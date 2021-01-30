@@ -1,0 +1,13 @@
+package dnd.items.belts;
+
+import dnd.items.Equippable;
+import dnd.items.Item;
+
+public abstract class Belt extends Item implements Equippable {
+
+	public Belt(String name, int value) {
+		super(name, value);
+		// TODO Auto-generated constructor stub
+	}
+
+}
