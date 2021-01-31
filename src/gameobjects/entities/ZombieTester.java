@@ -10,12 +10,11 @@ import org.junit.jupiter.api.Test;
 
 import engine.Manager;
 import engine.effects.ViciousMockeryEffect;
-import engine.events.Event;
 import engine.events.attackrolls.GuidingBolt;
 
 class ZombieTester extends Zombie {
 
-	static Zombie assistant = new Zombie();
+	static TestDummy dummy = new TestDummy();
 	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -41,11 +40,17 @@ class ZombieTester extends Zombie {
 	
 	@Test
 	void test_Disadvantage() {
-		ViciousMockeryEffect VM = new ViciousMockeryEffect(assistant,this);  
+		GuidingBolt guidingBolt = (GuidingBolt) availableEvents.get(0); // TODO: this is cheating
+		ViciousMockeryEffect VM = new ViciousMockeryEffect(dummy,this);
+		addTarget(dummy);
+		// 0 indicates neither ADVANTAGE nor DISADVANTAGE
+		assertEquals(0,guidingBolt.getAdvantageState());
 		Manager.addEffect(VM);
-		addTarget(assistant);
-		GuidingBolt guidingBolt = (GuidingBolt) availableEvents.get(0);
-		Manager.processEvent(guidingBolt, assistant);
+		Manager.processEvent(guidingBolt, dummy);
+		// -1 indicates DISADVANTAGE
 		assertEquals(-1,guidingBolt.getAdvantageState());
+		invokeEvent(guidingBolt);
+		// 0 indicates neither ADVANTAGE nor DISADVANTAGE
+		assertEquals(0,guidingBolt.getAdvantageState());
 	}
 }
