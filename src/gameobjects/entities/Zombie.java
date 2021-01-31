@@ -12,9 +12,17 @@ import maths.Vector;
 
 public class Zombie extends Entity {
 
+	public Zombie() {
+		super("Zombie", new Vector(0,0,0), new Vector(0,0,0));
+		defaultAttributes();
+	}
+	
 	public Zombie(Vector pos, Vector rot) {
 		super("Zombie", pos, rot);
-		
+		defaultAttributes();
+	}
+
+	private void defaultAttributes() {
 		size = SizeCategory.MEDIUM;
 		type = CreatureType.UNDEAD;
 		alignment = Alignment.NEUTRAL_EVIL;
@@ -39,11 +47,9 @@ public class Zombie extends Entity {
 		// TODO: replace with Slam
 		availableEvents.add(new GuidingBolt(this, AttackRoll.INTRINSIC, Entity.WIS));
 		availableEvents.add(new ViciousMockery(this, null, Entity.WIS));
-		
 		// TODO: implement Undead Fortitude
-		
 	}
-
+	
 	@Override
 	public void manage() {
 		// TODO Auto-generated method stub

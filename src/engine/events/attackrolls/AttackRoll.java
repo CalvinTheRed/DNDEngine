@@ -118,7 +118,7 @@ public abstract class AttackRoll extends Event {
 		disadvantage++;
 	}
 	
-	private int getAdvantageState() {
+	public int getAdvantageState() {
 		if (advantage > 0 && disadvantage > 0) {
 			return 0;
 		}
