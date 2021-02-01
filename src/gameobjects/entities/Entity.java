@@ -139,7 +139,7 @@ public abstract class Entity extends GameObject {
 		return observedEffects;
 	}
 	
-	public void flushEndedEffects() {
+	public void clearEndedEffects() {
 		for (int i = 0; i < observedEffects.size(); i++) {
 			if (observedEffects.get(i).isEnded()) {
 				observedEffects.remove(i);

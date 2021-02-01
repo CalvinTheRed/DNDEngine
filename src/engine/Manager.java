@@ -28,9 +28,6 @@ public final class Manager {
 		return gameObjects.remove(o);
 	}
 	
-	/* NOTE: 'center' is located at the center of the cube's
-	 * base, not at the center of the cube itself.
-	 */
 	public static LinkedList<Entity> entitiesInCube(Vector center, Vector rot, double radius) {
 		LinkedList<Entity> entities = new LinkedList<Entity>();
 		Vector axis1 = rot.unit().scale(radius);
@@ -45,7 +42,7 @@ public final class Manager {
 		for (GameObject o : gameObjects) {
 			if (o instanceof Entity) {
 				Vector deltaPos = o.getPos().sub(center);
-				if (deltaPos.proj(axis1).mag() <= radius && deltaPos.proj(axis2).mag() <= radius && deltaPos.proj(Vector.UNIT_Y).mag() <= radius * 2) {
+				if (deltaPos.proj(axis1).mag() <= radius && deltaPos.proj(axis2).mag() <= radius && deltaPos.proj(Vector.UNIT_Y).mag() <= radius) {
 					System.out.println("Found " + o + " " + o.getPos());
 					entities.add((Entity)o);
 				}

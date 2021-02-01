@@ -1,5 +1,9 @@
 package engine.events.savingthrows;
 
+import java.util.LinkedList;
+
+import dnd.combat.DamageDiceGroup;
+import dnd.data.DamageType;
 import dnd.items.Item;
 import engine.effects.Effect;
 import engine.effects.ViciousMockeryEffect;
@@ -22,11 +26,17 @@ public class ViciousMockery extends SavingThrow {
 	protected void applyFail(Entity target) {
 		Effect e = new ViciousMockeryEffect(getSource(), target);
 		target.observeEffect(e);
+		
+		target.processDamageEvent(d);
 	}
 
 	@Override
 	protected Damage genDamage() {
-		return null;
+		Damage d = new Damage(getSource(), toString());
+		LinkedList<DamageDiceGroup> damageDice = new LinkedList<DamageDiceGroup>();
+		damageDice.add(new DamageDiceGroup(1, 4, DamageType.PSYCHIC));
+		d.setDamageDice(damageDice);
+		return d;
 	}
 
 }
