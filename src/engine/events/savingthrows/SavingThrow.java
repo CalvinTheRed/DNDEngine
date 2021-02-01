@@ -3,7 +3,6 @@ package engine.events.savingthrows;
 import java.util.LinkedList;
 
 import dnd.items.Item;
-import engine.Manager;
 import engine.effects.Effect;
 import engine.events.Damage;
 import engine.events.Event;
@@ -30,16 +29,7 @@ public abstract class SavingThrow extends Event {
 		this.targetAbilityScore = targetAbilityScore;
 		this.sourceAbilityScore = sourceAbilityScore;
 		this.isSpell = isSpell;
-	}
-	
-	@Override
-	protected void reset() {
 		d20 = new Die(20);
-		appliedEffects.clear();
-		advantage = 0;
-		disadvantage = 0;
-		sourceAbilityScore = Entity.STR;
-		saveBonus = 0;
 	}
 	
 	@Override
@@ -51,8 +41,8 @@ public abstract class SavingThrow extends Event {
 		d = genDamage();
 		
 		for (Entity target : targets) {
-			reset();
-			while (Manager.processEvent(this, target)) {
+//			reset();
+			while (getSource().processEvent(this, target) || target.processEvent(this,  target)) {
 				/* Allows the Effects applied to the source and the target to
 				 * modify the parameters of the saving throw (e.g. Aura of
 				 * Protection grants a static bonus to saving throws).
@@ -61,7 +51,7 @@ public abstract class SavingThrow extends Event {
 			
 			roll(target);
 			
-			while (Manager.processEvent(this, target)) {
+			while (getSource().processEvent(this, target) || target.processEvent(this, target)) {
 				/* Allows the Effects applied to the source and the target to
 				 * attempt to change the outcome of the saving throw after it
 				 * has been rolled (e.g. the Lucky feat allows the target to
@@ -69,7 +59,7 @@ public abstract class SavingThrow extends Event {
 				 */
 			}
 			
-			int sourceDC = source.getSaveDiceCheck(sourceAbilityScore);
+			int sourceDC = getSource().getSaveDiceCheck(sourceAbilityScore);
 			if (saveRoll >= sourceDC) {
 				System.out.println("Saving throw success! (" + saveRoll + ":" + sourceDC + ")");
 				applyPass(target);

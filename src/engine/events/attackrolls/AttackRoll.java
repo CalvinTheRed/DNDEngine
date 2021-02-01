@@ -4,7 +4,6 @@ import java.util.LinkedList;
 
 import dnd.items.Item;
 import dnd.items.items.Self;
-import engine.Manager;
 import engine.effects.Effect;
 import engine.events.Event;
 import gameobjects.entities.Entity;
@@ -31,18 +30,7 @@ public abstract class AttackRoll extends Event {
 		this.medium = medium;
 		this.attackAbilityScore = attackAbilityScore;
 		this.isSpell = isSpell;
-	}
-	
-	@Override
-	protected void reset() {
 		d20 = new Die(20);
-		appliedEffects.clear();
-		advantage = 0;
-		disadvantage = 0;
-		attackAbilityScore = Entity.STR;
-		attackBonus = source.getAbilityModifier(Entity.STR);
-		attackBonus += (isSpell || medium == INTRINSIC || source.hasWeaponProficiency(medium.getWeaponType()) ? source.getProficiencyBonus() : 0);
-		numAdvantageDice = 2;
 	}
 	
 	@Override
@@ -52,8 +40,8 @@ public abstract class AttackRoll extends Event {
 		 * behavior is required.
 		 */
 		for (Entity target : targets) {
-			reset();
-			while (Manager.processEvent(this, target)) {
+			//reset();
+			while (getSource().processEvent(this, target) || target.processEvent(this, target)) {
 				/* Allows the effects applied to the source and the target to
 				 * modify the parameters of the attack roll (e.g. Guiding
 				 * Bolt grants advantage to an attack roll made against its
@@ -63,7 +51,7 @@ public abstract class AttackRoll extends Event {
 			
 			roll();
 			
-			while (Manager.processEvent(this, target)) {
+			while (getSource().processEvent(this, target) || target.processEvent(this, target)) {
 				/* Allows the effects applied to the source and the target to
 				 * attempt to change the outcome of the attack roll after it
 				 * has been rolled (e.g. Bardic Inspiration adds a bonus to

@@ -43,11 +43,5 @@ public class Zombie extends Entity {
 		// TODO: implement Undead Fortitude
 		
 	}
-
-	@Override
-	public void manage() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 }

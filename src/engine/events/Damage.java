@@ -29,12 +29,6 @@ public class Damage extends Event {
 			group.roll();
 		}
 	}
-
-	@Override
-	protected void reset() {
-		// Not a resettable event! (?)
-		
-	}
 	
 	public LinkedList<DamageDiceGroup> getDamageDice(){
 		return damageDice;
