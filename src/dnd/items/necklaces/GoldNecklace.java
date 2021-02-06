@@ -3,7 +3,7 @@ package dnd.items.necklaces;
 public class GoldNecklace extends Necklace {
 
 	public GoldNecklace() {
-		super("Golden Necklace", 25);
+		super("Golden Necklace");
 	}
 
 	@Override

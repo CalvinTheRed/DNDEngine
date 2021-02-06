@@ -16,9 +16,11 @@ import gameobjects.entities.Entity;
 
 public class Damage extends Event {
 	protected LinkedList<DamageDiceGroup> damageDice;
+	protected Event parent;
 	
-	public Damage(Entity source, String sourceEventName) {
-		super(source, "Damage from " + sourceEventName);
+	public Damage(Entity source, Event parent) {
+		super(source, "Damage from " + parent);
+		this.parent = parent;
 	}
 
 	@Override
@@ -34,6 +36,10 @@ public class Damage extends Event {
 	
 	public void setDamageDice(LinkedList<DamageDiceGroup> damageDice) {
 		this.damageDice = damageDice;
+	}
+	
+	public Event getParent() {
+		return parent;
 	}
 
 	@Override

@@ -129,6 +129,10 @@ public abstract class AttackRoll extends Event {
 		return d20.getRoll();
 	}
 	
+	public Item getMedium() {
+		return medium;
+	}
+	
 	protected abstract void applyHit(Entity target);
 	protected abstract void applyMiss(Entity target);
 	

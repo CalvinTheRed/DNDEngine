@@ -5,8 +5,8 @@ import dnd.items.Item;
 
 public abstract class Ring extends Item implements Equippable {
 
-	public Ring(String name, int value) {
-		super(name, value);
+	public Ring(String name) {
+		super(name);
 		// TODO Auto-generated constructor stub
 	}
 

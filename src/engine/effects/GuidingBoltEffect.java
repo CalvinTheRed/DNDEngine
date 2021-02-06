@@ -17,8 +17,8 @@ public class GuidingBoltEffect extends Effect {
 		}
 		if (target == getTarget() && e instanceof AttackRoll && !((AttackRoll)e).isEffectApplied(this)) {
 			System.out.println("Applying " + this);
-			((AttackRoll)e).applyEffect(this);
-			((AttackRoll)e).grantAdvantage();
+			e.applyEffect(this);
+			e.grantAdvantage();
 			end();
 			return true;
 		}

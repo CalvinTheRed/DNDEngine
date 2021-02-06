@@ -3,7 +3,7 @@ package dnd.items.rings;
 public class GoldRing extends Ring {
 
 	public GoldRing() {
-		super("Golden Ring", 25);
+		super("Golden Ring");
 	}
 
 	@Override

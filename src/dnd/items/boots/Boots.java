@@ -5,8 +5,8 @@ import dnd.items.Item;
 
 public abstract class Boots extends Item implements Equippable {
 
-	public Boots(String name, int value) {
-		super(name, value);
+	public Boots(String name) {
+		super(name);
 		// TODO Auto-generated constructor stub
 	}
 

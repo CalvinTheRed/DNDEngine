@@ -17,8 +17,8 @@ public class ViciousMockeryEffect extends Effect {
 		}
 		if (e.getSource() == getTarget() && e instanceof AttackRoll && !((AttackRoll)e).isEffectApplied(this)) {
 			System.out.println("Applying " + this);
-			((AttackRoll)e).applyEffect(this);
-			((AttackRoll)e).grantDisadvantage();
+			e.applyEffect(this);
+			e.grantDisadvantage();
 			end();
 			return true;
 		}

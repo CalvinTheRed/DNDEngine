@@ -32,7 +32,7 @@ public class ViciousMockery extends SavingThrow {
 
 	@Override
 	protected Damage genDamage() {
-		Damage d = new Damage(getSource(), toString());
+		Damage d = new Damage(getSource(), this);
 		LinkedList<DamageDiceGroup> damageDice = new LinkedList<DamageDiceGroup>();
 		damageDice.add(new DamageDiceGroup(1, 4, DamageType.PSYCHIC));
 		d.setDamageDice(damageDice);

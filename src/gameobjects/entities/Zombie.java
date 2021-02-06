@@ -5,9 +5,9 @@ import dnd.data.Condition;
 import dnd.data.CreatureType;
 import dnd.data.DamageType;
 import dnd.data.SizeCategory;
-import engine.events.attackrolls.AttackRoll;
-import engine.events.attackrolls.GuidingBolt;
-import engine.events.savingthrows.ViciousMockery;
+import dnd.items.Item;
+import dnd.items.weapons.Longsword;
+import engine.events.attackrolls.WeaponAttack;
 import maths.Vector;
 
 public class Zombie extends Entity {
@@ -37,8 +37,13 @@ public class Zombie extends Entity {
 		conditionImmunities.add(Condition.POISONED);
 		immunities.add(DamageType.POISON);
 		// TODO: replace with Slam
-		availableEvents.add(new GuidingBolt(this, AttackRoll.INTRINSIC, Entity.WIS));
-		availableEvents.add(new ViciousMockery(this, null, Entity.WIS));
+//		availableEvents.add(new GuidingBolt(this, AttackRoll.INTRINSIC, Entity.WIS));
+//		availableEvents.add(new ViciousMockery(this, null, Entity.WIS));
+		
+		Item longsword = new Longsword();
+		inventory.equipWeapon(longsword, false);
+		
+		invokableEvents.add(new WeaponAttack(this, inventory.mainhand()));
 		
 		// TODO: implement Undead Fortitude
 		

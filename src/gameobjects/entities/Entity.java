@@ -73,7 +73,8 @@ public abstract class Entity extends GameObject {
 	protected LinkedList<DamageType> vulnerabilities;
 	protected LinkedList<Effect>     observedEffects;
 	protected LinkedList<Entity>     targets;
-	protected LinkedList<Event>      availableEvents;
+	protected LinkedList<Event>      invokableEvents;
+	protected LinkedList<Event>      stagedEvents; // TODO: implement stagedEvents
 	protected LinkedList<Language>   languages;
 	protected LinkedList<WeaponType> weaponProficiency;
 	
@@ -93,7 +94,8 @@ public abstract class Entity extends GameObject {
 		vulnerabilities     = new LinkedList<DamageType>();
 		observedEffects     = new LinkedList<Effect>();
 		targets             = new LinkedList<Entity>();
-		availableEvents     = new LinkedList<Event>();
+		invokableEvents     = new LinkedList<Event>();
+		stagedEvents        = new LinkedList<Event>();
 		languages           = new LinkedList<Language>();
 		weaponProficiency   = new LinkedList<WeaponType>();
 	}
@@ -114,12 +116,12 @@ public abstract class Entity extends GameObject {
 		targets.clear();
 	}
 	
-	public LinkedList<Event> getAvailableEvents(){
-		return availableEvents;
+	public LinkedList<Event> getInvokableEvents(){
+		return invokableEvents;
 	}
 	
 	public boolean invokeEvent(Event e) {
-		if (availableEvents.contains(e)) {
+		if (invokableEvents.contains(e)) {
 			e.invoke(targets);
 			return true;
 		}
@@ -260,6 +262,10 @@ public abstract class Entity extends GameObject {
 		if (health < 1) {
 			// TODO: initiate death if NPC or saving throw mode if PC
 		}
+	}
+	
+	public Inventory getInventory() {
+		return inventory;
 	}
 	
 }

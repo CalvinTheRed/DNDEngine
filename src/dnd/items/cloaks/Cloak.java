@@ -5,8 +5,8 @@ import dnd.items.Item;
 
 public abstract class Cloak extends Item implements Equippable {
 
-	public Cloak(String name, int value) {
-		super(name, value);
+	public Cloak(String name) {
+		super(name);
 		// TODO Auto-generated constructor stub
 	}
 

@@ -21,7 +21,7 @@ public class GuidingBolt extends AttackRoll {
 		Effect e = new GuidingBoltEffect(getSource(), target);
 		target.observeEffect(e);
 		
-		Damage d = new Damage(getSource(), toString());
+		Damage d = new Damage(getSource(), this);
 		LinkedList<DamageDiceGroup> damageDice = new LinkedList<DamageDiceGroup>();
 		damageDice.add(new DamageDiceGroup(3, 8, DamageType.RADIANT));
 		d.setDamageDice(damageDice);

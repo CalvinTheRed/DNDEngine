@@ -3,7 +3,7 @@ package dnd.items.boots;
 public class GoldBoots extends Boots {
 
 	public GoldBoots() {
-		super("Golden Boots", 25);
+		super("Golden Boots");
 		// TODO Auto-generated constructor stub
 	}
 
