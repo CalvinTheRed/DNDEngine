@@ -3,7 +3,7 @@ package dnd.items.belts;
 public class GoldBelt extends Belt {
 
 	public GoldBelt() {
-		super("Golden Belt", 25);
+		super("Golden Belt");
 		// TODO Auto-generated constructor stub
 	}
 

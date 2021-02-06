@@ -2,8 +2,6 @@ package engine;
 
 import java.util.LinkedList;
 
-import engine.effects.Effect;
-import engine.events.Event;
 import gameobjects.GameObject;
 import gameobjects.entities.Entity;
 import maths.Vector;
@@ -13,11 +11,9 @@ public final class Manager {
 	private static final double CONE_ARC_SIZE = Math.toRadians(45);
 	
 	private static LinkedList<GameObject> gameObjects;
-	private static LinkedList<Effect> effects;
 	
 	public static void initialize() {
 		gameObjects = new LinkedList<GameObject>();
-		effects = new LinkedList<Effect>();
 	}
 	
 	public static boolean addGameObject(GameObject o) {
@@ -30,48 +26,6 @@ public final class Manager {
 	
 	public static boolean removeGameObject(GameObject o) {
 		return gameObjects.remove(o);
-	}
-	
-	public static void manageGameObjects() {
-		for (GameObject o : gameObjects) {
-			o.manage();
-		}
-	}
-	
-	public static boolean addEffect(Effect e) {
-		if (effects.contains(e)) {
-			return false;
-		}
-		effects.add(e);
-		return true;
-	}
-	
-	// TODO: implement the utility of Effect.expire()
-	public static boolean removeEffect(Effect e) {
-		for (Effect effect : effects) {
-			if (effect == e) {
-				e.expire();
-			}
-		}
-		return effects.remove(e);
-	}
-	
-	public static boolean processEvent(Event e, Entity target) {
-		boolean isModified = false;
-		for (int i = 0; i < effects.size(); i++) {
-			/* avoid ConcurrentModificationException by using this
-			 * form of for loop, and account for if the event is
-			 * deleted upon being processed
-			 */
-			Effect effect = effects.get(i);
-			if (effect.processEvent(e, target)) {
-				isModified = true;
-			}
-			if (i < effects.size() && effect != effects.get(i)) {
-				i--;
-			}
-		}
-		return isModified;
 	}
 	
 	public static LinkedList<Entity> entitiesInCube(Vector center, Vector rot, double radius) {
@@ -88,7 +42,7 @@ public final class Manager {
 		for (GameObject o : gameObjects) {
 			if (o instanceof Entity) {
 				Vector deltaPos = o.getPos().sub(center);
-				if (deltaPos.proj(axis1).mag() <= radius && deltaPos.proj(axis2).mag() <= radius && deltaPos.proj(Vector.UNIT_Y).mag() <= radius * 2) {
+				if (deltaPos.proj(axis1).mag() <= radius && deltaPos.proj(axis2).mag() <= radius && deltaPos.proj(Vector.UNIT_Y).mag() <= radius) {
 					System.out.println("Found " + o + " " + o.getPos());
 					entities.add((Entity)o);
 				}

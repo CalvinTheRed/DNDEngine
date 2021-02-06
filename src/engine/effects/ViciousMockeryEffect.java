@@ -1,6 +1,5 @@
 package engine.effects;
 
-import engine.Manager;
 import engine.events.Event;
 import engine.events.attackrolls.AttackRoll;
 import gameobjects.entities.Entity;
@@ -13,20 +12,17 @@ public class ViciousMockeryEffect extends Effect {
 
 	@Override
 	public boolean processEvent(Event e, Entity target) {
-		if (e.getSource() == this.target && e instanceof AttackRoll) {
-			if (!((AttackRoll)e).isEffectApplied(this)) {
-				((AttackRoll)e).applyEffect(this);
-				((AttackRoll)e).grantDisadvantage();
-				Manager.removeEffect(this);
-				return true;
-			}
+		if (isEnded()) {
+			return false;
+		}
+		if (e.getSource() == getTarget() && e instanceof AttackRoll && !((AttackRoll)e).isEffectApplied(this)) {
+			System.out.println("Applying " + this);
+			e.applyEffect(this);
+			e.grantDisadvantage();
+			end();
+			return true;
 		}
 		return false;
 	}
-
-	@Override
-	public void expire() {
-		
-	}
-
+	
 }

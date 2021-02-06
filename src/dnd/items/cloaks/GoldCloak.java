@@ -3,7 +3,7 @@ package dnd.items.cloaks;
 public class GoldCloak extends Cloak {
 
 	public GoldCloak() {
-		super("Golden Cloak", 25);
+		super("Golden Cloak");
 		// TODO Auto-generated constructor stub
 	}
 

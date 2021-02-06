@@ -5,7 +5,7 @@ import dnd.items.Item;
 public class Bucket extends Item {
 
 	public Bucket() {
-		super("Bucket", 1);
+		super("Bucket");
 	}
 
 }

@@ -5,7 +5,7 @@ import dnd.items.Item;
 public class Self extends Item {
 
 	public Self() {
-		super("Self", 1);
+		super("Self");
 	}
 
 }

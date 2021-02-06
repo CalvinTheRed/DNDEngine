@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import dnd.combat.DamageDiceGroup;
 import dnd.data.DamageType;
 import dnd.items.Item;
-import engine.Manager;
+import engine.effects.Effect;
 import engine.effects.ViciousMockeryEffect;
 import engine.events.Damage;
 import gameobjects.entities.Entity;
@@ -24,34 +24,18 @@ public class ViciousMockery extends SavingThrow {
 	
 	@Override
 	protected void applyFail(Entity target) {
+		Effect e = new ViciousMockeryEffect(getSource(), target);
+		target.observeEffect(e);
+		
 		target.processDamageEvent(d);
-		Manager.addEffect(new ViciousMockeryEffect(source, target));
 	}
 
 	@Override
 	protected Damage genDamage() {
-		Damage d = new Damage(source, null, name);
+		Damage d = new Damage(getSource(), this);
 		LinkedList<DamageDiceGroup> damageDice = new LinkedList<DamageDiceGroup>();
-		
-		int numDice;
-		if (source.getLevel() >= 17) {
-			numDice = 4;
-		}
-		else if (source.getLevel() >= 11) {
-			numDice = 3;
-		}
-		else if (source.getLevel() >= 5) {
-			numDice = 2;
-		}
-		else {
-			numDice = 1;
-		}
-		
-		damageDice.add(new DamageDiceGroup(numDice, 4, DamageType.PSYCHIC));
+		damageDice.add(new DamageDiceGroup(1, 4, DamageType.PSYCHIC));
 		d.setDamageDice(damageDice);
-		Manager.processEvent(d, null);
-		d.invoke(null);
-		
 		return d;
 	}
 

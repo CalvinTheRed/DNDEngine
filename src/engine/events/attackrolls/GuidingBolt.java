@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import dnd.combat.DamageDiceGroup;
 import dnd.data.DamageType;
 import dnd.items.Item;
-import engine.Manager;
+import engine.effects.Effect;
 import engine.effects.GuidingBoltEffect;
 import engine.events.Damage;
 import gameobjects.entities.Entity;
@@ -18,20 +18,20 @@ public class GuidingBolt extends AttackRoll {
 
 	@Override
 	protected void applyHit(Entity target) {
-		Damage d = new Damage(source, target, name);
+		Effect e = new GuidingBoltEffect(getSource(), target);
+		target.observeEffect(e);
+		
+		Damage d = new Damage(getSource(), this);
 		LinkedList<DamageDiceGroup> damageDice = new LinkedList<DamageDiceGroup>();
-		damageDice.add(new DamageDiceGroup(4, 6, DamageType.RADIANT));
+		damageDice.add(new DamageDiceGroup(3, 8, DamageType.RADIANT));
 		d.setDamageDice(damageDice);
-		Manager.processEvent(d, target);
 		d.invoke(null);
 		target.processDamageEvent(d);
-		
-		Manager.addEffect(new GuidingBoltEffect(source, target));
 	}
 
 	@Override
 	protected void applyMiss(Entity target) {
 		// No effects on a miss!
 	}
-
+	
 }

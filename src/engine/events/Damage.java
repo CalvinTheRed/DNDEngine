@@ -16,11 +16,11 @@ import gameobjects.entities.Entity;
 
 public class Damage extends Event {
 	protected LinkedList<DamageDiceGroup> damageDice;
-	protected Entity target;
+	protected Event parent;
 	
-	public Damage(Entity source, Entity target, String sourceEventName) {
-		super(source, "Damage from " + sourceEventName);
-		this.target = target;
+	public Damage(Entity source, Event parent) {
+		super(source, "Damage from " + parent);
+		this.parent = parent;
 	}
 
 	@Override
@@ -28,12 +28,6 @@ public class Damage extends Event {
 		for (DamageDiceGroup group : damageDice){
 			group.roll();
 		}
-	}
-
-	@Override
-	protected void reset() {
-		// Not a resettable event! (?)
-		
 	}
 	
 	public LinkedList<DamageDiceGroup> getDamageDice(){
@@ -44,8 +38,14 @@ public class Damage extends Event {
 		this.damageDice = damageDice;
 	}
 	
-	public Entity getTarget() {
-		return target;
+	public Event getParent() {
+		return parent;
+	}
+
+	@Override
+	protected void reset() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

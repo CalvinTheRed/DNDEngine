@@ -12,8 +12,8 @@ public abstract class Armor extends Item implements Equippable {
 	int strReq;
 	protected LinkedList<ArmorProperty> armorTags;
 	
-	public Armor(String name, int value, int baseArmorClass, int maxDex, int strReq) {
-		super(name, value);
+	public Armor(String name, int baseArmorClass, int maxDex, int strReq) {
+		super(name);
 		this.baseArmorClass = baseArmorClass;
 		this.maxDex = maxDex;
 		this.strReq = strReq;

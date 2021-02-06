@@ -46,20 +46,6 @@ public abstract class Entity extends GameObject {
 	public static final int STEALTH         = 16;
 	public static final int SURVIVAL        = 17;
 	
-	public static final int ARTIFICER = 0;
-	public static final int BARBARIAN = 1;
-	public static final int BARD      = 2;
-	public static final int CLERIC    = 3;
-	public static final int DRUID     = 4;
-	public static final int FIGHTER   = 5;
-	public static final int MONK      = 6;
-	public static final int PALADIN   = 7;
-	public static final int RANGER    = 8;
-	public static final int ROGUE     = 9;
-	public static final int SORCERER  = 10;
-	public static final int WARLOCK   = 11;
-	public static final int WIZARD    = 12;
-	
 	protected int baseArmorClass;
 	protected int experience;
 	protected int health;
@@ -78,16 +64,17 @@ public abstract class Entity extends GameObject {
 	protected boolean[] skillExpertise;
 	protected boolean[] skillProficiency;
 	
+	protected Effect    concentration;
 	protected Inventory inventory;
 	
 	protected LinkedList<Condition>  conditionImmunities;
 	protected LinkedList<DamageType> immunities;
 	protected LinkedList<DamageType> resistances;
 	protected LinkedList<DamageType> vulnerabilities;
-	protected LinkedList<Effect>     ownedEffects;
-	protected LinkedList<Effect>     subscribedEffects;
+	protected LinkedList<Effect>     observedEffects;
 	protected LinkedList<Entity>     targets;
-	protected LinkedList<Event>      availableEvents;
+	protected LinkedList<Event>      invokableEvents;
+	protected LinkedList<Event>      stagedEvents; // TODO: implement stagedEvents
 	protected LinkedList<Language>   languages;
 	protected LinkedList<WeaponType> weaponProficiency;
 	
@@ -105,8 +92,10 @@ public abstract class Entity extends GameObject {
 		immunities          = new LinkedList<DamageType>();
 		resistances         = new LinkedList<DamageType>();
 		vulnerabilities     = new LinkedList<DamageType>();
+		observedEffects     = new LinkedList<Effect>();
 		targets             = new LinkedList<Entity>();
-		availableEvents     = new LinkedList<Event>();
+		invokableEvents     = new LinkedList<Event>();
+		stagedEvents        = new LinkedList<Event>();
 		languages           = new LinkedList<Language>();
 		weaponProficiency   = new LinkedList<WeaponType>();
 	}
@@ -123,12 +112,79 @@ public abstract class Entity extends GameObject {
 		return targets.remove(e);
 	}
 	
-	public void removeTargets() {
+	public void clearTargets() {
 		targets.clear();
 	}
 	
-	public Inventory getInventory() {
-		return inventory;
+	public LinkedList<Event> getInvokableEvents(){
+		return invokableEvents;
+	}
+	
+	public boolean invokeEvent(Event e) {
+		if (invokableEvents.contains(e)) {
+			e.invoke(targets);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean observeEffect(Effect e) {
+		if (observedEffects.contains(e)) {
+			return false;
+		}
+		observedEffects.add(e);
+		System.out.println(this + " now observing " + e);
+		return true;
+	}
+	
+	public LinkedList<Effect> getObservedEffects(){
+		return observedEffects;
+	}
+	
+	public void clearEndedEffects() {
+		for (int i = 0; i < observedEffects.size(); i++) {
+			if (observedEffects.get(i).isEnded()) {
+				observedEffects.remove(i);
+				i--;
+			}
+		}
+	}
+	
+	public boolean processEvent(Event e, Entity target) {
+		boolean modifiedEvent = false;
+		for (Effect effect : observedEffects) {
+			if (effect.processEvent(e, target)) {
+				modifiedEvent = true;
+			}
+		}
+		return modifiedEvent;
+	}
+	
+	public int getAbilityModifier(int ability) {
+		return (abilityScores[ability] - 10) / 2;
+	}
+	
+	public int getProficiencyBonus() {
+		return ((level - 1) / 4) + 2;
+	}
+	
+	public int getLevel() {
+		return level;
+	}
+	
+	public boolean setConcentration(Effect e) {
+		if (concentration != null) {
+			concentration.end();
+			concentration = e;
+			return true;
+		}
+		concentration = e;
+		return false;
+	}
+	
+	public void breakConcentration() {
+		concentration.end();
+		concentration = null;
 	}
 	
 	// TODO: write better armor class algorithm
@@ -159,14 +215,6 @@ public abstract class Entity extends GameObject {
 		return tmp;
 	}
 	
-	public int getAbilityModifier(int ability) {
-		return (abilityScores[ability] - 10) / 2;
-	}
-	
-	public int getProficiencyBonus() {
-		return ((level - 1) / 4) + 2;
-	}
-	
 	public boolean getSaveProficiency(int ability) {
 		return saveProficiency[ability];
 	}
@@ -178,18 +226,6 @@ public abstract class Entity extends GameObject {
 		healthBase = health;
 		healthMax = health;
 		healthTmp = 0;
-	}
-	
-	public LinkedList<Event> getAvailableEvents(){
-		return availableEvents;
-	}
-	
-	public boolean invokeEvent(Event e) {
-		if (availableEvents.contains(e)) {
-			e.invoke(targets);
-			return true;
-		}
-		return false;
 	}
 	
 	public void processDamageEvent(Damage d) {
@@ -228,8 +264,8 @@ public abstract class Entity extends GameObject {
 		}
 	}
 	
-	public int getLevel() {
-		return level;
+	public Inventory getInventory() {
+		return inventory;
 	}
 	
 }
