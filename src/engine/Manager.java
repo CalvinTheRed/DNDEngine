@@ -28,6 +28,31 @@ public final class Manager {
 		return gameObjects.remove(o);
 	}
 	
+	public static Entity entityAt(Vector pos) {
+		try {
+			return entitiesInSphere(pos, 0).get(0);
+		}
+		catch (IndexOutOfBoundsException e) {
+			System.err.println("ERROR: no entity at position " + pos);
+			return null;
+		}
+	}
+	
+	public static LinkedList<Entity> entitiesInCone(Vector origin, double radius, Vector rot) {
+		LinkedList<Entity> entities = entitiesInSphere(origin, radius);
+		System.out.println("Refining search to match cone in direction " + rot.unit() + " within angle " + Math.toDegrees(CONE_ARC_SIZE / 2.0) + " degrees:");
+		for (int i = 0; i < entities.size(); i++) {
+			if (entities.get(i).getPos().sub(origin).calculateAngleDiff(rot) > CONE_ARC_SIZE / 2.0) {
+				entities.remove(i);
+				i--;
+			}
+			else {
+				System.out.println("Found " + entities.get(i) + " " + entities.get(i).getPos());
+			}
+		}
+		return entities;
+	}
+	
 	public static LinkedList<Entity> entitiesInCube(Vector center, Vector rot, double radius) {
 		LinkedList<Entity> entities = new LinkedList<Entity>();
 		Vector axis1 = rot.unit().scale(radius);
@@ -51,6 +76,29 @@ public final class Manager {
 		return entities;
 	}
 	
+	/*
+	 * NOTE: this algorithm does not return an entity standing exactly at origin.
+	 * I am not sure why this is the case at this time, but it is helpful for
+	 * target selection with line spells, considering the caster is not a valid
+	 * target and would otherwise need to be artificially filtered from the
+	 * targets.
+	 */
+	public static LinkedList<Entity> entitiesInLine(Vector origin, Vector rot, double length, double radius){
+		System.out.println("Searching for Entities within " + radius + " of " + length + "-long line " + origin + " + " + rot + "t:");
+		LinkedList<Entity> entities = new LinkedList<Entity>();
+		for (GameObject o : gameObjects) {
+			
+			if (o instanceof Entity) {
+				Vector deltaPos = o.getPos().sub(origin);
+				if (deltaPos.cross(rot).mag() / rot.mag() <= radius && deltaPos.calculateAngleDiff(rot) <= Math.toRadians(90) && deltaPos.proj(rot).mag() <= length) {
+					System.out.println("Found " + o + " " + o.getPos());
+					entities.add((Entity)o);
+				}
+			}
+		}
+		return entities;
+	}
+	
 	public static LinkedList<Entity> entitiesInSphere(Vector origin, double radius) {
 		System.out.println("Searching for Entities in sphere centered at " + origin + " with radius " + radius + ":");
 		LinkedList<Entity> entities = new LinkedList<Entity>();
@@ -63,19 +111,8 @@ public final class Manager {
 		return entities;
 	}
 	
-	public static LinkedList<Entity> entitiesInCone(Vector origin, double radius, Vector rot) {
-		LinkedList<Entity> entities = entitiesInSphere(origin, radius);
-		System.out.println("Refining search to match cone in direction " + rot.unit() + " within angle " + Math.toDegrees(CONE_ARC_SIZE / 2.0) + " degrees:");
-		for (int i = 0; i < entities.size(); i++) {
-			if (entities.get(i).getPos().sub(origin).calculateAngleDiff(rot) > CONE_ARC_SIZE / 2.0) {
-				entities.remove(i);
-				i--;
-			}
-			else {
-				System.out.println("Found " + entities.get(i) + " " + entities.get(i).getPos());
-			}
-		}
-		return entities;
-	}
+	
+	
+	
 	
 }
