@@ -1,6 +1,6 @@
-package engine.effects;
+package dnd.effects;
 
-import engine.events.Event;
+import dnd.events.Event;
 import gameobjects.entities.Entity;
 
 public abstract class Effect {
