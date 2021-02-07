@@ -16,26 +16,26 @@ public abstract class Effect {
 		ended = false;
 	}
 	
-	public Entity getSource() {
+	public final Entity getSource() {
 		return source;
 	}
 	
-	public Entity getTarget() {
+	public final Entity getTarget() {
 		return target;
 	}
 	
-	public void end() {
+	public final void end() {
 		ended = true;
 	}
 	
-	public boolean isEnded() {
+	public final boolean isEnded() {
 		return ended;
 	}
 	
 	public abstract boolean processEvent(Event e, Entity target);
 	
 	@Override
-	public String toString() {
+	public final String toString() {
 		return name;
 	}
 	
