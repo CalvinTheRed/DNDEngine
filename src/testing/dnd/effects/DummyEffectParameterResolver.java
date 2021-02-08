@@ -6,13 +6,11 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
 import gameobjects.entities.Entity;
-import maths.Vector;
-import testing.gameobjects.entities.DummyEntity;
 
 public class DummyEffectParameterResolver implements ParameterResolver {
 
-	public static final Entity Source = new DummyEntity("Dummy Entity Source", new Vector(0,0,0), new Vector(1,1,1) );
-	public static final Entity Target = new DummyEntity("Dummy Entity Target", new Vector(1,0,0), new Vector(1,0,0) );
+	public static Entity Source;
+	public static Entity Target;
 	
 	@Override
 	public Object resolveParameter(ParameterContext arg0, ExtensionContext arg1) throws ParameterResolutionException {

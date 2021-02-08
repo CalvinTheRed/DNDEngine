@@ -12,11 +12,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import engine.Manager;
+import maths.Vector;
+import testing.gameobjects.entities.DummyEntity;
+
 @ExtendWith(DummyEffectParameterResolver.class)
 class EffectTester {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
+		Manager.initialize();
+		DummyEffectParameterResolver.Source = new DummyEntity("Dummy Entity Source", new Vector(0,0,0), new Vector(1,1,1) );
+		DummyEffectParameterResolver.Target = new DummyEntity("Dummy Entity Target", new Vector(1,0,0), new Vector(1,0,0) );
 	}
 
 	@AfterAll
