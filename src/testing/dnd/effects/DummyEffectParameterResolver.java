@@ -1,13 +1,13 @@
-package dnd.effects;
+package testing.dnd.effects;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
-import gameobjects.entities.DummyEntity;
 import gameobjects.entities.Entity;
 import maths.Vector;
+import testing.gameobjects.entities.DummyEntity;
 
 public class DummyEffectParameterResolver implements ParameterResolver {
 

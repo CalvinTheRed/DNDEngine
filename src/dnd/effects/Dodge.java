@@ -8,17 +8,18 @@ public class Dodge extends Effect {
 
 	public Dodge(Entity source, Entity target) {
 		super(source, target, "Dodge");
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public boolean processEvent(Event e, Entity target) {
-		if (e.isEffectApplied(this)) {
-			return false;
-		}
 		if (e instanceof AttackRoll && target == getTarget()) {
-			((AttackRoll)e).grantDisadvantage(this);
-			return true;
+			try {
+				((AttackRoll)e).grantDisadvantage(this);
+				return true;
+			} catch (Exception ex) {
+				System.err.println("ERR: Effect " + e + " is already applied to Event " + this);
+				ex.printStackTrace();
+			}
 		}
 		return false;
 	}

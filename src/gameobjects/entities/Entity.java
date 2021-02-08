@@ -73,7 +73,7 @@ public abstract class Entity extends GameObject {
 	protected Alignment              alignment;
 	protected CreatureType           type;
 	protected SizeCategory           size;
-	protected Effect                 concentration;
+	protected Effect                 concentration; // TODO: concentrating effects need to be able to support multiple targets at a time
 	protected Inventory              inventory;
 	protected LinkedList<Condition>  conditionImmunities;
 	protected LinkedList<DamageType> immunities;

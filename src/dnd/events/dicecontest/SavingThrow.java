@@ -23,7 +23,7 @@ public class SavingThrow extends DiceContest {
 		case CUBE:
 			targets.addAll(Manager.entitiesInCube(targetPos, source.getRot(), getRadius()));
 		case LINE:
-			targets.addAll(Manager.entitiesInLine(source.getPos(), source.getRot(), getRange(), getRadius()));
+			targets.addAll(Manager.entitiesInLine(source.getPos(), source.getRot(), getRange()[LONGRANGE], getRadius()));
 		case SINGLE_TARGET:
 			targets.add(Manager.entityAt(targetPos));
 		case SPHERE:

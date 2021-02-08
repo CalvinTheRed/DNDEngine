@@ -2,12 +2,12 @@ package dnd.tasks;
 
 import dnd.events.EventGroup;
 
-public class Dodge extends Task {
+public class Disengage extends Task {
 
-	public Dodge() {
-		super("Dodge");
+	public Disengage() {
+		super("Disengage");
 		EventGroup group1 = new EventGroup();
-		group1.addEvent(new dnd.events.Dodge());
+		group1.addEvent(new dnd.events.Disengage());
 		addEventGroup(group1);
 	}
 

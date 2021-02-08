@@ -4,10 +4,10 @@ import dnd.data.EventShape;
 import gameobjects.entities.Entity;
 import maths.Vector;
 
-public class Dodge extends Event {
+public class Disengage extends Event {
 
-	public Dodge() {
-		super("Dodge");
+	public Disengage() {
+		super("Disengage");
 		setRange(0,0);
 		setShape(EventShape.SINGLE_TARGET);
 		setRadius(0);
@@ -15,8 +15,8 @@ public class Dodge extends Event {
 
 	@Override
 	public void invoke(Entity source, Vector targetPos) {
-		System.out.println(source + " starts dodging!");
-		source.observeEffect(new dnd.effects.Dodge(source, source));
+		System.out.println(source + " disengages from combat!");
+		source.observeEffect(new dnd.effects.Disengage(source, source));
 	}
 
 }

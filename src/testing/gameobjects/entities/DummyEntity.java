@@ -1,5 +1,6 @@
-package gameobjects.entities;
+package testing.gameobjects.entities;
 
+import gameobjects.entities.Entity;
 import maths.Vector;
 
 public class DummyEntity extends Entity {

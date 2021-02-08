@@ -22,17 +22,17 @@ public abstract class DiceContest extends Event {
 		d20 = new Die(20);
 	}
 	
-	public void grantAdvantage(Effect e) {
+	public void grantAdvantage(Effect e) throws Exception {
+		applyEffect(e);
 		advantage++;
-		applyEffect(e);
 	}
 	
-	public void grantDisadvantage(Effect e) {
+	public void grantDisadvantage(Effect e) throws Exception {
+		applyEffect(e);
 		disadvantage++;
-		applyEffect(e);
 	}
 	
-	protected int getAdvantageState() {
+	private int getAdvantageState() {
 		if (advantage > 0 && disadvantage > 0) {
 			return CANCELLED_OUT;
 		}
@@ -51,6 +51,37 @@ public abstract class DiceContest extends Event {
 	
 	public int getBonus() {
 		return bonus;
+	}
+	
+	public int getRawRoll() {
+		return d20.getRoll();
+	}
+	
+	protected void roll() {
+		d20.roll();
+		int advantageState = getAdvantageState();
+		if (advantageState == ADVANTAGE) {
+			System.out.println("Rolling with advantage!");
+			int roll = d20.getRoll();
+			d20.roll();
+			if (d20.getRoll() > roll) {
+				roll = d20.getRoll();
+			}
+		}
+		else if (advantageState == DISADVANTAGE) {
+			System.out.println("Rolling with disadvantage!");
+			int roll = d20.getRoll();
+			d20.roll();
+			if (d20.getRoll() < roll) {
+				roll = d20.getRoll();
+			}
+		}
+		else if (advantageState == NORMAL_ROLL) {
+			System.out.println("Rolling normally!");
+		}
+		else {
+			System.out.println("Rolling with both advantage and disadvantage!");
+		}
 	}
 	
 }

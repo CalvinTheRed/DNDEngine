@@ -8,8 +8,12 @@ import gameobjects.entities.Entity;
 import maths.Vector;
 
 public abstract class Event {
+	
+	public static final int SHORTRANGE = 0;
+	public static final int LONGRANGE  = 1;
+	
 	private String     name;
-	private double     range;
+	private double[]   range;
 	private EventShape shape;
 	private double     radius;
 	
@@ -18,13 +22,15 @@ public abstract class Event {
 	public Event(String name) {
 		this.name = name;
 		appliedEffects = new LinkedList<Effect>();
+		range = new double[2];
 	}
 	
-	public void setRange(double range) {
-		this.range = range;
+	public void setRange(double shortrange, double longrange) {
+		range[0] = shortrange;
+		range[1] = longrange;
 	}
 	
-	public double getRange() {
+	public double[] getRange() {
 		return range;
 	}
 	
@@ -44,11 +50,10 @@ public abstract class Event {
 		return radius;
 	}
 	
-	public boolean isEffectApplied(Effect e) {
-		return appliedEffects.contains(e);
-	}
-	
-	public void applyEffect(Effect e) {
+	public void applyEffect(Effect e) throws Exception {
+		if (appliedEffects.contains(e)) {
+			throw new Exception("Effect already applied");
+		}
 		appliedEffects.add(e);
 	}
 	

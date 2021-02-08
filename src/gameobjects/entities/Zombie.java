@@ -36,7 +36,7 @@ public class Zombie extends Entity {
 		immunities.add(DamageType.POISON);
 		
 		Task task1 = new dnd.tasks.Dodge();
-		Task task2 = new dnd.tasks.Dodge();
+		Task task2 = new dnd.tasks.Disengage();
 		addBaseTask(task1);
 		addBaseTask(task2);
 		resetTasks();
