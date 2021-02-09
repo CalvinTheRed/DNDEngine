@@ -16,10 +16,7 @@ public class Dodge extends Effect {
 			try {
 				((AttackRoll)e).grantDisadvantage(this);
 				return true;
-			} catch (Exception ex) {
-				System.err.println("ERR: Effect " + e + " is already applied to Event " + this);
-				ex.printStackTrace();
-			}
+			} catch (Exception ex) {}
 		}
 		return false;
 	}

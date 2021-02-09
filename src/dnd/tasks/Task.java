@@ -2,7 +2,7 @@ package dnd.tasks;
 
 import java.util.LinkedList;
 
-import dnd.events.EventGroup;
+import dnd.events.eventgroups.EventGroup;
 import gameobjects.entities.Entity;
 
 public abstract class Task {

@@ -50,6 +50,7 @@ public final class Manager {
 				System.out.println("Found " + entities.get(i) + " " + entities.get(i).getPos());
 			}
 		}
+		System.out.println();
 		return entities;
 	}
 	
@@ -73,6 +74,7 @@ public final class Manager {
 				}
 			}
 		}
+		System.out.println();
 		return entities;
 	}
 	
@@ -96,6 +98,7 @@ public final class Manager {
 				}
 			}
 		}
+		System.out.println();
 		return entities;
 	}
 	
@@ -108,6 +111,7 @@ public final class Manager {
 				entities.add((Entity)o);
 			}
 		}
+		System.out.println();
 		return entities;
 	}
 	

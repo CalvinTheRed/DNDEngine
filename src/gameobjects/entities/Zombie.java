@@ -37,9 +37,12 @@ public class Zombie extends Entity {
 		
 		Task task1 = new dnd.tasks.Dodge();
 		Task task2 = new dnd.tasks.Disengage();
+		Task task3 = new dnd.tasks.ExtraAttack3(inventory);
 		addBaseTask(task1);
 		addBaseTask(task2);
+		addBaseTask(task3);
 		resetTasks();
+		//inventory.equipWeapon(new Club());
 		
 	}
 	

@@ -49,17 +49,11 @@ public class Inventory implements Subject {
 		return armor;
 	}
 	
-	public void equipWeapon(Item item, boolean versatile) {
+	public void equipWeapon(Item item) {
 		if (mainhand != null) {
 			contents.add(mainhand);
 		}
 		mainhand = item;
-		if (versatile) {
-			if (offhand != null) {
-				contents.add(offhand);
-			}
-			offhand = item;
-		}
 		updateObservers();
 	}
 	

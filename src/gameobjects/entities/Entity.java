@@ -11,7 +11,7 @@ import dnd.data.SizeCategory;
 import dnd.data.WeaponType;
 import dnd.effects.Effect;
 import dnd.events.Event;
-import dnd.events.EventGroup;
+import dnd.events.eventgroups.EventGroup;
 import dnd.items.Inventory;
 import dnd.tasks.Task;
 import gameobjects.GameObject;

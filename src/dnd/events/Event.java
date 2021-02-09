@@ -26,8 +26,8 @@ public abstract class Event {
 	}
 	
 	public void setRange(double shortrange, double longrange) {
-		range[0] = shortrange;
-		range[1] = longrange;
+		range[SHORTRANGE] = shortrange;
+		range[LONGRANGE] = longrange;
 	}
 	
 	public double[] getRange() {
@@ -54,6 +54,7 @@ public abstract class Event {
 		if (appliedEffects.contains(e)) {
 			throw new Exception("Effect already applied");
 		}
+		System.out.println("Applying effect " + e + " to " + this);
 		appliedEffects.add(e);
 	}
 	

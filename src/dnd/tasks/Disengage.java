@@ -1,6 +1,6 @@
 package dnd.tasks;
 
-import dnd.events.EventGroup;
+import dnd.events.eventgroups.EventGroup;
 
 public class Disengage extends Task {
 
