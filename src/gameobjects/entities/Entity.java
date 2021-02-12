@@ -10,6 +10,7 @@ import dnd.data.Language;
 import dnd.data.SizeCategory;
 import dnd.data.WeaponType;
 import dnd.effects.Effect;
+import dnd.events.Damage;
 import dnd.events.Event;
 import dnd.events.eventgroups.EventGroup;
 import dnd.items.Inventory;
@@ -107,6 +108,30 @@ public abstract class Entity extends GameObject {
 		availableTasks      = new LinkedList<Task>();
 		baseTasks           = new LinkedList<Task>();
 		weaponProficiency   = new LinkedList<WeaponType>();
+	}
+	
+	// ---- Static class methods ----
+	
+	public static String getAbility(int abilityIndex) {
+		if (abilityIndex == STR) {
+			return "STR";
+		}
+		else if (abilityIndex == DEX) {
+			return "DEX";
+		}
+		else if (abilityIndex == CON) {
+			return "CON";
+		}
+		else if (abilityIndex == INT) {
+			return "INT";
+		}
+		else if (abilityIndex == WIS) {
+			return "WIS";
+		}
+		else if (abilityIndex == CHA) {
+			return "CHA";
+		}
+		return "";
 	}
 	
 	// ---- Methods concerning targets ----
@@ -207,10 +232,10 @@ public abstract class Entity extends GameObject {
 		return true;
 	}
 	
-	public boolean processEvent(Event e, Entity target) {
+	public boolean processEvent(Event e, Entity source, Entity target) {
 		boolean modifiedEvent = false;
 		for (Effect effect : observedEffects) {
-			if (effect.processEvent(e, target)) {
+			if (effect.processEvent(e, source, target)) {
 				modifiedEvent = true;
 			}
 		}
@@ -231,6 +256,11 @@ public abstract class Entity extends GameObject {
 	}
 	
 	// ---- Methods concerning entity data ----
+	
+	public void receiveDamage(Damage d) {
+		// TODO: implement damage reception
+		System.out.println(this + " received " + d);
+	}
 	
 	public int getAbilityModifier(int ability) {
 		return (abilityScores[ability] - 10) / 2;

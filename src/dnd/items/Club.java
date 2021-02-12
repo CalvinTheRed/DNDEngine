@@ -1,26 +1,19 @@
 package dnd.items;
 
-import java.util.LinkedList;
-
-import dnd.events.Event;
-import dnd.events.dicecontest.MeleeWeaponAttack;
-import dnd.events.dicecontest.ThrownWeaponAttack;
+import dnd.combat.DamageDiceGroup;
+import dnd.data.DamageType;
+import dnd.data.WeaponProperty;
 
 public class Club extends Item {
 	
 	public Club() {
-		super("Club");
-		// TODO Auto-generated constructor stub
+		super("Club", new double[] {20.0, 40.0}, 5.0);
+		weaponProperties.add(WeaponProperty.LIGHT);
 	}
 	
 	@Override
-	public LinkedList<Event> getAttackOptions() {
-		LinkedList<Event> events = new LinkedList<Event>();
-		Event event1 = new MeleeWeaponAttack(this);
-		Event event2 = new ThrownWeaponAttack(this);
-		events.add(event1);
-		events.add(event2);
-		return events;
+	public DamageDiceGroup getDamageDice() {
+		return new DamageDiceGroup(1, 4, DamageType.BLUDGEONING);
 	}
 	
 }

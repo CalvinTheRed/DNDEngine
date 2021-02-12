@@ -22,8 +22,8 @@ public class DamageDiceGroup extends DiceGroup {
 		return damageBonus;
 	}
 	
-	public void setDamageBonus(int bonus) {
-		damageBonus = bonus;
+	public void addDamageBonus(int bonus) {
+		damageBonus += bonus;
 	}
 	
 	public DamageType getDamageType() {

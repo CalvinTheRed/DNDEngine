@@ -5,6 +5,7 @@ import dnd.data.Condition;
 import dnd.data.CreatureType;
 import dnd.data.DamageType;
 import dnd.data.SizeCategory;
+import dnd.items.Dagger;
 import dnd.tasks.Task;
 import maths.Vector;
 
@@ -42,7 +43,7 @@ public class Zombie extends Entity {
 		addBaseTask(task2);
 		addBaseTask(task3);
 		resetTasks();
-		//inventory.equipWeapon(new Club());
+		inventory.equipWeapon(new Dagger());
 		
 	}
 	

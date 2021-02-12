@@ -10,7 +10,7 @@ public class Disengage extends Effect {
 	}
 
 	@Override
-	public boolean processEvent(Event e, Entity target) {
+	public boolean processEvent(Event e, Entity source, Entity target) {
 		/* It is assumed that opportunity attacks will search for the
 		 * presence of the Effect prior to offering the chance to be
 		 * invoked. The Disengage Effect does not do anything itself.

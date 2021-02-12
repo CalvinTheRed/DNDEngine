@@ -32,7 +32,7 @@ public abstract class Effect {
 		return ended;
 	}
 	
-	public abstract boolean processEvent(Event e, Entity target);
+	public abstract boolean processEvent(Event e, Entity source, Entity target);
 	
 	@Override
 	public final String toString() {

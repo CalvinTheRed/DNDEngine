@@ -1,7 +1,8 @@
-package dnd.events.dicecontest;
+package dnd.events.dicecontests;
 
 import dnd.effects.Effect;
 import dnd.events.Event;
+import gameobjects.entities.Entity;
 import maths.dice.Die;
 
 public abstract class DiceContest extends Event {
@@ -83,5 +84,7 @@ public abstract class DiceContest extends Event {
 			System.out.println("Rolling with both advantage and disadvantage!");
 		}
 	}
+	
+	protected abstract void invokeFallout(Entity source);
 	
 }

@@ -11,7 +11,7 @@ public class DummyEffect extends Effect {
 	}
 
 	@Override
-	public boolean processEvent(Event e, Entity target) {
+	public boolean processEvent(Event e, Entity source, Entity target) {
 		return false;
 	}
 

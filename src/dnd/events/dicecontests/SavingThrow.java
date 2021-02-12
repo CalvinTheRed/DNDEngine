@@ -1,4 +1,4 @@
-package dnd.events.dicecontest;
+package dnd.events.dicecontests;
 
 import java.util.LinkedList;
 
@@ -31,6 +31,12 @@ public class SavingThrow extends DiceContest {
 		default:
 			System.out.println("ERROR: Event shape did not match any known geometries!");
 		}
+		
+	}
+
+	@Override
+	protected void invokeFallout(Entity source) {
+		// TODO Auto-generated method stub
 		
 	}
 
