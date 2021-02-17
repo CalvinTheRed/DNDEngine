@@ -1,6 +1,6 @@
 package gameobjects;
 
-import engine.Manager;
+import engine.VirtualBoard;
 import maths.Vector;
 
 public abstract class GameObject {
@@ -13,7 +13,7 @@ public abstract class GameObject {
 		this.pos = pos;
 		this.rot = rot;
 		
-		Manager.addGameObject(this);
+		VirtualBoard.addGameObject(this);
 	}
 	
 	@Override

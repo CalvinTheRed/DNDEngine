@@ -1,6 +1,6 @@
 package dnd.events.eventgroups;
 
-import dnd.events.dicecontests.WeaponAttack;
+import dnd.events.dicecontests.attackroll.WeaponAttack;
 import dnd.items.Inventory;
 import dnd.items.Item;
 import engine.patterns.Observer;

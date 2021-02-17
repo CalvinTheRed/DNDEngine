@@ -12,12 +12,12 @@ public abstract class Event {
 	public static final int SHORTRANGE = 0;
 	public static final int LONGRANGE  = 1;
 	
-	private String     name;
-	private double[]   range;
-	private EventShape shape;
-	private double     radius;
-	
-	private LinkedList<Effect> appliedEffects;
+	protected LinkedList<Effect> appliedEffects;
+	protected Vector     targetPos;
+	protected String     name;
+	protected double[]   range;
+	protected EventShape shape;
+	protected double     radius;
 	
 	public Event(String name) {
 		this.name = name;
@@ -62,7 +62,10 @@ public abstract class Event {
 		appliedEffects.clear();
 	}
 	
-	public abstract void invoke(Entity source, Vector targetPos);
+	public void invoke(Entity source, Vector targetPos) {
+		System.out.println(source + " invokes Event " + this);
+		this.targetPos = targetPos;
+	}
 	
 	@Override
 	public String toString() {

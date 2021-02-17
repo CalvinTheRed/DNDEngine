@@ -12,10 +12,9 @@ public abstract class DiceContest extends Event {
 	public static final int ADVANTAGE     =  1;
 	public static final int CANCELLED_OUT =  2;
 	
-	private int advantage;
-	private int disadvantage;
-	private int bonus;
-	
+	protected int advantage;
+	protected int disadvantage;
+	protected int bonus;
 	protected Die d20;
 	
 	public DiceContest(String name) {
@@ -24,12 +23,10 @@ public abstract class DiceContest extends Event {
 	}
 	
 	public void grantAdvantage(Effect e) throws Exception {
-		applyEffect(e);
 		advantage++;
 	}
 	
 	public void grantDisadvantage(Effect e) throws Exception {
-		applyEffect(e);
 		disadvantage++;
 	}
 	

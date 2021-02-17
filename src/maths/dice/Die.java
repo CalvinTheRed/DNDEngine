@@ -19,4 +19,11 @@ public class Die {
 	public int getRoll() {
 		return roll;
 	}
+	
+	@Override
+	public Die clone() {
+		Die d = new Die(size);
+		d.roll = roll;
+		return d;
+	}
 }

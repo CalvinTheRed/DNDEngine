@@ -7,7 +7,7 @@ import dnd.data.ArmorProperty;
 import dnd.data.DamageType;
 import dnd.data.WeaponProperty;
 import dnd.events.Event;
-import dnd.events.dicecontests.WeaponAttack;
+import dnd.events.dicecontests.attackroll.WeaponAttack;
 import gameobjects.entities.Entity;
 
 public abstract class Item {

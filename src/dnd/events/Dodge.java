@@ -15,7 +15,7 @@ public class Dodge extends Event {
 
 	@Override
 	public void invoke(Entity source, Vector targetPos) {
-		System.out.println(source + " starts dodging!");
+		super.invoke(source, targetPos);
 		source.observeEffect(new dnd.effects.Dodge(source, source));
 	}
 

@@ -22,6 +22,7 @@ public abstract class Task {
 	public boolean invoke(Entity invoker) {
 		// TODO: return false if insufficient action economy
 		// TODO: expend action economy
+		System.out.println(invoker + " invokes Task " + this);
 		for (EventGroup group : eventGroups) {
 			invoker.addToEventQueue(group);
 		}

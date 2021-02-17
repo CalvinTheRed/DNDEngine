@@ -1,11 +1,9 @@
-package dnd.events.dicecontests;
+package dnd.events.dicecontests.attackroll;
 
 import dnd.combat.DamageDiceGroup;
 import dnd.events.Damage;
 import dnd.items.Item;
-import engine.Manager;
 import gameobjects.entities.Entity;
-import maths.Vector;
 
 public class WeaponAttack extends AttackRoll {
 	public static final int MELEE = 0;
@@ -23,24 +21,13 @@ public class WeaponAttack extends AttackRoll {
 	}
 	
 	@Override
-	public void invoke(Entity source, Vector targetPos) {
-		target = Manager.entityAt(targetPos);
-		System.out.println(source + " makes a " + (attackType == MELEE ? "Melee" : (attackType == THROWN ? "Thrown" : "Ranged")) + " weapon attack using " + (weapon == null ? "Fist" : weapon) + " against " + target + " with " + Entity.getAbility(attackAbility));
-		
-		while (source.processEvent(this, source, target) || target.processEvent(this, source, target));
-		roll();
-		while (source.processEvent(this, source, target) || target.processEvent(this, source, target));
-		
-		invokeFallout(source);
-	}
-
-	@Override
 	protected void invokeFallout(Entity source) {
 		Damage d = new Damage("Damage (" + this + ")", this);
 		DamageDiceGroup damageDice = weapon.getDamageDice();
 		damageDice.addDamageBonus(source.getAbilityModifier(attackAbility));
 		d.addDamageDiceGroup(damageDice);
-		d.invoke(source, target.getPos());
+		d.invoke(source, null);
+		d.invokeClone(source, target);
 	}
 	
 	public int getAttackType() {

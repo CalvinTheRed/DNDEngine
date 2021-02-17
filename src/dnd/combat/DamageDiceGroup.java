@@ -5,17 +5,40 @@ import maths.dice.DiceGroup;
 import maths.dice.Die;
 
 public class DamageDiceGroup extends DiceGroup {
-	protected int damageBonus;
+	
+	public static final int NORMAL      = 0;
+	public static final int RESISTED    = 1;
+	public static final int ENHANCED    = 2;
+	public static final int NEUTRALIZED = 3;
+	public static final int NO_EFFECT   = 4;
+	
 	protected DamageType damageType;
+	protected int damageBonus;
+	protected int resistances;
+	protected int immunities;
+	protected int vulnerabilities;
 	
 	public DamageDiceGroup(int numDice, int dieSize, DamageType damageType) {
 		super(numDice, dieSize);
 		this.damageType = damageType;
+		resistances     = 0;
+		immunities      = 0;
+		vulnerabilities = 0;
+	}
+	
+	@Override
+	public DamageDiceGroup clone() {
+		DamageDiceGroup group = new DamageDiceGroup(0, 0, damageType);
+		group.addDamageBonus(damageBonus);
+		for (Die d : dice) {
+			group.addDamageDie(d.clone());
+		}
+		return group;
 	}
 	
 	@Override
 	public int getSum() {
-		return super.getSum() + damageBonus;
+		return Math.max(1, super.getSum() + damageBonus);
 	}
 	
 	public int getDamageBonus() {
@@ -38,6 +61,35 @@ public class DamageDiceGroup extends DiceGroup {
 		dice.add(d);
 	}
 	
+	public void grantResistance() {
+		resistances++;
+	}
+	
+	public void grantImmunity() {
+		immunities++;
+	}
+	
+	public void grantVulnerability() {
+		vulnerabilities++;
+	}
+	
+	public int getEffectiveness() {
+		if (immunities > 0) {
+			return NO_EFFECT;
+		}
+		if (resistances > 0 && vulnerabilities > 0) {
+			return NEUTRALIZED;
+		}
+		if (resistances > 0) {
+			return RESISTED;
+		}
+		if (vulnerabilities > 0) {
+			return ENHANCED;
+		}
+		return NORMAL;
+	}
+	
+	// TODO: check whether this should be written in if-elif-else format
 	public boolean grantMagic() {
 		switch (damageType) {
 		case BLUDGEONING:

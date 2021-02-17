@@ -15,7 +15,7 @@ public class Disengage extends Event {
 
 	@Override
 	public void invoke(Entity source, Vector targetPos) {
-		System.out.println(source + " disengages from combat!");
+		super.invoke(source, targetPos);
 		source.observeEffect(new dnd.effects.Disengage(source, source));
 	}
 

@@ -2,6 +2,7 @@ package gameobjects.entities;
 
 import java.util.LinkedList;
 
+import dnd.combat.DamageDiceGroup;
 import dnd.data.Alignment;
 import dnd.data.Condition;
 import dnd.data.CreatureType;
@@ -258,8 +259,34 @@ public abstract class Entity extends GameObject {
 	// ---- Methods concerning entity data ----
 	
 	public void receiveDamage(Damage d) {
-		// TODO: implement damage reception
 		System.out.println(this + " received " + d);
+		for (DamageDiceGroup group : d.getDamageDice()) {
+			int damage = 0;
+			if (group.getEffectiveness() == DamageDiceGroup.NORMAL) {
+				damage = group.getSum();
+				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: " + group.getDamageBonus() + ")");
+			}
+			else if (group.getEffectiveness() == DamageDiceGroup.RESISTED) {
+				damage = Math.max(1, group.getSum() / 2);
+				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: " + group.getDamageBonus() + ") (resistant)");
+			}
+			else if (group.getEffectiveness() == DamageDiceGroup.ENHANCED) {
+				damage = group.getSum() * 2;
+				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: " + group.getDamageBonus() + ") (vulnerable)");
+			}
+			else if (group.getEffectiveness() == DamageDiceGroup.NEUTRALIZED) {
+				damage = group.getSum();
+				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: " + group.getDamageBonus() + ") (resistant and vulnerable)");
+			}
+			else if (group.getEffectiveness() == DamageDiceGroup.NO_EFFECT) {
+				System.out.println(this + " takes 0 " + group.getDamageType() + " damage (bonus: " + group.getDamageBonus() + ") (immune)");
+			}
+			takeDamage(damage);
+		}
+	}
+	
+	private void takeDamage(int damage) {
+		// TODO: implement health decrementation from damage
 	}
 	
 	public int getAbilityModifier(int ability) {
