@@ -9,7 +9,7 @@ import gameobjects.entities.Entity;
 public class Evasion extends Effect {
 
 	public Evasion(Entity source, Entity target) {
-		super(source, target, "Evasive");
+		super(source, target, "Evasive", LO_PRIORITY);
 		// TODO Auto-generated constructor stub
 	}
 

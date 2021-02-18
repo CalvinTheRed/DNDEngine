@@ -225,10 +225,17 @@ public abstract class Entity extends GameObject {
 	// ---- Methods concerning events ----
 	
 	public boolean addEffect(Effect e) {
+		// TODO: add support for sequentially prior/latter Effect processing by prepending or appending
 		if (activeEffects.contains(e)) {
 			return false;
 		}
-		activeEffects.add(e);
+		
+		if (e.getSequencingPriority() == Effect.HI_PRIORITY) {
+			activeEffects.addFirst(e);
+		}
+		else {
+			activeEffects.addLast(e);
+		}
 		System.out.println(this + " now observing " + e);
 		return true;
 	}

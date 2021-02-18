@@ -22,7 +22,17 @@ public class Fireball extends SavingThrow {
 		Damage d = new Damage(name, this);
 		d.addDamageDiceGroup(new DamageDiceGroup(numDice, dieSize, DamageType.FIRE));
 		d.invoke(source, null);
-		for (Entity target : targets) {
+		
+		// Targets who fail their Dex save take full damage
+		for (Entity target : failedTargets) {
+			d.invokeClone(source, target);
+		}
+		
+		// Targets who pass their Dex save take half damage
+		for (DamageDiceGroup group : d.getDamageDice()) {
+			group.addDamageBonus(-(group.getSum() + 1) / 2);
+		}
+		for (Entity target : passedTargets) {
 			d.invokeClone(source, target);
 		}
 	}

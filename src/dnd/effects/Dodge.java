@@ -8,7 +8,7 @@ import gameobjects.entities.Entity;
 public class Dodge extends Effect {
 
 	public Dodge(Entity source, Entity target) {
-		super(source, target, "Dodge");
+		super(source, target, "Dodge", HI_PRIORITY);
 	}
 
 	@Override
