@@ -66,9 +66,13 @@ public class Vector {
 		return Math.acos(dot(other) / (mag() * other.mag()));
 	}
 	
+	public boolean equalTo(Vector other) {
+		return x == other.x && y == other.y && z == other.z;
+	}
+	
 	@Override
 	public String toString() {
-		return "[" + x + ", " + y + ", " + z + "]";
+		return "<" + x + ", " + y + ", " + z + ">";
 	}
 	
 }

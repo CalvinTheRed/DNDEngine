@@ -1,5 +1,6 @@
 package gameobjects;
 
+import engine.VirtualBoard;
 import maths.Vector;
 
 public abstract class GameObject {
@@ -11,6 +12,8 @@ public abstract class GameObject {
 		this.name = name;
 		this.pos = pos;
 		this.rot = rot;
+		
+		VirtualBoard.addGameObject(this);
 	}
 	
 	@Override

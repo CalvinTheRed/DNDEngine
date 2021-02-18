@@ -2,27 +2,39 @@ package dnd.items;
 
 import java.util.LinkedList;
 
-import dnd.items.armor.Armor;
-import dnd.items.belts.Belt;
-import dnd.items.boots.Boots;
-import dnd.items.cloaks.Cloak;
-import dnd.items.necklaces.Necklace;
-import dnd.items.rings.Ring;
+import engine.patterns.Observer;
+import engine.patterns.Subject;
 
-public class Inventory {
-	private LinkedList<Item> contents;
+public class Inventory implements Subject {
+	
+	private LinkedList<Item>     contents;
+	private LinkedList<Observer> observers;
 	private Item mainhand;
 	private Item offhand;
-	private Armor armor;
-	private Necklace necklace;
-	private Ring ringLeftHand;
-	private Ring ringRightHand;
-	private Cloak cloak;
-	private Belt belt;
-	private Boots boots;
+	private Item armor;
 	
 	public Inventory() {
-		contents = new LinkedList<Item>();
+		contents  = new LinkedList<Item>();
+		observers = new LinkedList<Observer>();
+	}
+	
+	@Override
+	public void addObserver(Observer o) {
+		observers.add(o);
+		
+	}
+
+	@Override
+	public void removeObserver(Observer o) {
+		observers.remove(o);
+		
+	}
+	
+	@Override
+	public void updateObservers() {
+		for (Observer o : observers) {
+			o.update(this);
+		}
 	}
 	
 	public Item mainhand() {
@@ -33,45 +45,16 @@ public class Inventory {
 		return offhand;
 	}
 	
-	public Armor armor() {
+	public Item armor() {
 		return armor;
 	}
 	
-	public Necklace necklace() {
-		return necklace;
-	}
-	
-	public Ring ringLeftHand() {
-		return ringLeftHand;
-	}
-	
-	public Ring ringRightHand() {
-		return ringRightHand;
-	}
-	
-	public Cloak cloak() {
-		return cloak;
-	}
-	
-	public Belt belt() {
-		return belt;
-	}
-	
-	public Boots boots() {
-		return boots;
-	}
-	
-	public void equipWeapon(Item item, boolean versatile) {
+	public void equipWeapon(Item item) {
 		if (mainhand != null) {
 			contents.add(mainhand);
 		}
 		mainhand = item;
-		if (versatile) {
-			if (offhand != null) {
-				contents.add(offhand);
-			}
-			offhand = item;
-		}
+		updateObservers();
 	}
 	
 }

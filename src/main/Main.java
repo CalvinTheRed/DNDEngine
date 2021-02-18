@@ -1,63 +1,69 @@
 package main;
 
-import engine.Manager;
-import engine.effects.Effect;
-import engine.effects.FightingStyleDueling;
-import engine.effects.GuidingBoltEffect;
-import engine.io.Window;
+import dnd.effects.Evasion;
+import dnd.events.dicecontests.savingthrow.Fireball;
 import gameobjects.entities.Entity;
 import gameobjects.entities.Zombie;
 import maths.Vector;
 
 public class Main {
-	
-	//public static Window window;
-	
+
+	// public static Window window;
+
 	public static void main(String[] args) {
-		initialize();
+		// initialize();
 		test();
 	}
-	
-	private static void initialize(){
-		Manager.initialize();
-		//Window.setDefaultLookAndFeelDecorated(false);
-		//window = new Window();
+
+	private static void initialize() {
+		// Window.setDefaultLookAndFeelDecorated(false);
+		// window = new Window();
 	}
-	
+
 	private static void test() {
-		
-		// TODO: verify Damage events can be processed and modified by effects
-		
-		Entity zombie1 = new Zombie(new Vector(0, 0, 0), new Vector(0, 0, 0));
-		Entity zombie2 = new Zombie(new Vector(0, 0, 0), new Vector(0, 0, 0));
-		Entity zombie3 = new Zombie(new Vector(0, 0, 0), new Vector(0, 0, 0));
-		Entity zombie4 = new Zombie(new Vector(0, 0, 0), new Vector(0, 0, 0));
-		Manager.addGameObject(zombie1);
-		Manager.addGameObject(zombie2);
-		Manager.addGameObject(zombie3);
-		Manager.addGameObject(zombie4);
-		zombie1.addTarget(zombie2);
-		zombie2.addTarget(zombie1);
-		
-		zombie1.observeEffect(new FightingStyleDueling(zombie1, zombie1));
-		System.out.println();
-		zombie2.observeEffect(new GuidingBoltEffect(zombie1, zombie2));
-		System.out.println();
-		
-		System.out.println("Effects on Zombie2:");
-		for (Effect e : zombie2.getObservedEffects()) {
-			System.out.println(e + " - " + (e.isEnded() ? "ended" : "active"));
-		}
-		System.out.println();
-		
-		zombie1.invokeEvent(zombie1.getInvokableEvents().get(0));
-		System.out.println();
-		
-		System.out.println("Effects on Zombie2:");
-		for (Effect e : zombie2.getObservedEffects()) {
-			System.out.println(e + " - " + (e.isEnded() ? "ended" : "active"));
-		}
-		System.out.println();
+
+		Entity zombie1 = new Zombie(new Vector(30, 0, 0), new Vector(1, 0, 0));
+
+		Entity zombie2 = new Zombie(new Vector(0, 0, 1), new Vector(1, 0, 0));
+		Entity zombie3 = new Zombie(new Vector(0, 0, 2), new Vector(1, 0, 0));
+		Entity zombie4 = new Zombie(new Vector(1, 0, 0), new Vector(1, 0, 0));
+		Entity zombie5 = new Zombie(new Vector(1, 0, 1), new Vector(1, 0, 0));
+		Entity zombie6 = new Zombie(new Vector(1, 0, 2), new Vector(1, 0, 0));
+
+		zombie4.invokeTask(0);
+		zombie4.invokeQueuedEvent(0, 0, zombie2.getPos());
+		zombie4.addEffect(new Evasion(zombie4, zombie4));
+
+		Fireball fb = new Fireball(Entity.WIS, 3);
+		fb.invoke(zombie1, zombie2.getPos());
+
+//		zombie1.invokeTask(0);
+//		zombie1.invokeTask(2);
+//		System.out.println();
+//		
+//		System.out.println(zombie1 + "'s queued events:");
+//		for (EventGroup group : zombie1.getEventQueue()) {
+//			System.out.println(group);
+//		}
+//		System.out.println();
+//		
+//		zombie1.invokeQueuedEvent(0, 0, zombie1.getPos());
+//		System.out.println();
+//		
+//		System.out.println(zombie1 + "'s queued events:");
+//		for (EventGroup group : zombie1.getEventQueue()) {
+//			System.out.println(group);
+//		}
+//		System.out.println();
+//		
+//		zombie1.invokeQueuedEvent(0, 0, zombie1.getPos());
+//		System.out.println();
+//		
+//		System.out.println(zombie1 + "'s queued events:");
+//		for (EventGroup group : zombie1.getEventQueue()) {
+//			System.out.println(group);
+//		}
+//		System.out.println();
 	}
-	 
+
 }
