@@ -36,6 +36,12 @@ public class Damage extends Event {
 	public void invokeClone(Entity source, Entity target) {
 		Damage clone = clone();
 		while (source.processEvent(clone, source, target));
+		// Separation here to ensure sequentially prior Effects on the source
+		// (such as the Dragon Sorcerer's Elemental Affinity) do not come
+		// before sequentially latter Effects on the target (such as Rogue's
+		// Evasion). The target shall never have a relevant sequentially
+		// prior Effect in relation to the source's Effects, as the target
+		// always behaves in a reactionary manner to Damage Events.
 		while (target.processEvent(clone, source, target));
 		target.receiveDamage(clone);
 	}
