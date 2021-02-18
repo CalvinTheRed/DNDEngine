@@ -29,6 +29,16 @@ public class Dodge extends Effect {
 				return true;
 			} catch (Exception ex) {}
 		}
+		// TODO: remove
+		else if (e instanceof Damage && target == getTarget()) {
+			for (DamageDiceGroup group : ((Damage)e).getDamageDice()) {
+				try {
+					e.applyEffect(this);
+					group.grantResistance();
+					return true;
+				} catch (Exception ex) {}
+			}
+		}
 		return false;
 	}
 

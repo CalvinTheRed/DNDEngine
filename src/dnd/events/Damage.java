@@ -10,16 +10,14 @@ public class Damage extends Event {
 	protected LinkedList<DamageDiceGroup> damageDice;
 	protected Event parent;
 	
-	public Damage(String name, Event parent) {
+	public Damage(String name) {
 		super(name);
 		damageDice = new LinkedList<DamageDiceGroup>();
-		this.parent = parent;
-		cloneAreaParams(parent);
 	}
 	
 	@Override
 	public Damage clone() {
-		Damage d = new Damage(name, parent);
+		Damage d = new Damage(name);
 		for (DamageDiceGroup group : damageDice) {
 			d.addDamageDiceGroup(group.clone());
 		}
@@ -37,17 +35,13 @@ public class Damage extends Event {
 	public void invokeClone(Entity source, Entity target) {
 		Damage clone = clone();
 		while (source.processEvent(clone, source, target) || target.processEvent(clone, source, target));
-		source.receiveDamage(clone);
+		target.receiveDamage(clone);
 	}
 	
 	protected void cloneAreaParams(Event other) {
 		range = other.range.clone();
 		shape = other.shape;
 		radius = other.radius;
-	}
-	
-	public Event getParent() {
-		return parent;
 	}
 	
 	public void addDamageDiceGroup(DamageDiceGroup group) {

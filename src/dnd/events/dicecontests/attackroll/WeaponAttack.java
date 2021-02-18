@@ -22,7 +22,7 @@ public class WeaponAttack extends AttackRoll {
 	
 	@Override
 	protected void invokeFallout(Entity source) {
-		Damage d = new Damage("Damage (" + this + ")", this);
+		Damage d = new Damage("Damage (" + this + ")");
 		DamageDiceGroup damageDice = weapon.getDamageDice();
 		damageDice.addDamageBonus(source.getAbilityModifier(attackAbility));
 		d.addDamageDiceGroup(damageDice);

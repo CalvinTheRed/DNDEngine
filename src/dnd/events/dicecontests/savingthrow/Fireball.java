@@ -19,7 +19,7 @@ public class Fireball extends SavingThrow {
 		int dieSize = 6;
 		int numDice = 5 + level;
 		
-		Damage d = new Damage(name, this);
+		Damage d = new Damage(name); // TODO check this
 		d.addDamageDiceGroup(new DamageDiceGroup(numDice, dieSize, DamageType.FIRE));
 		d.invoke(source, null);
 		for (Entity target : targets) {
