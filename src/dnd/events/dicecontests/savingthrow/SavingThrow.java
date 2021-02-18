@@ -100,7 +100,7 @@ public abstract class SavingThrow extends DiceContest {
 	 * This function returns the ability score the targets of the saving throw will
 	 * use when attempting to resist the effects of the saving throw.
 	 * 
-	 * @return
+	 * @return {@code int}
 	 */
 	public int getSaveAbility() {
 		return saveAbility;
@@ -108,7 +108,7 @@ public abstract class SavingThrow extends DiceContest {
 
 	/**
 	 * This function returns a list of the target Entity objects which have passed
-	 * their saving throws against this saving throw.
+	 * their saving throws against this event.
 	 * 
 	 * @return {@code LinkedList<Entity>}
 	 */
@@ -116,10 +116,22 @@ public abstract class SavingThrow extends DiceContest {
 		return passedTargets;
 	}
 
+	/**
+	 * This function returns a list of the target Entity objects which have failed
+	 * their saving throws against this event.
+	 * 
+	 * @return {@code LinkedList<Entity>}
+	 */
 	public LinkedList<Entity> getFailedTargets() {
 		return failedTargets;
 	}
 
+	/**
+	 * This function provides a deep clone of this event. All fields are cloned to
+	 * new memory addresses where appropriate.
+	 * 
+	 * @return {@code SavingThrow}
+	 */
 	public abstract SavingThrow clone();
 
 }

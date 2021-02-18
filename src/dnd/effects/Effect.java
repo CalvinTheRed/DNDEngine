@@ -95,7 +95,7 @@ public abstract class Effect {
 	 * @param e      (Event) the Event being processed
 	 * @param source (Entity) the source of the Event being processed
 	 * @param target (Entity) the target of the Event being processed
-	 * @return
+	 * @return boolean
 	 */
 	public abstract boolean processEvent(Event e, Entity source, Entity target);
 
