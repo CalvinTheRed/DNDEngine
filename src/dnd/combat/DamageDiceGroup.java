@@ -89,109 +89,108 @@ public class DamageDiceGroup extends DiceGroup {
 		return NORMAL;
 	}
 	
-	// TODO: check whether this should be written in if-elif-else format
 	public boolean grantMagic() {
-		switch (damageType) {
-		case BLUDGEONING:
+		if (damageType == DamageType.BLUDGEONING) {
 			damageType = DamageType.BLUDGEONING_MAGICAL;
-			return true;
-		case BLUDGEONING_SILVERED:
+		}
+		else if (damageType == DamageType.BLUDGEONING_SILVERED) {
 			damageType = DamageType.BLUDGEONING_MAGICAL_SILVERED;
-			return true;
-		case PIERCING:
+		}
+		else if (damageType == DamageType.PIERCING) {
 			damageType = DamageType.PIERCING_MAGICAL;
-			return true;
-		case PIERCING_SILVERED:
+		}
+		else if (damageType == DamageType.PIERCING_SILVERED) {
 			damageType = DamageType.PIERCING_MAGICAL_SILVERED;
-			return true;
-		case SLASHING:
+		}
+		else if (damageType == DamageType.SLASHING) {
 			damageType = DamageType.SLASHING_MAGICAL;
-			return true;
-		case SLASHING_SILVERED:
+		}
+		else if (damageType == DamageType.SLASHING_SILVERED) {
 			damageType = DamageType.SLASHING_MAGICAL_SILVERED;
-			return true;
-		default:
-			System.out.println("ERR: damage type cannot be made magical.");
+		}
+		else {
+			System.out.println("ERR: damage type " + damageType + " cannot be made magical");
 			return false;
 		}
+		return true;
 	}
 	
 	public boolean revokeMagic() {
-		switch (damageType) {
-		case BLUDGEONING_MAGICAL:
+		if (damageType == DamageType.BLUDGEONING_MAGICAL) {
 			damageType = DamageType.BLUDGEONING;
-			return true;
-		case BLUDGEONING_MAGICAL_SILVERED:
+		}
+		else if (damageType == DamageType.BLUDGEONING_MAGICAL_SILVERED) {
 			damageType = DamageType.BLUDGEONING_SILVERED;
-			return true;
-		case PIERCING_MAGICAL:
+		}
+		else if (damageType == DamageType.PIERCING_MAGICAL) {
 			damageType = DamageType.PIERCING;
-			return true;
-		case PIERCING_MAGICAL_SILVERED:
+		}
+		else if (damageType == DamageType.PIERCING_MAGICAL_SILVERED) {
 			damageType = DamageType.PIERCING_SILVERED;
-			return true;
-		case SLASHING_MAGICAL:
+		}
+		else if (damageType == DamageType.SLASHING_MAGICAL) {
 			damageType = DamageType.SLASHING;
-			return true;
-		case SLASHING_MAGICAL_SILVERED:
+		}
+		else if (damageType == DamageType.SLASHING_MAGICAL_SILVERED) {
 			damageType = DamageType.SLASHING_SILVERED;
-			return true;
-		default:
-			System.out.println("ERR: cannot revoke magic from damage type.");
+		}
+		else {
+			System.out.println("ERR: damage type " + damageType + " cannot be made non-magical");
 			return false;
 		}
+		return true;
 	}
 	
 	public boolean grantSilvered() {
-		switch (damageType) {
-		case BLUDGEONING:
+		if (damageType == DamageType.BLUDGEONING) {
 			damageType = DamageType.BLUDGEONING_SILVERED;
-			return true;
-		case BLUDGEONING_MAGICAL:
+		}
+		else if (damageType == DamageType.BLUDGEONING_MAGICAL) {
 			damageType = DamageType.BLUDGEONING_MAGICAL_SILVERED;
-			return true;
-		case PIERCING:
+		}
+		else if (damageType == DamageType.PIERCING) {
 			damageType = DamageType.PIERCING_SILVERED;
-			return true;
-		case PIERCING_MAGICAL:
+		}
+		else if (damageType == DamageType.PIERCING_MAGICAL) {
 			damageType = DamageType.PIERCING_MAGICAL_SILVERED;
-			return true;
-		case SLASHING:
+		}
+		else if (damageType == DamageType.SLASHING) {
 			damageType = DamageType.SLASHING_SILVERED;
-			return true;
-		case SLASHING_MAGICAL:
+		}
+		else if (damageType == DamageType.SLASHING_MAGICAL) {
 			damageType = DamageType.SLASHING_MAGICAL_SILVERED;
-			return true;
-		default:
-			System.out.println("ERR: damage type cannot be made silvered.");
+		}
+		else {
+			System.out.println("ERR: damage type " + damageType + " cannot be made silvered");
 			return false;
 		}
+		return true;
 	}
 	
 	public boolean revokeSilvered() {
-		switch (damageType) {
-		case BLUDGEONING_SILVERED:
+		if (damageType == DamageType.BLUDGEONING_SILVERED) {
 			damageType = DamageType.BLUDGEONING;
-			return true;
-		case BLUDGEONING_MAGICAL_SILVERED:
+		}
+		else if (damageType == DamageType.BLUDGEONING_MAGICAL_SILVERED) {
 			damageType = DamageType.BLUDGEONING_MAGICAL;
-			return true;
-		case PIERCING_SILVERED:
+		}
+		else if (damageType == DamageType.PIERCING_SILVERED) {
 			damageType = DamageType.PIERCING;
-			return true;
-		case PIERCING_MAGICAL_SILVERED:
+		}
+		else if (damageType == DamageType.PIERCING_MAGICAL_SILVERED) {
 			damageType = DamageType.PIERCING_MAGICAL;
-			return true;
-		case SLASHING_SILVERED:
+		}
+		else if (damageType == DamageType.SLASHING_SILVERED) {
 			damageType = DamageType.SLASHING;
-			return true;
-		case SLASHING_MAGICAL_SILVERED:
+		}
+		else if (damageType == DamageType.SLASHING_MAGICAL_SILVERED) {
 			damageType = DamageType.SLASHING_MAGICAL;
-			return true;
-		default:
-			System.out.println("ERR: cannot revoke silvered from damage type.");
+		}
+		else {
+			System.out.println("ERR: damage type " + damageType + " cannot be made non-silvered");
 			return false;
 		}
+		return true;
 	}
 	
 }

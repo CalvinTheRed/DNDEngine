@@ -54,7 +54,7 @@ public abstract class Entity extends GameObject {
 	
 	// ---- Structural variables ----
 	
-	protected LinkedList<Effect>     observedEffects;
+	protected LinkedList<Effect>     activeEffects;
 	protected LinkedList<Entity>     targets;
 	protected LinkedList<EventGroup> eventQueue;
 	
@@ -100,9 +100,9 @@ public abstract class Entity extends GameObject {
 		inventory           = new Inventory();
 		conditionImmunities = new LinkedList<Condition>();
 		immunities          = new LinkedList<DamageType>();
-		resistances         = new LinkedList<DamageType>();
+		resistances         = new LinkedList<DamageType>(); // TODO: turn into Effect objects rather than attributes of Entity
 		vulnerabilities     = new LinkedList<DamageType>();
-		observedEffects     = new LinkedList<Effect>();
+		activeEffects       = new LinkedList<Effect>();
 		targets             = new LinkedList<Entity>();
 		eventQueue          = new LinkedList<EventGroup>();
 		languages           = new LinkedList<Language>();
@@ -224,18 +224,18 @@ public abstract class Entity extends GameObject {
 	
 	// ---- Methods concerning events ----
 	
-	public boolean observeEffect(Effect e) {
-		if (observedEffects.contains(e)) {
+	public boolean addEffect(Effect e) {
+		if (activeEffects.contains(e)) {
 			return false;
 		}
-		observedEffects.add(e);
+		activeEffects.add(e);
 		System.out.println(this + " now observing " + e);
 		return true;
 	}
 	
 	public boolean processEvent(Event e, Entity source, Entity target) {
 		boolean modifiedEvent = false;
-		for (Effect effect : observedEffects) {
+		for (Effect effect : activeEffects) {
 			if (effect.processEvent(e, source, target)) {
 				modifiedEvent = true;
 			}
@@ -244,13 +244,13 @@ public abstract class Entity extends GameObject {
 	}
 	
 	public LinkedList<Effect> getObservedEffects(){
-		return observedEffects;
+		return activeEffects;
 	}
 	
 	public void clearEndedEffects() {
-		for (int i = 0; i < observedEffects.size(); i++) {
-			if (observedEffects.get(i).isEnded()) {
-				observedEffects.remove(i);
+		for (int i = 0; i < activeEffects.size(); i++) {
+			if (activeEffects.get(i).isEnded()) {
+				activeEffects.remove(i);
 				i--;
 			}
 		}
@@ -281,6 +281,36 @@ public abstract class Entity extends GameObject {
 			else if (group.getEffectiveness() == DamageDiceGroup.NO_EFFECT) {
 				System.out.println(this + " takes 0 " + group.getDamageType() + " damage (bonus: " + group.getDamageBonus() + ") (immune)");
 			}
+			// TODO: make a mechanism to account for Evasive effect
+			takeDamage(damage);
+		}
+	}
+	
+	public void receiveHalfDamage(Damage d) {
+		System.out.println(this + " received " + d);
+		for (DamageDiceGroup group : d.getDamageDice()) {
+			int damage = 0;
+			if (group.getEffectiveness() == DamageDiceGroup.NORMAL) {
+				damage = group.getSum();
+				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: " + group.getDamageBonus() + ")");
+			}
+			else if (group.getEffectiveness() == DamageDiceGroup.RESISTED) {
+				damage = Math.max(1, group.getSum() / 2);
+				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: " + group.getDamageBonus() + ") (resistant)");
+			}
+			else if (group.getEffectiveness() == DamageDiceGroup.ENHANCED) {
+				damage = group.getSum() * 2;
+				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: " + group.getDamageBonus() + ") (vulnerable)");
+			}
+			else if (group.getEffectiveness() == DamageDiceGroup.NEUTRALIZED) {
+				damage = group.getSum();
+				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: " + group.getDamageBonus() + ") (resistant and vulnerable)");
+			}
+			else if (group.getEffectiveness() == DamageDiceGroup.NO_EFFECT) {
+				System.out.println(this + " takes 0 " + group.getDamageType() + " damage (bonus: " + group.getDamageBonus() + ") (immune)");
+			}
+			damage /= 2.0;
+			// TODO: make a mechanism to account for Evasive effect
 			takeDamage(damage);
 		}
 	}

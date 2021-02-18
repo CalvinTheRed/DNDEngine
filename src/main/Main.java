@@ -1,5 +1,6 @@
 package main;
 
+import dnd.effects.Evasion;
 import dnd.events.dicecontests.savingthrow.Fireball;
 import gameobjects.entities.Entity;
 import gameobjects.entities.Zombie;
@@ -31,6 +32,7 @@ public class Main {
 		
 		zombie4.invokeTask(0);
 		zombie4.invokeQueuedEvent(0, 0, zombie2.getPos());
+		zombie4.addEffect(new Evasion(zombie4, zombie4));
 		
 		Fireball fb = new Fireball(Entity.WIS, 3);
 		fb.invoke(zombie1, zombie2.getPos());

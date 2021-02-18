@@ -74,8 +74,6 @@ public class SavingThrow extends DiceContest {
 			while (source.processEvent(clone, source, target) || target.processEvent(clone, source, target));
 			clone.roll();
 			while (source.processEvent(clone, source, target) || target.processEvent(clone, source, target));
-			
-			// TODO: make a saving throw check properly here
 			failedTargets.add(target);
 		}
 		invokeFallout(source);
@@ -91,6 +89,14 @@ public class SavingThrow extends DiceContest {
 	
 	public int getSaveAbility() {
 		return saveAbility;
+	}
+	
+	public LinkedList<Entity> getPassedTargets(){
+		return passedTargets;
+	}
+	
+	public LinkedList<Entity> getFailedTargets(){
+		return failedTargets;
 	}
 	
 }

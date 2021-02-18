@@ -31,7 +31,7 @@ public class SacredFlame extends SavingThrow {
 			numDice = 4;
 		}
 		
-		Damage d = new Damage(name);
+		Damage d = new Damage(name, this);
 		d.addDamageDiceGroup(new DamageDiceGroup(numDice, dieSize, DamageType.RADIANT));
 		d.invoke(source, null);
 		for (Entity target : targets) {

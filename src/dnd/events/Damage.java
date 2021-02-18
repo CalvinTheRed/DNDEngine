@@ -8,16 +8,17 @@ import maths.Vector;
 
 public class Damage extends Event {
 	protected LinkedList<DamageDiceGroup> damageDice;
-	protected Event parent;
+	Event parent;
 	
-	public Damage(String name) {
+	public Damage(String name, Event parent) {
 		super(name);
 		damageDice = new LinkedList<DamageDiceGroup>();
+		this.parent = parent;
 	}
 	
 	@Override
 	public Damage clone() {
-		Damage d = new Damage(name);
+		Damage d = new Damage(name, parent);
 		for (DamageDiceGroup group : damageDice) {
 			d.addDamageDiceGroup(group.clone());
 		}
@@ -34,7 +35,8 @@ public class Damage extends Event {
 	
 	public void invokeClone(Entity source, Entity target) {
 		Damage clone = clone();
-		while (source.processEvent(clone, source, target) || target.processEvent(clone, source, target));
+		while (source.processEvent(clone, source, target));
+		while (target.processEvent(clone, source, target));
 		target.receiveDamage(clone);
 	}
 	
@@ -56,6 +58,10 @@ public class Damage extends Event {
 	
 	public LinkedList<DamageDiceGroup> getDamageDice(){
 		return damageDice;
+	}
+	
+	public Event getParent() {
+		return parent;
 	}
 
 }

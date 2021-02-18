@@ -26,6 +26,7 @@ public abstract class AttackRoll extends DiceContest {
 		roll();
 		while (source.processEvent(this, source, target) || target.processEvent(this, source, target));
 		
+		// TODO: make an attack roll check properly here
 		invokeFallout(source);
 	}
 	

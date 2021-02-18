@@ -1,7 +1,5 @@
 package dnd.effects;
 
-import dnd.combat.DamageDiceGroup;
-import dnd.events.Damage;
 import dnd.events.Event;
 import dnd.events.dicecontests.attackroll.AttackRoll;
 import dnd.events.dicecontests.savingthrow.SavingThrow;
@@ -28,16 +26,6 @@ public class Dodge extends Effect {
 				((SavingThrow)e).grantAdvantage(this);
 				return true;
 			} catch (Exception ex) {}
-		}
-		// TODO: remove
-		else if (e instanceof Damage && target == getTarget()) {
-			for (DamageDiceGroup group : ((Damage)e).getDamageDice()) {
-				try {
-					e.applyEffect(this);
-					group.grantResistance();
-					return true;
-				} catch (Exception ex) {}
-			}
 		}
 		return false;
 	}
