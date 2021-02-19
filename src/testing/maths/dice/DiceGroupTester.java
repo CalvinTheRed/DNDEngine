@@ -39,6 +39,7 @@ public class DiceGroupTester {
 		int numDice = 4;
 		int dieSize = 1;
 		DiceGroup group = new DiceGroup(numDice, dieSize);
+		assertEquals(group.getBonus(), 0);
 		LinkedList<Die> list = group.getDice();
 		assertEquals(list.size(), numDice);
 		for (Die d : list) {
