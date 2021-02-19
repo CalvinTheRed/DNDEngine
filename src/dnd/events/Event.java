@@ -11,6 +11,7 @@ public abstract class Event {
 
 	public static final int SHORTRANGE = 0;
 	public static final int LONGRANGE = 1;
+	public static final int DEFAULTRANGE = LONGRANGE;
 
 	protected LinkedList<Effect> appliedEffects;
 	protected Vector targetPos;

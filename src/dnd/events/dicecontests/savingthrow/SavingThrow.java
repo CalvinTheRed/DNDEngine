@@ -59,7 +59,7 @@ public abstract class SavingThrow extends DiceContest {
 		} else if (shape == EventShape.CUBE) {
 			targets.addAll(VirtualBoard.entitiesInCube(targetPos, source.getRot(), radius));
 		} else if (shape == EventShape.LINE) {
-			targets.addAll(VirtualBoard.entitiesInLine(targetPos, source.getRot(), range[LONGRANGE], radius));
+			targets.addAll(VirtualBoard.entitiesInLine(targetPos, source.getRot(), range[DEFAULTRANGE], radius));
 		} else if (shape == EventShape.SINGLE_TARGET) {
 			targets.add(VirtualBoard.entityAt(targetPos));
 		} else if (shape == EventShape.SPHERE) {
