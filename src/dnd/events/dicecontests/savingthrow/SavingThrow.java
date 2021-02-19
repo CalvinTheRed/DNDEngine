@@ -55,7 +55,7 @@ public abstract class SavingThrow extends DiceContest {
 	public void invoke(Entity source, Vector targetPos) {
 		super.invoke(source, targetPos);
 		if (shape == EventShape.CONE) {
-			targets.addAll(VirtualBoard.entitiesInCone2(targetPos, radius, source.getRot()));
+			targets.addAll(VirtualBoard.entitiesInCone2(targetPos, source.getRot(), radius));
 		} else if (shape == EventShape.CUBE) {
 			targets.addAll(VirtualBoard.entitiesInCube(targetPos, source.getRot(), radius));
 		} else if (shape == EventShape.LINE) {
