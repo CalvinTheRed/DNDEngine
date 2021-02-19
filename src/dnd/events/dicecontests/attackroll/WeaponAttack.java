@@ -43,7 +43,7 @@ public class WeaponAttack extends AttackRoll {
 	protected void invokeFallout(Entity source) {
 		Damage d = new Damage("Damage (" + this + ")", this);
 		DamageDiceGroup damageDice = weapon.getDamageDice();
-		damageDice.addDamageBonus(source.getAbilityModifier(attackAbility));
+		damageDice.addBonus(source.getAbilityModifier(attackAbility));
 		d.addDamageDiceGroup(damageDice);
 		d.invoke(source, null);
 		d.invokeClone(source, target);

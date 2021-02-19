@@ -22,7 +22,6 @@ public class DamageDiceGroup extends DiceGroup {
 	public static final int NO_EFFECT = 4;
 
 	protected DamageType damageType;
-	protected int damageBonus;
 	protected int resistances;
 	protected int immunities;
 	protected int vulnerabilities;
@@ -58,9 +57,9 @@ public class DamageDiceGroup extends DiceGroup {
 	 */
 	public DamageDiceGroup clone() {
 		DamageDiceGroup group = new DamageDiceGroup(0, 0, damageType);
-		group.addDamageBonus(damageBonus);
+		group.addBonus(bonus);
 		for (Die d : dice) {
-			group.addDamageDie(d.clone());
+			group.addDie(d.clone());
 		}
 		return group;
 	}
@@ -75,26 +74,7 @@ public class DamageDiceGroup extends DiceGroup {
 	 * @Override
 	 */
 	public int getSum() {
-		return Math.max(1, super.getSum() + damageBonus);
-	}
-
-	/**
-	 * This function returns the contained damage bonus.
-	 * 
-	 * @return int
-	 */
-	public int getDamageBonus() {
-		return damageBonus;
-	}
-
-	/**
-	 * This function adds to the contained damage bonus. It does not overwrite the
-	 * damage bonus.
-	 * 
-	 * @param bonus (int) the damage bonus to be added to the current damage bonus.
-	 */
-	public void addDamageBonus(int bonus) {
-		damageBonus += bonus;
+		return Math.max(1, super.getSum());
 	}
 
 	/**
@@ -114,16 +94,6 @@ public class DamageDiceGroup extends DiceGroup {
 	 */
 	public void setDamageType(DamageType damageType) {
 		this.damageType = damageType;
-	}
-
-	/**
-	 * This function adds a new damage die to the object. It does not have to have
-	 * the same number of sides as the other dice contained in the object.
-	 * 
-	 * @param d (Die) the die to be added to the object
-	 */
-	public void addDamageDie(Die d) {
-		dice.add(d);
 	}
 
 	/**

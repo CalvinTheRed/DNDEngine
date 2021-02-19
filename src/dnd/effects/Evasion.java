@@ -38,7 +38,7 @@ public class Evasion extends Effect {
 						((Damage) e).getDamageDice().clear();
 					} else if (((SavingThrow) parent).getFailedTargets().contains(target)) {
 						for (DamageDiceGroup group : ((Damage) e).getDamageDice()) {
-							group.addDamageBonus(-(group.getSum() + 1) / 2);
+							group.addBonus(-(group.getSum() + 1) / 2);
 						}
 					}
 					return true;

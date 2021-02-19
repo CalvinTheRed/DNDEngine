@@ -266,22 +266,22 @@ public abstract class Entity extends GameObject {
 			if (group.getEffectiveness() == DamageDiceGroup.NORMAL) {
 				damage = group.getSum();
 				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: "
-						+ group.getDamageBonus() + ")");
+						+ group.getBonus() + ")");
 			} else if (group.getEffectiveness() == DamageDiceGroup.RESISTED) {
 				damage = Math.max(1, group.getSum() / 2);
 				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: "
-						+ group.getDamageBonus() + ") (resistant)");
+						+ group.getBonus() + ") (resistant)");
 			} else if (group.getEffectiveness() == DamageDiceGroup.ENHANCED) {
 				damage = group.getSum() * 2;
 				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: "
-						+ group.getDamageBonus() + ") (vulnerable)");
+						+ group.getBonus() + ") (vulnerable)");
 			} else if (group.getEffectiveness() == DamageDiceGroup.NEUTRALIZED) {
 				damage = group.getSum();
 				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: "
-						+ group.getDamageBonus() + ") (resistant and vulnerable)");
+						+ group.getBonus() + ") (resistant and vulnerable)");
 			} else if (group.getEffectiveness() == DamageDiceGroup.NO_EFFECT) {
 				System.out.println(this + " takes 0 " + group.getDamageType() + " damage (bonus: "
-						+ group.getDamageBonus() + ") (immune)");
+						+ group.getBonus() + ") (immune)");
 			}
 			takeDamage(damage);
 		}

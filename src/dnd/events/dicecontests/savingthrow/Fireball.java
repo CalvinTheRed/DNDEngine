@@ -28,7 +28,7 @@ public class Fireball extends SpellSavingThrow {
 
 		// Targets who pass their Dex save take half damage
 		for (DamageDiceGroup group : d.getDamageDice()) {
-			group.addDamageBonus(-(group.getSum() + 1) / 2);
+			group.addBonus(-(group.getSum() + 1) / 2);
 		}
 		for (Entity target : passedTargets) {
 			d.invokeClone(source, target);
