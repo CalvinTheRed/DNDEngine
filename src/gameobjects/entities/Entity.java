@@ -55,8 +55,10 @@ public abstract class Entity extends GameObject {
 	// ---- Structural variables ----
 
 	protected LinkedList<Effect> activeEffects;
-	protected LinkedList<Entity> targets;
+	protected LinkedList<Entity> targets; // TODO is this used?
 	protected LinkedList<EventGroup> eventQueue;
+	protected LinkedList<Task> availableTasks;
+	protected LinkedList<Task> baseTasks;
 
 	// ---- Entity data ----
 
@@ -83,8 +85,6 @@ public abstract class Entity extends GameObject {
 	protected LinkedList<DamageType> resistances;
 	protected LinkedList<DamageType> vulnerabilities;
 	protected LinkedList<Language> languages;
-	protected LinkedList<Task> availableTasks;
-	protected LinkedList<Task> baseTasks;
 	protected LinkedList<WeaponType> weaponProficiency;
 
 	// ---- Constructors ----
