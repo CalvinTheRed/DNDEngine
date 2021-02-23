@@ -25,13 +25,13 @@ public abstract class Effect {
 	/**
 	 * Constructor for class Effect
 	 * 
-	 * @param source             (Entity) the Entity responsible for creating this
-	 *                           Effect
-	 * @param target             (Entity) the Entity which is inflicted with this
-	 *                           Effect
-	 * @param name               (String) the name of this Effect
-	 * @param sequencingPriority (boolean) the priority of the Effect in an Entity's
-	 *                           activeEffects list
+	 * @param source             ({@code Entity}) the Entity responsible for
+	 *                           creating this Effect
+	 * @param target             ({@code Entity}) the Entity which is inflicted with
+	 *                           this Effect
+	 * @param name               ({@code String}) the name of this Effect
+	 * @param sequencingPriority ({@code boolean}) the priority of the Effect in an
+	 *                           Entity's activeEffects list
 	 */
 	public Effect(Entity source, Entity target, String name, boolean sequencingPriority) {
 		this.source = source;
@@ -44,7 +44,7 @@ public abstract class Effect {
 	/**
 	 * This function returns the Entity responsible for creating this Effect.
 	 * 
-	 * @return Entity
+	 * @return {@code Entity} source
 	 */
 	public final Entity getSource() {
 		return source;
@@ -53,7 +53,7 @@ public abstract class Effect {
 	/**
 	 * This function returns the Entity which is inflicted with this Effect.
 	 * 
-	 * @return Entity
+	 * @return {@code Entity} target
 	 */
 	public final Entity getTarget() {
 		return target;
@@ -71,7 +71,7 @@ public abstract class Effect {
 	/**
 	 * This function returns whether this Effect is ended or active.
 	 * 
-	 * @return boolean
+	 * @return {@code boolean} ended
 	 */
 	public final boolean isEnded() {
 		return ended;
@@ -81,7 +81,7 @@ public abstract class Effect {
 	 * This function returns the priority of this Effect in an Entity's
 	 * activeEffects list.
 	 * 
-	 * @return boolean
+	 * @return {@code boolean} sequencingPriority
 	 */
 	public boolean getSequencingPriority() {
 		return sequencingPriority;
@@ -92,12 +92,14 @@ public abstract class Effect {
 	 * Dodge Effect will grant advantage to all Dex-based SavingThrow Events if the
 	 * Dodge and the SavingThrow target the same Entity, among other things).
 	 * 
-	 * @param e      (Event) the Event being processed
-	 * @param source (Entity) the source of the Event being processed
-	 * @param target (Entity) the target of the Event being processed
-	 * @return boolean
+	 * @param e      ({@code Event}) the Event being processed
+	 * @param source ({@code Entity}) the source of the Event being processed
+	 * @param target ({@code Entity}) the target of the Event being processed
+	 * @return {@code boolean} did this Effect modify the Event?
 	 */
 	public abstract boolean processEvent(Event e, Entity source, Entity target);
+
+	// TODO: add processTask() abstract function?
 
 	@Override
 	public final String toString() {

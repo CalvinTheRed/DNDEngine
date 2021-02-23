@@ -20,8 +20,9 @@ public class Evasion extends Effect {
 	 * Constructor for class Evasion. This Effect has low priority in an Entity's
 	 * activeEffects list.
 	 * 
-	 * @param source (Entity) the Entity responsible for creating this Effect
-	 * @param target (Entity) the Entity which is inflicted with this Effect
+	 * @param source ({@code Entity}) the Entity responsible for creating this
+	 *               Effect
+	 * @param target ({@code Entity}) the Entity which is inflicted with this Effect
 	 */
 	public Evasion(Entity source, Entity target) {
 		super(source, target, "Evasive", LO_PRIORITY);

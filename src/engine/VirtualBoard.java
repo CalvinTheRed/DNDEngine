@@ -24,9 +24,9 @@ public final class VirtualBoard {
 	 * This function adds a new GameObject object to the virtual board. If the
 	 * object is already on the board, it is not added a second time.
 	 * 
-	 * @param o (GameObject) object to be added to the virtual board
+	 * @param o ({@code GameObject}) object to be added to the virtual board
 	 * 
-	 * @return whether o is a novel addition to gameObjects
+	 * @return {@code boolean} whether o is a novel addition to gameObjects
 	 */
 	public static boolean addGameObject(GameObject o) {
 		if (gameObjects.contains(o)) {
@@ -41,9 +41,9 @@ public final class VirtualBoard {
 	 * the game is being played. If the GameObject object is not in the virtual
 	 * board, then nothing happens.
 	 * 
-	 * @param o (GameObject) object to be removed from the virtual board
+	 * @param o ({@code GameObject}) object to be removed from the virtual board
 	 * 
-	 * @return whether o was present on the virtual board
+	 * @return {@code boolean} whether o was present on the virtual board
 	 */
 	public static boolean removeGameObject(GameObject o) {
 		return gameObjects.remove(o);
@@ -62,7 +62,7 @@ public final class VirtualBoard {
 	 * 
 	 * @param o ({@code GameObject}) the GameObject whose presence is being checked
 	 *          for
-	 * @return
+	 * @return {@code boolean} whether o was contained in the VirtualBoard
 	 */
 	public static boolean containsGameObject(GameObject o) {
 		return gameObjects.contains(o);
@@ -74,9 +74,10 @@ public final class VirtualBoard {
 	 * coordinate, this function returns the first object in gameObjects which
 	 * matches this coordinate.
 	 * 
-	 * @param pos (Vector) the coordinate at which an Entity is being searched for
+	 * @param pos ({@code Vector}) the coordinate at which an Entity is being
+	 *            searched for
 	 * 
-	 * @return an Entity located at the provided position vector
+	 * @return {@code Entity} an Entity located at the provided position vector
 	 */
 	public static Entity entityAt(Vector pos) {
 		System.out.println("Searching for entity at " + pos);
@@ -98,16 +99,16 @@ public final class VirtualBoard {
 	 * 
 	 * @deprecated Use VirtualBoard.entitiesInCone2
 	 * 
-	 * @param origin (Vector) the coordinate of the vertex/point of the cone
+	 * @param origin ({@code Vector}) the coordinate of the vertex/point of the cone
 	 * 
-	 * @param radius (double) the length of the cone from vertex to the farthest
-	 *               point on the base
+	 * @param radius ({@code double}) the length of the cone from vertex to the
+	 *               farthest point on the base
 	 * 
-	 * @param rot    (Vector) a vector in parallel with the central axis of the cone
-	 *               (magnitude does not matter)
+	 * @param rot    ({@code Vector}) a vector in parallel with the central axis of
+	 *               the cone (magnitude does not matter)
 	 * 
-	 * @return a LinkedList of Entity objects which are contained in the specified
-	 *         cone
+	 * @return {@code LinkedList<Entity>} a LinkedList of Entity objects which are
+	 *         contained in the specified cone
 	 */
 	public static LinkedList<Entity> entitiesInCone(Vector origin, double radius, Vector rot) {
 		LinkedList<Entity> entities = entitiesInSphere(origin, radius);
@@ -130,16 +131,16 @@ public final class VirtualBoard {
 	 * within the volume of a specified cone. This function does not return an
 	 * Entity located at the origin.
 	 * 
-	 * @param origin (Vector) the coordinate of the vertex/point of the cone
+	 * @param origin ({@code Vector}) the coordinate of the vertex/point of the cone
 	 * 
-	 * @param radius (double) the length of the cone from vertex to the farthest
-	 *               point on the base
+	 * @param radius ({@code double}) the length of the cone from vertex to the
+	 *               farthest point on the base
 	 * 
-	 * @param rot    (Vector) a vector in parallel with the central axis of the cone
-	 *               (magnitude does not matter)
+	 * @param rot    ({@code Vector}) a vector in parallel with the central axis of
+	 *               the cone (magnitude does not matter)
 	 * 
-	 * @return a LinkedList of Entity objects which are contained in the specified
-	 *         cone
+	 * @return {@code LinkedList<Entity>} a LinkedList of Entity objects which are
+	 *         contained in the specified cone
 	 */
 	public static LinkedList<Entity> entitiesInCone2(Vector origin, Vector rot, double length) {
 		System.out.println(
@@ -168,17 +169,17 @@ public final class VirtualBoard {
 	 * 
 	 * TODO: enforce a parallel base OR re-incorporate rotation vectors
 	 * 
-	 * @param center (Vector) the coordinate equally spaced from all vertices of the
-	 *               cube
+	 * @param center ({@code Vector}) the coordinate equally spaced from all
+	 *               vertices of the cube
 	 * 
-	 * @param rot    (Vector) a vector which is normal to one of the faces of the
-	 *               cube
+	 * @param rot    ({@code Vector}) a vector which is normal to one of the faces
+	 *               of the cube
 	 * 
-	 * @param radius (double) the distance from the cube's center to one of its
-	 *               faces
+	 * @param radius ({@code double}) the distance from the cube's center to one of
+	 *               its faces
 	 * 
-	 * @return a LinkedList of Entity objects which are contained in the specified
-	 *         cube
+	 * @return {@code LinkedList<Entity>} a LinkedList of Entity objects which are
+	 *         contained in the specified cube
 	 */
 	public static LinkedList<Entity> entitiesInCube(Vector center, Vector rot, double radius) {
 		LinkedList<Entity> entities = new LinkedList<Entity>();
@@ -201,11 +202,18 @@ public final class VirtualBoard {
 		return entities;
 	}
 
-	/*
-	 * NOTE: this algorithm does not return an entity located exactly at origin. I
-	 * am not sure why this is the case at this time, but it is helpful for target
-	 * selection with line spells, considering the caster is not a valid target and
-	 * would otherwise need to be artificially filtered from the targets.
+	/**
+	 * This function returns a list of GameObject (Entity) objects which are located
+	 * within a certain radius of a specified line. Any Entities located precisely
+	 * at the origin of this line are not to be included in the list.
+	 * 
+	 * @param origin ({@code Vector}) the coordinate from which the line emits
+	 * @param rot    ({@code Vector}) a vector in parallel with the line
+	 * @param length ({@code double}) the length of the line
+	 * @param radius ({@code double}) the radius of the line (as though it were a
+	 *               cylinder)
+	 * @return {@code LinkedList<Entity>} a LinkedList of Entity objects which are
+	 *         contained in the volume of the line's area of effect
 	 */
 	public static LinkedList<Entity> entitiesInLine(Vector origin, Vector rot, double length, double radius) {
 		System.out.println("Searching for Entities within " + radius + " of " + length + "-long line " + origin + " + "
@@ -226,6 +234,15 @@ public final class VirtualBoard {
 		return entities;
 	}
 
+	/**
+	 * This function returns a list of GameObject (Entity) objects which are
+	 * contained within the volume of a specified sphere.
+	 * 
+	 * @param center ({@code Vector}) the coordinate of the sphere's center
+	 * @param radius ({@code double}) the radius of the sphere
+	 * @return {@code LinkedList<Entity>} a LinkedList of Entity objects which are
+	 *         within the sphere's volume
+	 */
 	public static LinkedList<Entity> entitiesInSphere(Vector center, double radius) {
 		System.out.println("Searching for Entities in sphere centered at " + center + " with radius " + radius + ":");
 		LinkedList<Entity> entities = new LinkedList<Entity>();

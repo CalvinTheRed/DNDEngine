@@ -26,7 +26,7 @@ public abstract class DiceContest extends Event {
 	/**
 	 * Constructor for class DiceContest
 	 * 
-	 * @param name
+	 * @param name ({@code String}) the name of the DiceContest
 	 */
 	public DiceContest(String name) {
 		super(name);
@@ -53,7 +53,7 @@ public abstract class DiceContest extends Event {
 	 * This function returns whether this die roll has advantage, disadvantage,
 	 * both, or neither.
 	 * 
-	 * @return int
+	 * @return {@code int} advantage state id [-1,2]
 	 */
 	private int getAdvantageState() {
 		if (advantage > 0 && disadvantage > 0) {
@@ -72,7 +72,7 @@ public abstract class DiceContest extends Event {
 	 * This function adds a given bonus to the contained bonus. It does not
 	 * overwrite the contained bonus.
 	 * 
-	 * @param bonus (int) a bonusto be added to the contained bonus
+	 * @param bonus ({@code int}) a bonus to be added to the contained bonus
 	 */
 	public void addBonus(int bonus) {
 		this.bonus += bonus;
@@ -81,7 +81,7 @@ public abstract class DiceContest extends Event {
 	/**
 	 * This function returns the contained bonus.
 	 * 
-	 * @return int
+	 * @return {@code int} bonus
 	 */
 	public int getBonus() {
 		return bonus;
@@ -91,7 +91,7 @@ public abstract class DiceContest extends Event {
 	 * This function returns the sum of the rolled d20 and the contained bonus. This
 	 * function requires that roll() is called before it can return meaningful data.
 	 * 
-	 * @return int
+	 * @return {@code int} raw d20 rolled value before any bonuses are added to it
 	 */
 	public int getRawRoll() {
 		return d20.getRoll();
@@ -128,7 +128,8 @@ public abstract class DiceContest extends Event {
 	 * This function causes the consequences of the DiceContest object's results to
 	 * occur (e.g. causing Damage, applying an Effect, etc).
 	 * 
-	 * @param source (Entity) the Entity which caused this DiceContest to occur
+	 * @param source ({@code Entity}) the Entity which caused this DiceContest to
+	 *               occur
 	 */
 	protected abstract void invokeFallout(Entity source);
 
