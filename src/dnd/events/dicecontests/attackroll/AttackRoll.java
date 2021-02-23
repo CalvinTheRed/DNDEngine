@@ -20,9 +20,9 @@ public abstract class AttackRoll extends DiceContest {
 	/**
 	 * Constructor for class AttackRoll
 	 * 
-	 * @param name          (String) the name of the AttackRoll
-	 * @param attackAbility (int) the index of the ability score being used to make
-	 *                      the attack roll
+	 * @param name          ({@code String}) the name of the AttackRoll
+	 * @param attackAbility ({@code int}) the index of the ability score being used
+	 *                      to make the attack roll
 	 */
 	public AttackRoll(String name, int attackAbility) {
 		super(name);

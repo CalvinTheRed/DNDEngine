@@ -24,11 +24,12 @@ public class WeaponAttack extends AttackRoll {
 	/**
 	 * Constructor for class WeaponAttack
 	 * 
-	 * @param weapon        (Item) the item being used to make the weapon attack
-	 * @param attackType    (int) index indicating whether this weapon attack is
-	 *                      melee, thrown, or ranged
-	 * @param attackAbility (int) index indicating the ability score being used to
-	 *                      make the weapon attack
+	 * @param weapon        ({@code Item}) the item being used to make the weapon
+	 *                      attack
+	 * @param attackType    ({@code int}) index indicating whether this weapon
+	 *                      attack is melee, thrown, or ranged
+	 * @param attackAbility ({@code int}) index indicating the ability score being
+	 *                      used to make the weapon attack
 	 */
 	public WeaponAttack(Item weapon, int attackType, int attackAbility) {
 		super((attackType == MELEE ? "Melee" : (attackType == THROWN ? "Thrown" : "Ranged")) + " Attack ("
@@ -43,7 +44,7 @@ public class WeaponAttack extends AttackRoll {
 	protected void invokeFallout(Entity source) {
 		Damage d = new Damage("Damage (" + this + ")", this);
 		DamageDiceGroup damageDice = weapon.getDamageDice();
-		damageDice.addDamageBonus(source.getAbilityModifier(attackAbility));
+		damageDice.addBonus(source.getAbilityModifier(attackAbility));
 		d.addDamageDiceGroup(damageDice);
 		d.invoke(source, null);
 		d.invokeClone(source, target);
@@ -52,7 +53,7 @@ public class WeaponAttack extends AttackRoll {
 	/**
 	 * This function returns whether this weapon attack is melee, thrown, or ranged.
 	 * 
-	 * @return int
+	 * @return {@code int} attack type id [0,3]
 	 */
 	public int getAttackType() {
 		return attackType;

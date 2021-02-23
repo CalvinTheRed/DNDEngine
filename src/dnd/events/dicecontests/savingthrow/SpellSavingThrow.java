@@ -11,6 +11,23 @@ public class SpellSavingThrow extends SavingThrow implements Observer {
 	protected Item implement;
 	protected int level;
 
+	/**
+	 * 
+	 * @param name        ({@code String}) the name of the SpellSavingThrow
+	 * @param shape       ({@code EventShape}) the shape of the SpellSavingThrow's
+	 *                    area of effect
+	 * @param range       ({@code double[2]}) the range of the SpellSavingThrow
+	 * @param radius      ({@code double}) the radius of the SpellSavingThrow
+	 * @param dcAbility   ({@code int}) the index of the ability which the source of
+	 *                    the SpellSavingThrow will use to determine the spell save
+	 *                    DC
+	 * @param saveAbility ({@code int}) the index of the ability which the target of
+	 *                    the SpellSavingThrow will use to contest the source's
+	 *                    spell save DC
+	 * @param level       ({@code int}) the level at which the spell was cast (this
+	 *                    indicates player level in the case of a cantrip, rather
+	 *                    than spell level)
+	 */
 	public SpellSavingThrow(String name, EventShape shape, double[] range, double radius, int dcAbility,
 			int saveAbility, int level) {
 		super(name, shape, range, radius, dcAbility, saveAbility);

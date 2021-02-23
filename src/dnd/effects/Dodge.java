@@ -20,8 +20,8 @@ public class Dodge extends Effect {
 	 * Constructor for class Dodge. This Effect has high priority in an Entity's
 	 * activeEffects list.
 	 * 
-	 * @param source (Entity) the source of the Dodge Event
-	 * @param target (Entity) the Entity which is Dodging
+	 * @param source ({@code Entity}) the source of the Dodge Event
+	 * @param target ({@code Entity}) the Entity which is Dodging
 	 */
 	public Dodge(Entity source, Entity target) {
 		super(source, target, "Dodge", HI_PRIORITY);

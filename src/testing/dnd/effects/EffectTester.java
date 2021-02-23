@@ -10,18 +10,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import maths.Vector;
 import testing.gameobjects.entities.DummyEntity;
 
-@ExtendWith(DummyEffectParameterResolver.class)
 class EffectTester {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		DummyEffectParameterResolver.Source = new DummyEntity("Dummy Entity Source", new Vector(0,0,0), new Vector(1,1,1) );
-		DummyEffectParameterResolver.Target = new DummyEntity("Dummy Entity Target", new Vector(1,0,0), new Vector(1,0,0) );
 	}
 
 	@AfterAll
@@ -37,24 +33,23 @@ class EffectTester {
 	}
 
 	@Test
-	@DisplayName("Attributes are managed")
-	void test1(DummyEffect E) {
-		assertEquals(E.toString(),"Dummy Effect");
-		assertEquals(E.getSource(),DummyEffectParameterResolver.Source);
-		assertEquals(E.getTarget(),DummyEffectParameterResolver.Target);
+	@DisplayName("Effect contructor works")
+	void test1() {
+		DummyEntity source = new DummyEntity("Dummy Entity", new Vector(0, 0, 0), new Vector(1, 0, 0));
+		DummyEntity target = new DummyEntity("Dummy Entity", new Vector(0, 0, 0), new Vector(1, 0, 0));
+		DummyEffect e = new DummyEffect(source, target, "Dummy Effect", false);
+		assertEquals(e.getSource(), source);
+		assertEquals(e.getTarget(), target);
+		assertFalse(e.isEnded());
+		assertFalse(e.getSequencingPriority());
 	}
-	
-	@Test
-	@DisplayName("Effects are created as NOT ended")
-	void test2(DummyEffect E) {
-		assertFalse(E.isEnded());
-	}
-	
+
 	@Test
 	@DisplayName("Effects can be ended")
-	void test3(DummyEffect E) {
-		E.end();
-		assertTrue(E.isEnded());
+	void test3() {
+		DummyEffect e = new DummyEffect(null, null, "Dummy Effect", false);
+		e.end();
+		assertTrue(e.isEnded());
 	}
-	
+
 }

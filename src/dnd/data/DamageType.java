@@ -1,15 +1,24 @@
 package dnd.data;
 
 public enum DamageType {
-	// meant for damage which adds to an existing damage roll
-	// such as the Rogue class's Sneak Attack damage
+	/**
+	 * This damage type is intended to be used for damage dice which are to be added
+	 * to another group of damage dice, when the damage type of those dice is not
+	 * necessarily known. This is currently intended to be used for appending to the
+	 * damage dice of a weapon's damage.
+	 */
 	MATCHING(),
-	// meant for damage which has no particular type
-	// such as that dealt due to blood loss
+	/**
+	 * This damage type is intended to represent damage which does not have a
+	 * specific type, or raw damage. This may come up from effects such as blood
+	 * loss.
+	 */
 	TYPELESS(),
-	// meant for damage which cannot be reduced in any way
-	// such as that suffered from the Oath of Redemption subclass's
-	// Aura of the Guardian feature
+	/**
+	 * This damage type is intended to represent damage which cannot be reduced,
+	 * such as that suffered from the Oath of Redemption Paladin's Aura of the
+	 * Guardian feature.
+	 */
 	INEVITABLE(),
 	// normal in-game damage types
 	ACID(),

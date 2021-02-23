@@ -20,8 +20,9 @@ public class Evasion extends Effect {
 	 * Constructor for class Evasion. This Effect has low priority in an Entity's
 	 * activeEffects list.
 	 * 
-	 * @param source (Entity) the Entity responsible for creating this Effect
-	 * @param target (Entity) the Entity which is inflicted with this Effect
+	 * @param source ({@code Entity}) the Entity responsible for creating this
+	 *               Effect
+	 * @param target ({@code Entity}) the Entity which is inflicted with this Effect
 	 */
 	public Evasion(Entity source, Entity target) {
 		super(source, target, "Evasive", LO_PRIORITY);
@@ -38,7 +39,7 @@ public class Evasion extends Effect {
 						((Damage) e).getDamageDice().clear();
 					} else if (((SavingThrow) parent).getFailedTargets().contains(target)) {
 						for (DamageDiceGroup group : ((Damage) e).getDamageDice()) {
-							group.addDamageBonus(-(group.getSum() + 1) / 2);
+							group.addBonus(-(group.getSum() + 1) / 2);
 						}
 					}
 					return true;

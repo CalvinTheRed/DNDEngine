@@ -22,7 +22,6 @@ public class DamageDiceGroup extends DiceGroup {
 	public static final int NO_EFFECT = 4;
 
 	protected DamageType damageType;
-	protected int damageBonus;
 	protected int resistances;
 	protected int immunities;
 	protected int vulnerabilities;
@@ -30,14 +29,14 @@ public class DamageDiceGroup extends DiceGroup {
 	/**
 	 * Constructor for class DamageDiceGroup
 	 * 
-	 * @param numDice    (int) the number of dice to be included in the
+	 * @param numDice    ({@code int}) the number of dice to be included in the
 	 *                   DamageDiceGroup upon construction
 	 * 
-	 * @param dieSize    (int) the number of sides on each die added to the
+	 * @param dieSize    ({@code int}) the number of sides on each die added to the
 	 *                   DamageDiceGroup upon construction
 	 * 
-	 * @param damageType (DamageType) the damage type of the damage dice contained
-	 *                   in this DamageDiceGroup
+	 * @param damageType ({@code DamageType}) the damage type of the damage dice
+	 *                   contained in this DamageDiceGroup
 	 */
 	public DamageDiceGroup(int numDice, int dieSize, DamageType damageType) {
 		super(numDice, dieSize);
@@ -52,15 +51,15 @@ public class DamageDiceGroup extends DiceGroup {
 	 * contains clones of all of its fields, rather than identical memory addresses
 	 * to the same fields as its parent instance.
 	 * 
-	 * @return DamageDiceGroup
+	 * @return {@code DamageDiceGroup} clone
 	 * 
 	 * @Override
 	 */
 	public DamageDiceGroup clone() {
 		DamageDiceGroup group = new DamageDiceGroup(0, 0, damageType);
-		group.addDamageBonus(damageBonus);
+		group.addBonus(bonus);
 		for (Die d : dice) {
-			group.addDamageDie(d.clone());
+			group.addDie(d.clone());
 		}
 		return group;
 	}
@@ -70,37 +69,18 @@ public class DamageDiceGroup extends DiceGroup {
 	 * data. It returns the sum of all contained dice plus the contained damage
 	 * bonus.
 	 * 
-	 * @return int
+	 * @return {@code int} sum
 	 * 
 	 * @Override
 	 */
 	public int getSum() {
-		return Math.max(1, super.getSum() + damageBonus);
-	}
-
-	/**
-	 * This function returns the contained damage bonus.
-	 * 
-	 * @return int
-	 */
-	public int getDamageBonus() {
-		return damageBonus;
-	}
-
-	/**
-	 * This function adds to the contained damage bonus. It does not overwrite the
-	 * damage bonus.
-	 * 
-	 * @param bonus (int) the damage bonus to be added to the current damage bonus.
-	 */
-	public void addDamageBonus(int bonus) {
-		damageBonus += bonus;
+		return Math.max(1, super.getSum());
 	}
 
 	/**
 	 * This function returns the damage type of the contained damage dice.
 	 * 
-	 * @return DamageType
+	 * @return {@code DamageType} damageType
 	 */
 	public DamageType getDamageType() {
 		return damageType;
@@ -109,21 +89,11 @@ public class DamageDiceGroup extends DiceGroup {
 	/**
 	 * This function modifies the damage type for the contained damage dice.
 	 * 
-	 * @param damageType (DamageType) the new damage type for the contained damage
-	 *                   dice
+	 * @param damageType ({@code DamageType}) the new damage type for the contained
+	 *                   damage dice
 	 */
 	public void setDamageType(DamageType damageType) {
 		this.damageType = damageType;
-	}
-
-	/**
-	 * This function adds a new damage die to the object. It does not have to have
-	 * the same number of sides as the other dice contained in the object.
-	 * 
-	 * @param d (Die) the die to be added to the object
-	 */
-	public void addDamageDie(Die d) {
-		dice.add(d);
 	}
 
 	/**
@@ -154,7 +124,7 @@ public class DamageDiceGroup extends DiceGroup {
 	 * This function returns how effective the damage is with respect to
 	 * resistances, vulnerabilities, and immunities.
 	 * 
-	 * @return int
+	 * @return {@code int} effectiveness id [0,4]
 	 */
 	public int getEffectiveness() {
 		if (immunities > 0) {
@@ -178,7 +148,7 @@ public class DamageDiceGroup extends DiceGroup {
 	 * This function is a specialized form of setDamageType(). It makes the damage
 	 * type magical, if applicable.
 	 * 
-	 * @return boolean
+	 * @return {@code boolean} was this operation successful?
 	 */
 	public boolean grantMagic() {
 		if (damageType == DamageType.BLUDGEONING) {
@@ -204,7 +174,7 @@ public class DamageDiceGroup extends DiceGroup {
 	 * This function is a specialized form of setDamageType(). It takes away the
 	 * magical property from the damage type, if applicable.
 	 * 
-	 * @return boolean
+	 * @return {@code boolean} was this operation successful?
 	 */
 	public boolean revokeMagic() {
 		if (damageType == DamageType.BLUDGEONING_MAGICAL) {
@@ -230,7 +200,7 @@ public class DamageDiceGroup extends DiceGroup {
 	 * This function is a specialized form of setDamageType(). It makes the damage
 	 * type silvered, if applicable.
 	 * 
-	 * @return boolean
+	 * @return {@code boolean} was this operation successful?
 	 */
 	public boolean grantSilvered() {
 		if (damageType == DamageType.BLUDGEONING) {
@@ -256,7 +226,7 @@ public class DamageDiceGroup extends DiceGroup {
 	 * This function is a specialized form of setDamageType(). It takes away the
 	 * silvered property from the damage type, if applicable.
 	 * 
-	 * @return boolean
+	 * @return {@code boolean} was this operation successful?
 	 */
 	public boolean revokeSilvered() {
 		if (damageType == DamageType.BLUDGEONING_SILVERED) {
