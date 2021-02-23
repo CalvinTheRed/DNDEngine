@@ -15,7 +15,7 @@ import dnd.events.Event;
  */
 public class EventGroup {
 	protected LinkedList<Event> events;
-	protected LinkedList<EventGroup> groups;
+	protected LinkedList<EventGroup> groups; // TODO: does this collection get used?
 
 	/**
 	 * Constructor for class DiceGroup
