@@ -2,6 +2,7 @@ package dnd.events;
 
 import java.util.LinkedList;
 
+import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import dnd.data.EventShape;
@@ -140,6 +141,12 @@ public class Event extends Scriptable {
 		globals.set("source", CoerceJavaToLua.coerce(source));
 		globals.set("targetPos", CoerceJavaToLua.coerce(targetPos));
 		globals.get("invokeEvent").invoke();
+
+		Varargs v = globals.get("getVal").invoke();
+		// System.out.println(v);
+
+		System.out.println(v.toint(1)); // 1-based index
+		System.out.println(v.toint(2));
 	}
 
 	@Override

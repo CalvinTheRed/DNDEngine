@@ -13,3 +13,11 @@ source:addEffect(effect)
 print("[LUA] Done")
 
 end
+
+
+
+function getVal()
+
+return 10,20
+
+end
