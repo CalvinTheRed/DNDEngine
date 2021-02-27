@@ -30,6 +30,8 @@ public class Event extends Scriptable {
 	protected EventShape shape;
 	protected double radius;
 
+	protected LinkedList<String> tags; // ask Event for which tags it has (attack roll, saving throw, magical, etc)
+
 	/**
 	 * Constructor for class Event
 	 * 

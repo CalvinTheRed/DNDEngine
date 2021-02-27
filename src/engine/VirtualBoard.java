@@ -20,6 +20,10 @@ public final class VirtualBoard {
 
 	private static LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
 
+	public static String getMessage() {
+		return "I am the VirtualBoard!";
+	}
+
 	/**
 	 * This function adds a new GameObject object to the virtual board. If the
 	 * object is already on the board, it is not added a second time.

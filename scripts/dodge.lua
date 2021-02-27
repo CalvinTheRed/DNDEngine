@@ -4,9 +4,10 @@ function invokeEvent()
 
 print("[LUA] Applying Dodge effect to " .. source:toString())
 
--- find way to utilize VirtualBoard search functions
+vb = luajava.bindClass("engine.VirtualBoard")
+target = vb:entityAt(targetPos)
 
-effect = luajava.newInstance("dnd.effects.Dodge", source, source)
+effect = luajava.newInstance("dnd.effects.Dodge", source, target)
 source:addEffect(effect)
 
 print("[LUA] Done")
