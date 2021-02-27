@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import dnd.data.EventShape;
 import dnd.effects.Effect;
+import engine.Scriptable;
 import gameobjects.entities.Entity;
 import maths.Vector;
 
@@ -14,7 +15,7 @@ import maths.Vector;
  * @author calvi
  *
  */
-public abstract class Event {
+public class Event extends Scriptable {
 
 	public static final int SHORTRANGE = 0;
 	public static final int LONGRANGE = 1;
@@ -32,7 +33,8 @@ public abstract class Event {
 	 * 
 	 * @param name ({@code String}) the name of the Event
 	 */
-	public Event(String name) {
+	public Event(String script, String name) {
+		super(script);
 		this.name = name;
 		appliedEffects = new LinkedList<Effect>();
 		range = new double[2];

@@ -25,7 +25,7 @@ public class Damage extends Event {
 	 * @param parent ({@code Event}) the Event which created this Damage Event
 	 */
 	public Damage(String name, Event parent) {
-		super(name);
+		super(name, name);
 		damageDice = new LinkedList<DamageDiceGroup>();
 		this.parent = parent;
 	}

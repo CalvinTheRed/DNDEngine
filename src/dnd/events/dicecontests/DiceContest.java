@@ -29,7 +29,7 @@ public abstract class DiceContest extends Event {
 	 * @param name ({@code String}) the name of the DiceContest
 	 */
 	public DiceContest(String name) {
-		super(name);
+		super(name, name);
 		d20 = new Die(20);
 	}
 

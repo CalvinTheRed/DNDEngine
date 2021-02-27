@@ -16,7 +16,7 @@ public class Dodge extends Task {
 	public Dodge() {
 		super("Dodge");
 		EventGroup group1 = new EventGroup();
-		group1.addEvent(new dnd.events.Dodge());
+		group1.addEvent(new dnd.events.Event("scripts/dodge.lua", "Dodge"));
 		addEventGroup(group1);
 	}
 
