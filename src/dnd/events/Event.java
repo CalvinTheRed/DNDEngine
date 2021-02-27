@@ -2,6 +2,8 @@ package dnd.events;
 
 import java.util.LinkedList;
 
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+
 import dnd.data.EventShape;
 import dnd.effects.Effect;
 import engine.Scriptable;
@@ -132,7 +134,10 @@ public class Event extends Scriptable {
 	 */
 	public void invoke(Entity source, Vector targetPos) {
 		System.out.println(source + " invokes Event " + this);
-		this.targetPos = targetPos;
+
+		globals.set("source", CoerceJavaToLua.coerce(source));
+		globals.set("targetPos", CoerceJavaToLua.coerce(targetPos));
+		globals.get("invokeEvent").invoke();
 	}
 
 	@Override
