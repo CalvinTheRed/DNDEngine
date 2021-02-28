@@ -6,8 +6,8 @@ import gameobjects.entities.Entity;
 
 public class DummyEffect extends Effect {
 
-	public DummyEffect(Entity source, Entity target, String name, boolean sequencingPriority) {
-		super(source, target, name, sequencingPriority);
+	public DummyEffect(Entity source, Entity target, String name) {
+		super("", name, source, target);
 	}
 
 	@Override

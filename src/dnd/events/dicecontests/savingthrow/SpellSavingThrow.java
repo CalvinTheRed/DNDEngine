@@ -28,15 +28,16 @@ public class SpellSavingThrow extends SavingThrow implements Observer {
 	 *                    indicates player level in the case of a cantrip, rather
 	 *                    than spell level)
 	 */
-	public SpellSavingThrow(String name, EventShape shape, double[] range, double radius, int dcAbility,
-			int saveAbility, int level) {
-		super(name, shape, range, radius, dcAbility, saveAbility);
+	public SpellSavingThrow(String name, EventShape shape, double shortrange, double longrange, double radius,
+			int dcAbility, int saveAbility, int level) {
+		super(name, shape, shortrange, longrange, radius, dcAbility, saveAbility);
 		this.level = level;
 	}
 
 	@Override
 	public SpellSavingThrow clone() {
-		SpellSavingThrow clone = new SpellSavingThrow(name, shape, range, radius, dcAbility, saveAbility, level);
+		SpellSavingThrow clone = new SpellSavingThrow(name, shape, shortrange, longrange, radius, dcAbility,
+				saveAbility, level);
 		clone.advantage = advantage;
 		clone.disadvantage = disadvantage;
 		clone.bonus = bonus;

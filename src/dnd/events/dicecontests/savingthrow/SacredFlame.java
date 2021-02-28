@@ -9,7 +9,7 @@ import gameobjects.entities.Entity;
 public class SacredFlame extends SpellSavingThrow {
 
 	public SacredFlame(int dcAbility) {
-		super("Sacred Flame", EventShape.SINGLE_TARGET, new double[] { 60.0, 60.0 }, 0, dcAbility, Entity.DEX, 0);
+		super("Sacred Flame", EventShape.SINGLE_TARGET, 60.0, 60.0, 0, dcAbility, Entity.DEX, 0);
 	}
 
 	@Override

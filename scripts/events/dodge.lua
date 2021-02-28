@@ -5,7 +5,7 @@ function invokeEvent()
 
 vb = luajava.bindClass("engine.VirtualBoard")
 target = vb:entityAt(targetPos)
-effect = luajava.newInstance("dnd.effects.Dodge", source, target)
+effect = luajava.newInstance("dnd.effects.Effect", "scripts/effects/dodge.lua", "Dodge", source, target)
 source:addEffect(effect)
 
 end

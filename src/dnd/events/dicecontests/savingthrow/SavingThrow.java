@@ -38,14 +38,15 @@ public abstract class SavingThrow extends DiceContest {
 	 *                    throw will use when attempting to resist the effects of
 	 *                    the saving throw
 	 */
-	public SavingThrow(String name, EventShape shape, double[] range, double radius, int dcAbility, int saveAbility) {
+	public SavingThrow(String name, EventShape shape, double shortrange, double longrange, double radius, int dcAbility,
+			int saveAbility) {
 		super(name);
 		targets = new LinkedList<Entity>();
 		passedTargets = new LinkedList<Entity>();
 		failedTargets = new LinkedList<Entity>();
 		this.shape = shape;
-		this.range[SHORTRANGE] = range[SHORTRANGE];
-		this.range[LONGRANGE] = range[LONGRANGE];
+		this.shortrange = shortrange;
+		this.longrange = longrange;
 		this.radius = radius;
 		this.dcAbility = dcAbility;
 		this.saveAbility = saveAbility;
@@ -59,7 +60,7 @@ public abstract class SavingThrow extends DiceContest {
 		} else if (shape == EventShape.CUBE) {
 			targets.addAll(VirtualBoard.entitiesInCube(targetPos, source.getRot(), radius));
 		} else if (shape == EventShape.LINE) {
-			targets.addAll(VirtualBoard.entitiesInLine(targetPos, source.getRot(), range[DEFAULTRANGE], radius));
+			targets.addAll(VirtualBoard.entitiesInLine(targetPos, source.getRot(), getRange()[DEFAULTRANGE], radius));
 		} else if (shape == EventShape.SINGLE_TARGET) {
 			targets.add(VirtualBoard.entityAt(targetPos));
 		} else if (shape == EventShape.SPHERE) {

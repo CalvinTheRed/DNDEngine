@@ -1,6 +1,9 @@
 package dnd.effects;
 
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+
 import dnd.events.Event;
+import engine.Scriptable;
 import gameobjects.entities.Entity;
 
 /**
@@ -11,16 +14,11 @@ import gameobjects.entities.Entity;
  * @author calvi
  *
  */
-public abstract class Effect {
-
-	public static final boolean HI_PRIORITY = true;
-	public static final boolean LO_PRIORITY = false;
-
+public class Effect extends Scriptable {
 	protected Entity source;
 	protected Entity target;
 	protected String name;
 	protected boolean ended;
-	protected boolean sequencingPriority;
 
 	/**
 	 * Constructor for class Effect
@@ -33,11 +31,11 @@ public abstract class Effect {
 	 * @param sequencingPriority ({@code boolean}) the priority of the Effect in an
 	 *                           Entity's activeEffects list
 	 */
-	public Effect(Entity source, Entity target, String name, boolean sequencingPriority) {
+	public Effect(String script, String name, Entity source, Entity target) {
+		super(script);
+		this.name = name;
 		this.source = source;
 		this.target = target;
-		this.name = name;
-		this.sequencingPriority = sequencingPriority;
 		ended = false;
 	}
 
@@ -78,16 +76,6 @@ public abstract class Effect {
 	}
 
 	/**
-	 * This function returns the priority of this Effect in an Entity's
-	 * activeEffects list.
-	 * 
-	 * @return {@code boolean} sequencingPriority
-	 */
-	public boolean getSequencingPriority() {
-		return sequencingPriority;
-	}
-
-	/**
 	 * This function allows an Effect to change the attributes of an Event (e.g. the
 	 * Dodge Effect will grant advantage to all Dex-based SavingThrow Events if the
 	 * Dodge and the SavingThrow target the same Entity, among other things).
@@ -97,7 +85,14 @@ public abstract class Effect {
 	 * @param target ({@code Entity}) the target of the Event being processed
 	 * @return {@code boolean} did this Effect modify the Event?
 	 */
-	public abstract boolean processEvent(Event e, Entity source, Entity target);
+	public boolean processEvent(Event e, Entity source, Entity target) {
+		globals.set("event", CoerceJavaToLua.coerce(e));
+		globals.set("effect", CoerceJavaToLua.coerce(this));
+		globals.set("eventSource", CoerceJavaToLua.coerce(source));
+		globals.set("eventTarget", CoerceJavaToLua.coerce(target));
+		globals.get("processEvent").invoke();
+		return false;
+	}
 
 	// TODO: add processTask() abstract function?
 

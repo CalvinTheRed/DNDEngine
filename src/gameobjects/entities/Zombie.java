@@ -46,8 +46,9 @@ public class Zombie extends Entity {
 		generateHealth(8);
 		immunities.add(DamageType.POISON);
 
-		Task task1 = new dnd.tasks.Task("scripts/tasks/dodge.lua", "Dodge");
-		addBaseTask(task1);
+		Task task;
+		task = new Task("scripts/tasks/dodge.lua", "Dodge");
+		addBaseTask(task);
 		resetTasks();
 	}
 

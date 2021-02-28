@@ -24,13 +24,13 @@ public class Event extends Scriptable {
 	public static final int DEFAULTRANGE = LONGRANGE;
 
 	protected LinkedList<Effect> appliedEffects;
+	protected LinkedList<String> tags; // ask Event for which tags it has (attack roll, saving throw, magical, etc)
 	protected Vector targetPos;
 	protected String name;
-	protected double[] range;
-	protected EventShape shape;
+	protected double shortrange;
+	protected double longrange;
 	protected double radius;
-
-	protected LinkedList<String> tags; // ask Event for which tags it has (attack roll, saving throw, magical, etc)
+	protected EventShape shape;
 
 	/**
 	 * Constructor for class Event
@@ -41,7 +41,19 @@ public class Event extends Scriptable {
 		super(script);
 		this.name = name;
 		appliedEffects = new LinkedList<Effect>();
-		range = new double[2];
+		tags = new LinkedList<String>();
+	}
+
+	public boolean addTag(String tag) {
+		if (tags.contains(tag)) {
+			return false;
+		}
+		tags.add(tag);
+		return true;
+	}
+
+	public boolean checkForTag(String tag) {
+		return tags.contains(tag);
 	}
 
 	/**
@@ -51,8 +63,8 @@ public class Event extends Scriptable {
 	 * @param longrange  ({@code double}) the long range of the spell
 	 */
 	public void setRange(double shortrange, double longrange) {
-		range[SHORTRANGE] = shortrange;
-		range[LONGRANGE] = longrange;
+		this.shortrange = shortrange;
+		this.longrange = longrange;
 	}
 
 	/**
@@ -61,7 +73,7 @@ public class Event extends Scriptable {
 	 * @return {@code double[2]} range
 	 */
 	public double[] getRange() {
-		return range;
+		return new double[] { shortrange, longrange };
 	}
 
 	/**
@@ -136,6 +148,9 @@ public class Event extends Scriptable {
 	 */
 	public void invoke(Entity source, Vector targetPos) {
 		System.out.println(source + " invokes Event " + this);
+
+		while (source.processEvent(this, source, null))
+			;
 
 		globals.set("source", CoerceJavaToLua.coerce(source));
 		globals.set("targetPos", CoerceJavaToLua.coerce(targetPos));

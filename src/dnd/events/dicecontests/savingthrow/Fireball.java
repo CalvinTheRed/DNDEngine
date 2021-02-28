@@ -9,7 +9,7 @@ import gameobjects.entities.Entity;
 public class Fireball extends SpellSavingThrow {
 
 	public Fireball(int dcAbility, int level) {
-		super("Fireball", EventShape.SPHERE, new double[] { 150.0, 150.0 }, 20.0, dcAbility, Entity.DEX, level);
+		super("Fireball", EventShape.SPHERE, 150.0, 150.0, 20.0, dcAbility, Entity.DEX, level);
 	}
 
 	@Override

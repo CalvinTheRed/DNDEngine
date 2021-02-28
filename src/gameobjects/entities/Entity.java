@@ -334,13 +334,8 @@ public abstract class Entity extends GameObject {
 		if (activeEffects.contains(e)) {
 			return false;
 		}
-
-		if (e.getSequencingPriority() == Effect.HI_PRIORITY) {
-			activeEffects.addFirst(e);
-		} else {
-			activeEffects.addLast(e);
-		}
-		System.out.println(this + " now observing " + e);
+		activeEffects.add(e);
+		System.out.println(this + " given Effect " + e);
 		return true;
 	}
 
@@ -356,13 +351,10 @@ public abstract class Entity extends GameObject {
 	 *         Effects
 	 */
 	public boolean processEvent(Event e, Entity source, Entity target) {
-		boolean modifiedEvent = false;
 		for (Effect effect : activeEffects) {
-			if (effect.processEvent(e, source, target)) {
-				modifiedEvent = true;
-			}
+			effect.processEvent(e, source, target);
 		}
-		return modifiedEvent;
+		return false;
 	}
 
 	/**
