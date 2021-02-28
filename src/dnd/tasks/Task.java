@@ -2,7 +2,11 @@ package dnd.tasks;
 
 import java.util.LinkedList;
 
+import org.luaj.vm2.Varargs;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+
 import dnd.events.eventgroups.EventGroup;
+import engine.Scriptable;
 import gameobjects.entities.Entity;
 
 /**
@@ -12,7 +16,7 @@ import gameobjects.entities.Entity;
  * @author calvi
  *
  */
-public abstract class Task {
+public class Task extends Scriptable {
 	private String name;
 	private LinkedList<EventGroup> eventGroups;
 	// TODO: action economy cost
@@ -22,7 +26,8 @@ public abstract class Task {
 	 * 
 	 * @param name ({@code String}) the name of the Task
 	 */
-	public Task(String name) {
+	public Task(String script, String name) {
+		super(script);
 		this.name = name;
 		eventGroups = new LinkedList<EventGroup>();
 	}
@@ -47,12 +52,17 @@ public abstract class Task {
 	 *         Task
 	 */
 	public boolean invoke(Entity invoker) {
+		System.out.print(invoker + " invokes Task " + this + " (cost: ");
+
+		Varargs vargs = globals.get("getTaskCost").invoke();
+		String cost = vargs.tojstring(1);
+		System.out.println(cost + ")");
+
 		// TODO: return false if insufficient action economy
 		// TODO: expend action economy
-		System.out.println(invoker + " invokes Task " + this);
-		for (EventGroup group : eventGroups) {
-			invoker.queueEventGroup(group);
-		}
+		globals.set("invoker", CoerceJavaToLua.coerce(invoker));
+		globals.get("invokeTask").invoke();
+
 		return true;
 	}
 

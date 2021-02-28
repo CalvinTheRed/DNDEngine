@@ -4,7 +4,6 @@ import dnd.data.Alignment;
 import dnd.data.CreatureType;
 import dnd.data.DamageType;
 import dnd.data.SizeCategory;
-import dnd.items.Dagger;
 import dnd.tasks.Task;
 import maths.Vector;
 
@@ -47,13 +46,9 @@ public class Zombie extends Entity {
 		generateHealth(8);
 		immunities.add(DamageType.POISON);
 
-		Task task1 = new dnd.tasks.Dodge();
-		// Task task2 = new dnd.tasks.Attack(inventory, 3);
+		Task task1 = new dnd.tasks.Task("scripts/tasks/dodge.lua", "Dodge");
 		addBaseTask(task1);
-		// addBaseTask(task2);
 		resetTasks();
-		inventory.equipWeapon(new Dagger());
-
 	}
 
 }
