@@ -1,16 +1,13 @@
 function invokeTask()
-
-group = luajava.newInstance("dnd.events.eventgroups.EventGroup")
-event = luajava.newInstance("dnd.events.Event", "scripts/events/dodge.lua", "Dodge")
-group:addEvent(event)
-invoker:queueEventGroup(group)
-
+	Event = luajava.bindClass("dnd.events.Event")
+	group = luajava.newInstance("dnd.events.eventgroups.EventGroup")
+	event = luajava.newInstance("dnd.events.Event", "scripts/events/dodge.lua", "Dodge", Event.SINGLE_TARGET)
+	group:addEvent(event)
+	invoker:queueEventGroup(group)
 end
 
 
 
 function getTaskCost()
-
-return "Free"
-
+	return "Free"
 end

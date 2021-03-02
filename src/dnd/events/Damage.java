@@ -25,7 +25,7 @@ public class Damage extends Event {
 	 * @param parent ({@code Event}) the Event which created this Damage Event
 	 */
 	public Damage(String name, Event parent) {
-		super(name, name);
+		super(name, name, Event.SINGLE_TARGET);
 		damageDice = new LinkedList<DamageDiceGroup>();
 		this.parent = parent;
 	}
@@ -48,7 +48,7 @@ public class Damage extends Event {
 
 	@Override
 	public void invoke(Entity source, Vector targetPos) {
-		System.out.println("Invoking Damage " + this);
+		System.out.println("[JAVA] Invoking Damage " + this);
 
 		while (source.processEvent(this, source, null))
 			;

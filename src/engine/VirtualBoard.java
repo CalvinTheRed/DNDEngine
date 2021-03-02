@@ -20,10 +20,6 @@ public final class VirtualBoard {
 
 	private static LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
 
-	public static String getMessage() {
-		return "I am the VirtualBoard!";
-	}
-
 	/**
 	 * This function adds a new GameObject object to the virtual board. If the
 	 * object is already on the board, it is not added a second time.
@@ -84,10 +80,10 @@ public final class VirtualBoard {
 	 * @return {@code Entity} an Entity located at the provided position vector
 	 */
 	public static Entity entityAt(Vector pos) {
-		System.out.println("Searching for entity at " + pos);
+		System.out.println("[JAVA] Searching for entity at " + pos);
 		for (GameObject o : gameObjects) {
 			if (o instanceof Entity && o.getPos().equals(pos)) {
-				System.out.println("Found " + o + " " + o.getPos());
+				System.out.println("[JAVA] Found " + o + " " + o.getPos());
 				return (Entity) o;
 			}
 		}
@@ -116,7 +112,7 @@ public final class VirtualBoard {
 	 */
 	public static LinkedList<Entity> entitiesInCone(Vector origin, double radius, Vector rot) {
 		LinkedList<Entity> entities = entitiesInSphere(origin, radius);
-		System.out.println("Refining search to match cone in direction " + rot.unit() + " within angle "
+		System.out.println("[JAVA] Refining search to match cone in direction " + rot.unit() + " within angle "
 				+ Math.toDegrees(CONE_ARC_SIZE / 2.0) + " degrees:");
 		for (int i = 0; i < entities.size(); i++) {
 			if (entities.get(i).getPos().sub(origin).calculateAngleDiff(rot) > CONE_ARC_SIZE / 2.0
@@ -124,7 +120,7 @@ public final class VirtualBoard {
 				entities.remove(i);
 				i--;
 			} else {
-				System.out.println("Found " + entities.get(i) + " " + entities.get(i).getPos());
+				System.out.println("[JAVA] Found " + entities.get(i) + " " + entities.get(i).getPos());
 			}
 		}
 		return entities;
@@ -147,8 +143,8 @@ public final class VirtualBoard {
 	 *         contained in the specified cone
 	 */
 	public static LinkedList<Entity> entitiesInCone2(Vector origin, Vector rot, double length) {
-		System.out.println(
-				"Searching for Entities in " + length + "-long cone in direction " + rot.unit() + " from " + origin);
+		System.out.println("[JAVA] Searching for Entities in " + length + "-long cone in direction " + rot.unit()
+				+ " from " + origin);
 		LinkedList<Entity> entities = new LinkedList<Entity>();
 		for (GameObject o : gameObjects) {
 
@@ -158,7 +154,7 @@ public final class VirtualBoard {
 				if (deltaPos.cross(rot).mag() / rot.mag() <= radius
 						&& deltaPos.calculateAngleDiff(rot) <= Math.toRadians(90)
 						&& deltaPos.proj(rot).mag() <= length) {
-					System.out.println("Found " + o + " " + o.getPos());
+					System.out.println("[JAVA] Found " + o + " " + o.getPos());
 					entities.add((Entity) o);
 				}
 			}
@@ -189,16 +185,17 @@ public final class VirtualBoard {
 		LinkedList<Entity> entities = new LinkedList<Entity>();
 		Vector axis1 = rot.unit().scale(radius);
 		Vector axis2 = axis1.cross(Vector.UNIT_Y);
-		System.out.println("Searching for Entities in cube centered at " + center + " with radius vector " + axis1);
-		System.out
-				.println("Defined by base corners " + center.add(axis1).add(axis2) + ", " + center.add(axis1).sub(axis2)
+		System.out.println(
+				"[JAVA] Searching for Entities in cube centered at " + center + " with radius vector " + axis1);
+		System.out.println(
+				"[JAVA] Defined by base corners " + center.add(axis1).add(axis2) + ", " + center.add(axis1).sub(axis2)
 						+ ", " + center.sub(axis1).add(axis2) + ", " + center.sub(axis1).sub(axis2) + ":");
 		for (GameObject o : gameObjects) {
 			if (o instanceof Entity) {
 				Vector deltaPos = o.getPos().sub(center);
 				if (deltaPos.proj(axis1).mag() <= radius && deltaPos.proj(axis2).mag() <= radius
 						&& deltaPos.proj(Vector.UNIT_Y).mag() <= radius) {
-					System.out.println("Found " + o + " " + o.getPos());
+					System.out.println("[JAVA] Found " + o + " " + o.getPos());
 					entities.add((Entity) o);
 				}
 			}
@@ -220,8 +217,8 @@ public final class VirtualBoard {
 	 *         contained in the volume of the line's area of effect
 	 */
 	public static LinkedList<Entity> entitiesInLine(Vector origin, Vector rot, double length, double radius) {
-		System.out.println("Searching for Entities within " + radius + " of " + length + "-long line " + origin + " + "
-				+ rot + "t:");
+		System.out.println("[JAVA] Searching for Entities within " + radius + " of " + length + "-long line " + origin
+				+ " + " + rot + "t:");
 		LinkedList<Entity> entities = new LinkedList<Entity>();
 		for (GameObject o : gameObjects) {
 
@@ -230,7 +227,7 @@ public final class VirtualBoard {
 				if (deltaPos.cross(rot).mag() / rot.mag() <= radius
 						&& deltaPos.calculateAngleDiff(rot) <= Math.toRadians(90)
 						&& deltaPos.proj(rot).mag() <= length) {
-					System.out.println("Found " + o + " " + o.getPos());
+					System.out.println("[JAVA] Found " + o + " " + o.getPos());
 					entities.add((Entity) o);
 				}
 			}
@@ -248,11 +245,12 @@ public final class VirtualBoard {
 	 *         within the sphere's volume
 	 */
 	public static LinkedList<Entity> entitiesInSphere(Vector center, double radius) {
-		System.out.println("Searching for Entities in sphere centered at " + center + " with radius " + radius + ":");
+		System.out.println(
+				"[JAVA] Searching for Entities in sphere centered at " + center + " with radius " + radius + ":");
 		LinkedList<Entity> entities = new LinkedList<Entity>();
 		for (GameObject o : gameObjects) {
 			if (o instanceof Entity && o.getPos().sub(center).mag() <= radius) {
-				System.out.println("Found " + o + " " + o.getPos());
+				System.out.println("[JAVA] Found " + o + " " + o.getPos());
 				entities.add((Entity) o);
 			}
 		}

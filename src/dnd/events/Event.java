@@ -4,9 +4,9 @@ import java.util.LinkedList;
 
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
-import dnd.data.EventShape;
 import dnd.effects.Effect;
 import engine.Scriptable;
+import engine.VirtualBoard;
 import gameobjects.entities.Entity;
 import maths.Vector;
 
@@ -23,32 +23,74 @@ public class Event extends Scriptable {
 	public static final int LONGRANGE = 1;
 	public static final int DEFAULTRANGE = LONGRANGE;
 
-	protected LinkedList<Effect> appliedEffects;
-	protected LinkedList<String> tags; // ask Event for which tags it has (attack roll, saving throw, magical, etc)
+	public static final String CONE = "Cone";
+	public static final String CUBE = "Cube";
+	public static final String LINE = "Line";
+	public static final String SINGLE_TARGET = "Single Target";
+	public static final String SPHERE = "Sphere";
+
 	protected Vector targetPos;
 	protected String name;
 	protected double shortrange;
 	protected double longrange;
 	protected double radius;
-	protected EventShape shape;
+	protected LinkedList<Effect> appliedEffects;
+	protected LinkedList<String> tags;
 
 	/**
-	 * Constructor for class Event
+	 * Constructor for class Event TODO: add parameter for target tag? cone/cube/etc
 	 * 
 	 * @param name ({@code String}) the name of the Event
 	 */
-	public Event(String script, String name) {
+	public Event(String script, String name, String targetTag) {
+		super(script);
+		this.name = name;
+		appliedEffects = new LinkedList<Effect>();
+		tags = new LinkedList<String>();
+		addTag(targetTag);
+	}
+
+	private Event(String script, String name) {
 		super(script);
 		this.name = name;
 		appliedEffects = new LinkedList<Effect>();
 		tags = new LinkedList<String>();
 	}
 
-	public boolean addTag(String tag) {
-		if (tags.contains(tag)) {
-			return false;
+	@Override
+	public Event clone() {
+		Event clone = new Event(script, name);
+		clone.targetPos = targetPos;
+		clone.shortrange = shortrange;
+		clone.longrange = longrange;
+		clone.radius = radius;
+		for (Effect effect : appliedEffects) {
+			clone.appliedEffects.add(effect);
 		}
+		for (String tag : tags) {
+			clone.addTag(tag);
+		}
+		return clone;
+	}
+
+	// TODO: figure out how to interface with this in luaj
+	public void addTags(String... taglist) {
+		for (String tag : taglist) {
+			tags.add(tag);
+		}
+	}
+
+	public void addTag(String tag) {
 		tags.add(tag);
+	}
+
+	// TODO: figure out how to interface with this in luaj
+	public boolean checkForTags(String... taglist) {
+		for (String tag : taglist) {
+			if (!tags.contains(tag)) {
+				return false;
+			}
+		}
 		return true;
 	}
 
@@ -74,24 +116,6 @@ public class Event extends Scriptable {
 	 */
 	public double[] getRange() {
 		return new double[] { shortrange, longrange };
-	}
-
-	/**
-	 * This function sets the shape of the Event
-	 * 
-	 * @param shape ({@code EventShape}) the shape of the Event
-	 */
-	public void setShape(EventShape shape) {
-		this.shape = shape;
-	}
-
-	/**
-	 * This function returns the shape of the Event
-	 * 
-	 * @return {@code EventShape} shape
-	 */
-	public EventShape getShape() {
-		return shape;
 	}
 
 	/**
@@ -124,7 +148,7 @@ public class Event extends Scriptable {
 		if (appliedEffects.contains(e)) {
 			throw new Exception("Effect already applied");
 		}
-		System.out.println("Applying effect " + e + " from " + e.getSource() + " to " + this);
+		System.out.println("[JAVA] Applying effect " + e + " from " + e.getSource() + " to " + this);
 		appliedEffects.add(e);
 	}
 
@@ -147,13 +171,42 @@ public class Event extends Scriptable {
 	 *                  coordinate of a single creature, or the center of a sphere)
 	 */
 	public void invoke(Entity source, Vector targetPos) {
-		System.out.println(source + " invokes Event " + this);
+		System.out.println("[JAVA] " + source + " invokes Event " + this);
 
-		while (source.processEvent(this, source, null))
+		LinkedList<Entity> targets = new LinkedList<Entity>();
+		if (checkForTags("Cone")) {
+			targets.addAll(VirtualBoard.entitiesInCone2(targetPos, source.getRot(), getRange()[DEFAULTRANGE]));
+		} else if (checkForTags("Cube")) {
+			targets.addAll(VirtualBoard.entitiesInCube(targetPos, source.getRot(), radius));
+		} else if (checkForTags("Line")) {
+			targets.addAll(VirtualBoard.entitiesInLine(targetPos, source.getRot(), getRange()[DEFAULTRANGE], radius));
+		} else if (checkForTags("Single Target")) {
+			targets.add(VirtualBoard.entityAt(targetPos));
+		} else if (checkForTags("Sphere")) {
+			targets.addAll(VirtualBoard.entitiesInSphere(targetPos, radius));
+		} else {
+			System.out
+					.println("[JAVA] ERR: event " + this + " has no targeting tags! (Choose from among the following)");
+			System.out.println("[JAVA] \"Cone\",\"Cube\",\"Line\",\"Single Target\",\"Sphere\"");
+			return;
+		}
+
+		// Give the source a chance to modify the Event before it gets cloned to each of
+		// its targets
+		// TODO: consider adding preProcess(Event e) method?
+
+		// Clone this event to each of its targets
+		for (Entity target : targets) {
+			clone().invokeClone(source, target);
+		}
+
+	}
+
+	public void invokeClone(Entity source, Entity target) {
+		while (source.processEvent(this, source, target) || target.processEvent(this, source, target))
 			;
-
 		globals.set("source", CoerceJavaToLua.coerce(source));
-		globals.set("targetPos", CoerceJavaToLua.coerce(targetPos));
+		globals.set("target", CoerceJavaToLua.coerce(target));
 		globals.get("invokeEvent").invoke();
 	}
 

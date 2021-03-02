@@ -29,7 +29,7 @@ public abstract class DiceContest extends Event {
 	 * @param name ({@code String}) the name of the DiceContest
 	 */
 	public DiceContest(String name) {
-		super(name, name);
+		super(name, name, Event.SINGLE_TARGET);
 		d20 = new Die(20);
 	}
 
@@ -104,23 +104,23 @@ public abstract class DiceContest extends Event {
 		d20.roll();
 		int advantageState = getAdvantageState();
 		if (advantageState == ADVANTAGE) {
-			System.out.println("Rolling with advantage!");
+			System.out.println("[JAVA] Rolling with advantage!");
 			int roll = d20.getRoll();
 			d20.roll();
 			if (d20.getRoll() > roll) {
 				roll = d20.getRoll();
 			}
 		} else if (advantageState == DISADVANTAGE) {
-			System.out.println("Rolling with disadvantage!");
+			System.out.println("[JAVA] Rolling with disadvantage!");
 			int roll = d20.getRoll();
 			d20.roll();
 			if (d20.getRoll() < roll) {
 				roll = d20.getRoll();
 			}
 		} else if (advantageState == NORMAL_ROLL) {
-			System.out.println("Rolling normally!");
+			System.out.println("[JAVA] Rolling normally!");
 		} else {
-			System.out.println("Rolling with both advantage and disadvantage!");
+			System.out.println("[JAVA] Rolling with both advantage and disadvantage!");
 		}
 	}
 

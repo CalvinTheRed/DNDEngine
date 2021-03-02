@@ -88,9 +88,9 @@ public class Effect extends Scriptable {
 	public boolean processEvent(Event e, Entity source, Entity target) {
 		globals.set("event", CoerceJavaToLua.coerce(e));
 		globals.set("effect", CoerceJavaToLua.coerce(this));
-		globals.set("eventSource", CoerceJavaToLua.coerce(source));
-		globals.set("eventTarget", CoerceJavaToLua.coerce(target));
-		globals.get("processEvent").invoke();
+		globals.set("source", CoerceJavaToLua.coerce(source));
+		globals.set("target", CoerceJavaToLua.coerce(target));
+		globals.get("processEventSafe").invoke();
 		return false;
 	}
 

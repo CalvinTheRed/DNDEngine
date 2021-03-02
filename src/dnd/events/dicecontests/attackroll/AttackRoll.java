@@ -1,6 +1,5 @@
 package dnd.events.dicecontests.attackroll;
 
-import dnd.data.EventShape;
 import dnd.events.dicecontests.DiceContest;
 import engine.VirtualBoard;
 import gameobjects.entities.Entity;
@@ -26,7 +25,6 @@ public abstract class AttackRoll extends DiceContest {
 	 */
 	public AttackRoll(String name, int attackAbility) {
 		super(name);
-		setShape(EventShape.SINGLE_TARGET);
 		setRadius(0);
 		this.attackAbility = attackAbility;
 	}

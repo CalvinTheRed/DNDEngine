@@ -52,10 +52,11 @@ public class Task extends Scriptable {
 	 *         Task
 	 */
 	public boolean invoke(Entity invoker) {
-		System.out.print(invoker + " invokes Task " + this + " (cost: ");
+		System.out.print("[JAVA] " + invoker + " invokes Task " + this + " (cost: ");
 
 		Varargs vargs = globals.get("getTaskCost").invoke();
 		String cost = vargs.tojstring(1);
+
 		System.out.println(cost + ")");
 
 		// TODO: return false if insufficient action economy

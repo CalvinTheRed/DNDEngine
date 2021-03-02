@@ -335,7 +335,7 @@ public abstract class Entity extends GameObject {
 			return false;
 		}
 		activeEffects.add(e);
-		System.out.println(this + " given Effect " + e);
+		System.out.println("[JAVA] " + this + " given Effect " + e);
 		return true;
 	}
 
@@ -387,28 +387,28 @@ public abstract class Entity extends GameObject {
 	 * @param d ({@code Damage}) the Damage being suffered
 	 */
 	public void receiveDamage(Damage d) {
-		System.out.println(this + " received " + d);
+		System.out.println("[JAVA] " + this + " received " + d);
 		for (DamageDiceGroup group : d.getDamageDice()) {
 			int damage = 0;
 			if (group.getEffectiveness() == DamageDiceGroup.NORMAL) {
 				damage = group.getSum();
-				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: "
-						+ group.getBonus() + ")");
+				System.out.println("[JAVA] " + this + " takes " + damage + " " + group.getDamageType()
+						+ " damage (bonus: " + group.getBonus() + ")");
 			} else if (group.getEffectiveness() == DamageDiceGroup.RESISTED) {
 				damage = Math.max(1, group.getSum() / 2);
-				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: "
-						+ group.getBonus() + ") (resistant)");
+				System.out.println("[JAVA] " + this + " takes " + damage + " " + group.getDamageType()
+						+ " damage (bonus: " + group.getBonus() + ") (resistant)");
 			} else if (group.getEffectiveness() == DamageDiceGroup.ENHANCED) {
 				damage = group.getSum() * 2;
 				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: "
 						+ group.getBonus() + ") (vulnerable)");
 			} else if (group.getEffectiveness() == DamageDiceGroup.NEUTRALIZED) {
 				damage = group.getSum();
-				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: "
-						+ group.getBonus() + ") (resistant and vulnerable)");
+				System.out.println("[JAVA] " + this + " takes " + damage + " " + group.getDamageType()
+						+ " damage (bonus: " + group.getBonus() + ") (resistant and vulnerable)");
 			} else if (group.getEffectiveness() == DamageDiceGroup.NO_EFFECT) {
-				System.out.println(this + " takes 0 " + group.getDamageType() + " damage (bonus: " + group.getBonus()
-						+ ") (immune)");
+				System.out.println("[JAVA] " + this + " takes 0 " + group.getDamageType() + " damage (bonus: "
+						+ group.getBonus() + ") (immune)");
 			}
 			takeDamage(damage);
 		}

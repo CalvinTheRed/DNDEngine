@@ -1,6 +1,5 @@
 package dnd.events.dicecontests.savingthrow;
 
-import dnd.data.EventShape;
 import dnd.effects.Effect;
 import dnd.items.Item;
 import engine.patterns.Observer;
@@ -28,16 +27,16 @@ public class SpellSavingThrow extends SavingThrow implements Observer {
 	 *                    indicates player level in the case of a cantrip, rather
 	 *                    than spell level)
 	 */
-	public SpellSavingThrow(String name, EventShape shape, double shortrange, double longrange, double radius,
-			int dcAbility, int saveAbility, int level) {
-		super(name, shape, shortrange, longrange, radius, dcAbility, saveAbility);
+	public SpellSavingThrow(String name, double shortrange, double longrange, double radius, int dcAbility,
+			int saveAbility, int level) {
+		super(name, shortrange, longrange, radius, dcAbility, saveAbility);
 		this.level = level;
 	}
 
 	@Override
 	public SpellSavingThrow clone() {
-		SpellSavingThrow clone = new SpellSavingThrow(name, shape, shortrange, longrange, radius, dcAbility,
-				saveAbility, level);
+		SpellSavingThrow clone = new SpellSavingThrow(name, shortrange, longrange, radius, dcAbility, saveAbility,
+				level);
 		clone.advantage = advantage;
 		clone.disadvantage = disadvantage;
 		clone.bonus = bonus;

@@ -2,14 +2,13 @@ package dnd.events.dicecontests.savingthrow;
 
 import dnd.combat.DamageDiceGroup;
 import dnd.data.DamageType;
-import dnd.data.EventShape;
 import dnd.events.Damage;
 import gameobjects.entities.Entity;
 
 public class SacredFlame extends SpellSavingThrow {
 
 	public SacredFlame(int dcAbility) {
-		super("Sacred Flame", EventShape.SINGLE_TARGET, 60.0, 60.0, 0, dcAbility, Entity.DEX, 0);
+		super("Sacred Flame", 60.0, 60.0, 0, dcAbility, Entity.DEX, 0);
 	}
 
 	@Override
