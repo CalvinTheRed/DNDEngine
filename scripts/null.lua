@@ -1,2 +1,0 @@
--- see more: http://www.luaj.org/luaj/3.0/README.html#luajava
--- note:     vb = luajava.bindClass("engine.VirtualBoard")

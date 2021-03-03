@@ -13,8 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import engine.VirtualBoard;
-import gameobjects.entities.Entity;
+import core.gameobjects.Entity;
+import dnd.VirtualBoard;
 import maths.Vector;
 import testing.gameobjects.entities.DummyEntity;
 

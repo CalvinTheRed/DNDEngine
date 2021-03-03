@@ -1,9 +1,9 @@
 function processEvent()
 	if target == effect:getTarget() then
-		if event:checkForTag("Attack Roll") then
+		if event:hasTag("Attack Roll") then
 			event:applyEffect(effect)
 			event:addTag("Disadvantage")
-		elseif event:checkForTag("Saving Throw") and event:checkForTag("Dex") then
+		elseif event:hasTag("Saving Throw") and event:hasTag("Dex") then
 			event:applyEffect(effect)
 			event:addTag("Advantage")
 		else

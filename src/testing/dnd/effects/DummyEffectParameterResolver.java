@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
-import gameobjects.entities.Entity;
+import core.gameobjects.Entity;
 
 // TODO: remove once a better example of parameter resolver is implemented
 public class DummyEffectParameterResolver implements ParameterResolver {
