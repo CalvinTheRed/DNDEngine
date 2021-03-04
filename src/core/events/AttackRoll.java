@@ -12,8 +12,8 @@ public abstract class AttackRoll extends DiceContest {
 	protected int attackAbility;
 	protected Entity target;
 
-	public AttackRoll(String script, String name, int attackAbility) {
-		super(script, name, Event.SINGLE_TARGET);
+	public AttackRoll(String script, int attackAbility) {
+		super(script, Event.SINGLE_TARGET);
 		this.attackAbility = attackAbility;
 		setRadius(0.0);
 		addTag("Attack Roll");

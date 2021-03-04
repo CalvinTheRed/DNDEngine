@@ -30,12 +30,15 @@ public class Effect extends Scriptable {
 	 * @param sequencingPriority ({@code boolean}) the priority of the Effect in an
 	 *                           Entity's activeEffects list
 	 */
-	public Effect(String script, String name, Entity source, Entity target) {
+	public Effect(String script, Entity source, Entity target) {
 		super(script);
-		this.name = name;
 		this.source = source;
 		this.target = target;
 		ended = false;
+		if (globals != null) {
+			globals.set("effect", CoerceJavaToLua.coerce(this));
+			globals.get("define").invoke();
+		}
 	}
 
 	/**
@@ -91,6 +94,10 @@ public class Effect extends Scriptable {
 		globals.set("target", CoerceJavaToLua.coerce(target));
 		globals.get("processEventSafe").invoke();
 		return false;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	// TODO: add processTask() abstract function?

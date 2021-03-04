@@ -1,12 +1,13 @@
 function define()
 	Item = luajava.bindClass("core.Item")
 	
-	item:setName("Dagger")
-	item:addTag(Item.FINESSE)
-	item:addTag(Item.LIGHT)
-	item:addTag(Item.THROWN)
-	item:addTag(Item.SIMPLE_MELEE)
-	item:addTag(Item.DAGGER)
+	item:setName("Heavy Crossbow")
+	item:addTag(Item.HEAVY)
+	item:addTag(Item.LOADING)
+	item:addTag(Item.RANGE)
+	item:addTag(Item.TWO_HANDED)
+	item:addTag(Item.MARTIAL_RANGED)
+	item:addTag(Item.HEAVY_CROSSBOW)
 end
 
 
@@ -18,7 +19,7 @@ end
 
 function damage()
 	dt = luajava.bindClass("dnd.data.DamageType")
-	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 1, 4, dt.PIERCING)
+	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 1, 10, dt.PIERCING)
 	return damageDice
 end
 
@@ -30,7 +31,7 @@ end
 
 
 function range()
-	return 20.0, 40.0, -1.0, -1.0
+	return 20.0, 40.0, 100.0, 400.0
 end
 
 
@@ -47,5 +48,5 @@ end
 
 
 function weight()
-	return 1.0
+	return 18.0
 end

@@ -7,8 +7,8 @@ public abstract class DiceContest extends Event {
 	protected Die d20;
 	protected int bonus;
 
-	public DiceContest(String script, String name, String targetTag) {
-		super(script, name, targetTag);
+	public DiceContest(String script, String targetTag) {
+		super(script, targetTag);
 		d20 = new Die(20);
 		addTag("Dice Contest");
 	}

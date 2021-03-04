@@ -38,19 +38,25 @@ public class Event extends Scriptable {
 	protected LinkedList<Effect> appliedEffects;
 	protected LinkedList<String> tags;
 
-	public Event(String script, String name, String targetTag) {
+	public Event(String script, String targetTag) {
 		super(script);
-		this.name = name;
 		appliedEffects = new LinkedList<Effect>();
 		tags = new LinkedList<String>();
 		addTag(targetTag);
+		if (globals != null) {
+			globals.set("event", CoerceJavaToLua.coerce(this));
+			globals.get("define").invoke();
+		}
 	}
 
-	private Event(String script, String name) {
+	private Event(String script) {
 		super(script);
-		this.name = name;
 		appliedEffects = new LinkedList<Effect>();
 		tags = new LinkedList<String>();
+		if (globals != null) {
+			globals.set("event", CoerceJavaToLua.coerce(this));
+			globals.get("define").invoke();
+		}
 	}
 
 	@Override
@@ -80,8 +86,7 @@ public class Event extends Scriptable {
 		} else if (hasTag("Sphere")) {
 			targets.addAll(VirtualBoard.entitiesInSphere(targetPos, radius));
 		} else {
-			System.out
-					.println("[JAVA] ERR: event " + this + " has no targeting tags! (Choose from among the following)");
+			System.out.println("[JAVA] ERR: event " + this + " has no targeting tags! (Choose from among the following)");
 			System.out.println("       \"Cone\",\"Cube\",\"Line\",\"Single Target\",\"Sphere\"");
 			return;
 		}
@@ -92,7 +97,6 @@ public class Event extends Scriptable {
 
 		// Clone this event to each of its targets
 		for (Entity target : targets) {
-			System.out.println(this.getClass());
 			clone().invokeAsClone(source, target);
 		}
 
@@ -114,6 +118,10 @@ public class Event extends Scriptable {
 
 	public boolean hasTag(String tag) {
 		return tags.contains(tag);
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setRange(double shortrange, double longrange) {

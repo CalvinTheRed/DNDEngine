@@ -5,9 +5,11 @@ import java.util.LinkedList;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
+import core.events.AttackRoll;
 import core.events.Event;
 import core.events.WeaponAttack;
 import core.gameobjects.Entity;
+import core.tasks.Task;
 import dnd.combat.DamageDiceGroup;
 
 public class Item extends Scriptable {
@@ -85,7 +87,6 @@ public class Item extends Scriptable {
 
 	public Item(String script) {
 		super(script);
-		name = "ITEM";
 		tags = new LinkedList<String>();
 		globals.set("item", CoerceJavaToLua.coerce(this));
 		globals.get("define").invoke();
@@ -94,11 +95,6 @@ public class Item extends Scriptable {
 	public void equip(Entity subject) {
 		globals.set("subject", CoerceJavaToLua.coerce(subject));
 		globals.get("equip").invoke();
-	}
-
-	public void unequip(Entity subject) {
-		globals.set("subject", CoerceJavaToLua.coerce(subject));
-		globals.get("unequip").invoke();
 	}
 
 	public LinkedList<Event> getMainhandAttackOptions() {
@@ -121,16 +117,50 @@ public class Item extends Scriptable {
 		return events;
 	}
 
+	public LinkedList<Task> getCustomTasks() {
+		Varargs va = globals.get("customTasks").invoke();
+		LinkedList<Task> tasks = new LinkedList<Task>();
+		int index = 1;
+		Task task = (Task) (va.touserdata(index));
+		while (task != null) {
+			tasks.add(task);
+			index++;
+			task = (Task) (va.touserdata(index));
+		}
+		return tasks;
+	}
+
 	public DamageDiceGroup getDamageDice() {
-		globals.set("item", CoerceJavaToLua.coerce(this));
-		Varargs va = globals.get("damageDice").invoke();
+		Varargs va = globals.get("damage").invoke();
 		return (DamageDiceGroup) (va.touserdata(1, DamageDiceGroup.class));
 	}
 
+	public double[] getRange(String attackType) {
+		double[] range = new double[2];
+		Varargs va = globals.get("range").invoke();
+		if (attackType == AttackRoll.RANGED && hasTag(RANGE)) {
+			range[Event.SHORTRANGE] = va.todouble(3);
+			range[Event.LONGRANGE] = va.todouble(4);
+		} else {
+			range[Event.SHORTRANGE] = va.todouble(1);
+			range[Event.LONGRANGE] = va.todouble(2);
+		}
+		return range;
+	}
+
 	public double getReach() {
-		globals.set("item", CoerceJavaToLua.coerce(this));
 		Varargs va = globals.get("reach").invoke();
 		return va.todouble(1);
+	}
+
+	public double getWeight() {
+		Varargs va = globals.get("weight").invoke();
+		return va.todouble(1);
+	}
+
+	public void unequip(Entity subject) {
+		globals.set("subject", CoerceJavaToLua.coerce(subject));
+		globals.get("unequip").invoke();
 	}
 
 	public void setName(String name) {

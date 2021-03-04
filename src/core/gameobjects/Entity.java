@@ -203,6 +203,20 @@ public abstract class Entity extends GameObject implements Subject {
 	}
 
 	public LinkedList<Task> getTasks() {
+		availableTasks.clear();
+		availableTasks.addAll(baseTasks);
+		try {
+			availableTasks.addAll(getMainhand().getCustomTasks());
+		} catch (NullPointerException ex) {
+		}
+		try {
+			availableTasks.addAll(getOffhand().getCustomTasks());
+		} catch (NullPointerException ex) {
+		}
+		try {
+			availableTasks.addAll(getArmor().getCustomTasks());
+		} catch (NullPointerException ex) {
+		}
 		return availableTasks;
 	}
 
@@ -267,11 +281,6 @@ public abstract class Entity extends GameObject implements Subject {
 
 	public void removeObserver(Observer o) {
 		observers.remove(o);
-	}
-
-	public void resetTasks() {
-		availableTasks.clear();
-		availableTasks.addAll(baseTasks);
 	}
 
 	private void takeDamage(int damage) {

@@ -1,3 +1,9 @@
+function define()
+	effect:setName("Dodge")
+end
+
+
+
 function processEvent()
 	if target == effect:getTarget() then
 		if event:hasTag("Attack Roll") then

@@ -1,6 +1,5 @@
 package core.gameobjects;
 
-import core.Item;
 import core.tasks.Attack;
 import core.tasks.Task;
 import maths.Vector;
@@ -13,13 +12,6 @@ import maths.Vector;
  */
 public class Zombie extends Entity {
 
-	/**
-	 * Constructor for class Zombie
-	 * 
-	 * @param pos ({@code Vector}) the coordinate at which the Zombie is located
-	 * @param rot ({@code Vector}) a Vector in parallel with the direction the
-	 *            Zombie is facing
-	 */
 	public Zombie(Vector pos, Vector rot) {
 		super("Zombie", pos, rot);
 
@@ -40,13 +32,10 @@ public class Zombie extends Entity {
 		generateHealth(8);
 
 		Task task;
-//		task = new Task("scripts/tasks/dodge.lua", "Dodge");
-//		addBaseTask(task);
 		task = new Attack(this, 3);
 		addBaseTask(task);
-		resetTasks();
 
-		equipMainhand(new Item("scripts/items/club.lua"));
+		getTasks(); // populate initial availableTasks list
 	}
 
 }

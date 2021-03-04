@@ -17,7 +17,7 @@ public class DummyEffectParameterResolver implements ParameterResolver {
 	public Object resolveParameter(ParameterContext arg0, ExtensionContext arg1) throws ParameterResolutionException {
 		if (arg0.getParameter().getType() == DummyEffect.class) {
 			// TODO: does priority interfere with this tester?
-			return new DummyEffect(Source, Target, "Dummy Effect");
+			return new DummyEffect(Source, Target);
 		}
 		return null;
 	}

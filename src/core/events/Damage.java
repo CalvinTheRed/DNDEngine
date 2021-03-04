@@ -18,17 +18,19 @@ public class Damage extends Event {
 	protected LinkedList<DamageDiceGroup> damageDice;
 	Event parent;
 
-	public Damage(String name, Event parent) {
-		super(null, name, Event.SINGLE_TARGET);
+	public Damage(Event parent) {
+		super(null, Event.SINGLE_TARGET);
 		damageDice = new LinkedList<DamageDiceGroup>();
 		this.parent = parent;
+		name = "Damage (" + parent + ")";
 	}
 
 	public Damage clone() {
-		Damage clone = new Damage(name, parent);
+		Damage clone = new Damage(parent);
 		for (DamageDiceGroup group : damageDice) {
 			clone.addDamageDiceGroup(group.clone());
 		}
+		clone.name = name;
 		return clone;
 	}
 

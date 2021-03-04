@@ -8,15 +8,15 @@ public class Attack extends Task {
 	protected int numAttacks;
 
 	public Attack(Entity subject, int numAttacks) {
-		super(null, "Attack");
+		super(null);
 		for (int i = 0; i < numAttacks; i++) {
 			WeaponAttackGroup group = new WeaponAttackGroup();
 			subject.addObserver(group);
 			addEventGroup(group);
 		}
-		subject.updateObservers(); // TODO: make compatible with natural weapon options? Perhaps after merging
-									// Inventory with Entity
+		subject.updateObservers();
 		this.numAttacks = numAttacks;
+		name = "Attack";
 	}
 
 	public int getNumAttacks() {

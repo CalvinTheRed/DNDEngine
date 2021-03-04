@@ -26,10 +26,13 @@ public class Task extends Scriptable {
 	 * 
 	 * @param name ({@code String}) the name of the Task
 	 */
-	public Task(String script, String name) {
+	public Task(String script) {
 		super(script);
-		this.name = name;
 		eventGroups = new LinkedList<EventGroup>();
+		if (globals != null) {
+			globals.set("task", CoerceJavaToLua.coerce(this));
+			globals.get("define").invoke();
+		}
 	}
 
 	/**
@@ -65,6 +68,10 @@ public class Task extends Scriptable {
 		globals.get("invokeTask").invoke();
 
 		return true;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override

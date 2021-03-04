@@ -6,8 +6,8 @@ import core.gameobjects.Entity;
 
 public class DummyEffect extends Effect {
 
-	public DummyEffect(Entity source, Entity target, String name) {
-		super("", name, source, target);
+	public DummyEffect(Entity source, Entity target) {
+		super("", source, target);
 	}
 
 	@Override
