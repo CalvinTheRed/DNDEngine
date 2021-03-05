@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import core.gameobjects.Entity;
 import dnd.combat.DamageDiceGroup;
 import maths.Vector;
+import maths.dice.Die;
 
 /**
  * A class which represents damage dealt from a single source (though that
@@ -62,11 +63,33 @@ public class Damage extends Event {
 		target.receiveDamage(this);
 	}
 
-	public void addDamageDiceGroup(DamageDiceGroup group) {
-		damageDice.add(group);
+	public void addDamageDiceGroup(DamageDiceGroup newGroup) {
+		for (DamageDiceGroup group : damageDice) {
+			if (group.getDamageType() == newGroup.getDamageType()) {
+				for (Die d : newGroup.getDice()) {
+					group.addDie(d);
+					group.addBonus(newGroup.getBonus());
+					return;
+				}
+			}
+		}
+		damageDice.add(newGroup);
 	}
 
 	public void roll() {
+		if (hasTag(AttackRoll.CRITICAL_HIT)) {
+			System.out.println("[JAVA] CRITICAL HIT!!!");
+			LinkedList<DamageDiceGroup> criticalDice = new LinkedList<DamageDiceGroup>();
+			for (DamageDiceGroup group : damageDice) {
+				DamageDiceGroup criticalClone = group.clone();
+				criticalClone.addBonus(-criticalClone.getBonus());
+				criticalDice.add(criticalClone);
+			}
+			for (DamageDiceGroup group : criticalDice) {
+				addDamageDiceGroup(group);
+			}
+		}
+
 		for (DamageDiceGroup group : damageDice) {
 			group.roll();
 		}

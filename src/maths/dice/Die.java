@@ -9,6 +9,9 @@ import java.util.Random;
  *
  */
 public class Die {
+	public static final int CRITICAL_FAIL = 1;
+	public static final int CRITICAL_HIT = 20;
+
 	protected int size;
 	protected int roll;
 

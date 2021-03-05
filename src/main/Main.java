@@ -15,10 +15,13 @@ public class Main {
 	private static void test() {
 		Entity z = new Zombie(new Vector(30, 0, 0), new Vector(1, 0, 0));
 		z.equipMainhand(new Item("scripts/items/test_item.lua"));
-		z.versatileSet();
 		z.equipArmor(new Item("scripts/items/test_item.lua"));
+
 		z.addItemProficiency(Item.HEAVY_CROSSBOW);
 		z.addItemProficiency(Item.ARMOR);
+
+		z.versatileSet();
+		z.versatileUnset();
 
 		z.invokeTask(0);
 

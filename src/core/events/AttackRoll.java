@@ -11,6 +11,8 @@ public abstract class AttackRoll extends DiceContest {
 	public static final String RANGED = "Ranged";
 	public static final String THROWN = "Thrown";
 
+	public static final String CRITICAL_HIT = "Critical Hit";
+
 	protected int attackAbility;
 	protected Entity target;
 
@@ -29,9 +31,9 @@ public abstract class AttackRoll extends DiceContest {
 		while (source.processEvent(this, source, target) || target.processEvent(this, source, target))
 			;
 
-		roll();
 		// apply relevant ability score modifier as attack roll bonus
 		addBonus(source.getAbilityModifier(attackAbility));
+		roll();
 
 		while (source.processEvent(this, source, target) || target.processEvent(this, source, target))
 			;
@@ -42,7 +44,7 @@ public abstract class AttackRoll extends DiceContest {
 			System.out.println("[JAVA] Attack roll hit! (" + getRawRoll() + "+" + bonus + ":" + acc.getAC() + ")");
 			invokeFallout(source);
 		} else {
-			System.out.println("[JAVA] Attack roll missed! (" + getRawRoll() + "+" + bonus + ":" + acc.getAC() + ")");
+			System.out.println("[JAVA] Attack roll miss! (" + getRawRoll() + "+" + bonus + ":" + acc.getAC() + ")");
 		}
 	}
 
