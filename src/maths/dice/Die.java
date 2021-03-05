@@ -31,6 +31,10 @@ public class Die {
 	 * This function rolls the Die
 	 */
 	public void roll() {
+//		if (size == 20) {
+//			roll = 20;
+//			return;
+//		}
 		roll = Die.r.nextInt(size) + 1;
 	}
 

@@ -1,6 +1,6 @@
 package main;
 
-import core.Item;
+import core.events.SpellAttack;
 import core.events.groups.EventGroup;
 import core.gameobjects.Entity;
 import core.gameobjects.Zombie;
@@ -14,16 +14,10 @@ public class Main {
 
 	private static void test() {
 		Entity z = new Zombie(new Vector(30, 0, 0), new Vector(1, 0, 0));
-		z.equipMainhand(new Item("scripts/items/test_item.lua"));
-		z.equipArmor(new Item("scripts/items/test_item.lua"));
 
-		z.addItemProficiency(Item.HEAVY_CROSSBOW);
-		z.addItemProficiency(Item.ARMOR);
-
-		z.versatileSet();
-		z.versatileUnset();
-
-		z.invokeTask(0);
+		EventGroup eg = new EventGroup();
+		eg.addEvent(new SpellAttack("scripts/events/fire_bolt.lua", Entity.INT));
+		z.queueEventGroup(eg);
 
 		for (EventGroup group : z.getEventQueue()) {
 			System.out.println(group);

@@ -7,6 +7,7 @@ import core.Observer;
 import core.Subject;
 import core.effects.Effect;
 import core.effects.ItemProficiencyWatcher;
+import core.effects.SpellProficiencyWatcher;
 import core.events.Damage;
 import core.events.Event;
 import core.events.TaskCollection;
@@ -68,6 +69,7 @@ public abstract class Entity extends GameObject implements Subject {
 		itemProficiencies = new LinkedList<String>();
 
 		addEffect(new ItemProficiencyWatcher(this));
+		addEffect(new SpellProficiencyWatcher(this));
 	}
 
 	public boolean addBaseTask(Task task) {
@@ -179,7 +181,11 @@ public abstract class Entity extends GameObject implements Subject {
 	}
 
 	public int getAbilityModifier(int ability) {
-		return (abilityScores[ability] - 10) / 2;
+		int abilityScoreBuffer = abilityScores[ability] - 10;
+		if (abilityScoreBuffer < 0) {
+			abilityScoreBuffer--;
+		}
+		return abilityScoreBuffer / 2;
 	}
 
 	public Item getArmor() {

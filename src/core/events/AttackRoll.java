@@ -13,6 +13,7 @@ public abstract class AttackRoll extends DiceContest {
 
 	public static final String CRITICAL_HIT = "Critical Hit";
 
+	protected String attackType;
 	protected int attackAbility;
 	protected Entity target;
 
@@ -22,6 +23,18 @@ public abstract class AttackRoll extends DiceContest {
 		setRadius(0.0);
 		addTag(Event.SINGLE_TARGET);
 		addTag(AttackRoll.EVENT_TAG_ID);
+	}
+
+	public int getAttackAbility() {
+		return attackAbility;
+	}
+
+	public String getAttackType() {
+		return attackType;
+	}
+
+	public void setAttackType(String attackType) {
+		this.attackType = attackType;
 	}
 
 	@Override

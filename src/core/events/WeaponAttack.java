@@ -8,7 +8,6 @@ import maths.dice.Die;
 
 public class WeaponAttack extends AttackRoll {
 	protected Item medium;
-	protected String attackType;
 	protected boolean mainhand;
 
 	public WeaponAttack(Item medium, int attackAbility, String attackType, boolean mainhand) {
