@@ -11,15 +11,37 @@ end
 
 
 
+function acAbilityBonusLimit()
+	return 0
+end
+
+
+
+function acbase()
+	return 0
+end
+
+
+
 function customTasks()
 end
 
 
 
 function damage()
+	ar = luajava.bindClass("core.events.AttackRoll")
 	dt = luajava.bindClass("dnd.data.DamageType")
-	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 1, 4, dt.PIERCING)
-	return damageDice
+	
+	if attackType == ar.MELEE then
+		damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 1, 4, dt.PIERCING)
+		return damageDice
+	elseif attackType == ar.RANGED then
+		return nil
+	elseif attackType == ar.THROWN then
+		damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 1, 4, dt.PIERCING)
+		return damageDice
+	end
+	
 end
 
 

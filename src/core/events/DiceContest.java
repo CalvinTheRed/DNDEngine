@@ -4,13 +4,15 @@ import core.gameobjects.Entity;
 import maths.dice.Die;
 
 public abstract class DiceContest extends Event {
+	public static final String EVENT_TAG_ID = "Dice Contest";
+
 	protected Die d20;
 	protected int bonus;
 
-	public DiceContest(String script, String targetTag) {
-		super(script, targetTag);
+	public DiceContest(String script) {
+		super(script);
 		d20 = new Die(20);
-		addTag("Dice Contest");
+		addTag(DiceContest.EVENT_TAG_ID);
 	}
 
 	public void addBonus(int bonus) {
@@ -23,6 +25,10 @@ public abstract class DiceContest extends Event {
 
 	public int getRawRoll() {
 		return d20.getRoll();
+	}
+
+	public int getRoll() {
+		return d20.getRoll() + bonus;
 	}
 
 	protected void roll() {

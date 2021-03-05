@@ -1,7 +1,8 @@
-package core;
+package core.effects;
 
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
+import core.Scriptable;
 import core.events.Event;
 import core.gameobjects.Entity;
 

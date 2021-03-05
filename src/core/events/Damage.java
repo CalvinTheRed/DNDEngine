@@ -15,14 +15,18 @@ import maths.Vector;
  *
  */
 public class Damage extends Event {
+	public final static String EVENT_TAG_ID = "Damage";
+
 	protected LinkedList<DamageDiceGroup> damageDice;
 	Event parent;
 
 	public Damage(Event parent) {
-		super(null, Event.SINGLE_TARGET);
+		super(null);
 		damageDice = new LinkedList<DamageDiceGroup>();
 		this.parent = parent;
 		name = "Damage (" + parent + ")";
+		addTag(Event.SINGLE_TARGET);
+		addTag(Damage.EVENT_TAG_ID);
 	}
 
 	public Damage clone() {

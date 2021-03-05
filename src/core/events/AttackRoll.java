@@ -5,6 +5,8 @@ import dnd.VirtualBoard;
 import maths.Vector;
 
 public abstract class AttackRoll extends DiceContest {
+	public static final String EVENT_TAG_ID = "Attack Roll";
+
 	public static final String MELEE = "Melee";
 	public static final String RANGED = "Ranged";
 	public static final String THROWN = "Thrown";
@@ -13,10 +15,11 @@ public abstract class AttackRoll extends DiceContest {
 	protected Entity target;
 
 	public AttackRoll(String script, int attackAbility) {
-		super(script, Event.SINGLE_TARGET);
+		super(script);
 		this.attackAbility = attackAbility;
 		setRadius(0.0);
-		addTag("Attack Roll");
+		addTag(Event.SINGLE_TARGET);
+		addTag(AttackRoll.EVENT_TAG_ID);
 	}
 
 	@Override
@@ -25,12 +28,22 @@ public abstract class AttackRoll extends DiceContest {
 
 		while (source.processEvent(this, source, target) || target.processEvent(this, source, target))
 			;
+
 		roll();
+		// apply relevant ability score modifier as attack roll bonus
+		addBonus(source.getAbilityModifier(attackAbility));
+
 		while (source.processEvent(this, source, target) || target.processEvent(this, source, target))
 			;
 
-		// TODO: make an attack roll check properly here
-		invokeFallout(source);
+		ArmorClassCalculation acc = new ArmorClassCalculation(source);
+		source.processEvent(acc, source, source);
+		if (getRoll() >= acc.getAC()) {
+			System.out.println("[JAVA] Attack roll hit! (" + getRawRoll() + "+" + bonus + ":" + acc.getAC() + ")");
+			invokeFallout(source);
+		} else {
+			System.out.println("[JAVA] Attack roll missed! (" + getRawRoll() + "+" + bonus + ":" + acc.getAC() + ")");
+		}
 	}
 
 }

@@ -1,6 +1,6 @@
 package testing.dnd.effects;
 
-import core.Effect;
+import core.effects.Effect;
 import core.events.Event;
 import core.gameobjects.Entity;
 

@@ -97,6 +97,16 @@ public class Item extends Scriptable {
 		globals.get("equip").invoke();
 	}
 
+	public int getAC() {
+		Varargs va = globals.get("acbase").invoke();
+		return va.toint(1);
+	}
+
+	public int getACAbilityBonusLimit() {
+		Varargs va = globals.get("acAbilityBonusLimit").invoke();
+		return va.toint(1);
+	}
+
 	public LinkedList<Event> getMainhandAttackOptions() {
 		LinkedList<Event> events = new LinkedList<Event>();
 
@@ -117,6 +127,10 @@ public class Item extends Scriptable {
 		return events;
 	}
 
+	public LinkedList<String> getTags() {
+		return tags;
+	}
+
 	public LinkedList<Task> getCustomTasks() {
 		Varargs va = globals.get("customTasks").invoke();
 		LinkedList<Task> tasks = new LinkedList<Task>();
@@ -130,7 +144,8 @@ public class Item extends Scriptable {
 		return tasks;
 	}
 
-	public DamageDiceGroup getDamageDice() {
+	public DamageDiceGroup getDamageDice(String attackType) {
+		globals.set("attackType", attackType);
 		Varargs va = globals.get("damage").invoke();
 		return (DamageDiceGroup) (va.touserdata(1, DamageDiceGroup.class));
 	}

@@ -7,6 +7,20 @@ function define()
 	item:addTag(Item.RANGE)
 	item:addTag(Item.THROWN)
 	item:addTag(Item.MARTIAL_RANGED)
+	item:addTag(Item.ARMOR)
+	item:addTag(Item.SHIELD)
+end
+
+
+
+function acAbilityBonusLimit()
+	return 2
+end
+
+
+
+function acbase()
+	return 15
 end
 
 
@@ -19,9 +33,20 @@ end
 
 
 function damage()
+	ar = luajava.bindClass("core.events.AttackRoll")
 	dt = luajava.bindClass("dnd.data.DamageType")
-	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 1, 4, dt.SLASHING)
-	return damageDice
+	
+	if attackType == ar.MELEE then
+		damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 1, 1, dt.BLUDGEONING)
+		return damageDice
+	elseif attackType == ar.RANGED then
+		damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 1, 1, dt.PIERCING)
+		return damageDice
+	elseif attackType == ar.THROWN then
+		damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 1, 1, dt.BLUDGEONING)
+		return damageDice
+	end
+	
 end
 
 

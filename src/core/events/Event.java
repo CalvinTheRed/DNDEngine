@@ -4,8 +4,8 @@ import java.util.LinkedList;
 
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
-import core.Effect;
 import core.Scriptable;
+import core.effects.Effect;
 import core.gameobjects.Entity;
 import dnd.VirtualBoard;
 import maths.Vector;
@@ -38,18 +38,7 @@ public class Event extends Scriptable {
 	protected LinkedList<Effect> appliedEffects;
 	protected LinkedList<String> tags;
 
-	public Event(String script, String targetTag) {
-		super(script);
-		appliedEffects = new LinkedList<Effect>();
-		tags = new LinkedList<String>();
-		addTag(targetTag);
-		if (globals != null) {
-			globals.set("event", CoerceJavaToLua.coerce(this));
-			globals.get("define").invoke();
-		}
-	}
-
-	private Event(String script) {
+	public Event(String script) {
 		super(script);
 		appliedEffects = new LinkedList<Effect>();
 		tags = new LinkedList<String>();
@@ -61,12 +50,13 @@ public class Event extends Scriptable {
 
 	@Override
 	public Event clone() {
-		Event clone = new Event(script, name);
+		Event clone = new Event(script);
 		clone.targetPos = targetPos;
 		clone.shortrange = shortrange;
 		clone.longrange = longrange;
 		clone.radius = radius;
 		clone.appliedEffects.addAll(appliedEffects);
+		clone.tags.clear();
 		clone.tags.addAll(tags);
 		return clone;
 	}
@@ -86,7 +76,8 @@ public class Event extends Scriptable {
 		} else if (hasTag("Sphere")) {
 			targets.addAll(VirtualBoard.entitiesInSphere(targetPos, radius));
 		} else {
-			System.out.println("[JAVA] ERR: event " + this + " has no targeting tags! (Choose from among the following)");
+			System.out
+					.println("[JAVA] ERR: event " + this + " has no targeting tags! (Choose from among the following)");
 			System.out.println("       \"Cone\",\"Cube\",\"Line\",\"Single Target\",\"Sphere\"");
 			return;
 		}
@@ -120,6 +111,10 @@ public class Event extends Scriptable {
 		return tags.contains(tag);
 	}
 
+	public LinkedList<String> getTags() {
+		return tags;
+	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -145,7 +140,7 @@ public class Event extends Scriptable {
 		if (appliedEffects.contains(e)) {
 			throw new Exception("Effect already applied");
 		}
-		System.out.println("[JAVA] Applying effect " + e + " from " + e.getSource() + " to " + this);
+		System.out.println("[JAVA] Applying effect " + e + " from " + e.getSource() + " to event " + this);
 		appliedEffects.add(e);
 	}
 

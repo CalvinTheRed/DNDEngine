@@ -21,6 +21,10 @@ public class WeaponAttack extends AttackRoll {
 				+ Entity.getAbility(attackAbility) + ")";
 	}
 
+	public Item getMedium() {
+		return medium;
+	}
+
 	@Override
 	protected void invokeFallout(Entity source) {
 		Damage d = new Damage(this);
@@ -28,7 +32,7 @@ public class WeaponAttack extends AttackRoll {
 		if (medium == null) {
 			damageDice = new DamageDiceGroup(1, 4, DamageType.BLUDGEONING);
 		} else {
-			damageDice = medium.getDamageDice();
+			damageDice = medium.getDamageDice(attackType);
 		}
 		if (mainhand) {
 			damageDice.addBonus(source.getAbilityModifier(attackAbility));

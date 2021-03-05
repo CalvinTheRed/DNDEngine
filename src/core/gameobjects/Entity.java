@@ -2,12 +2,14 @@ package core.gameobjects;
 
 import java.util.LinkedList;
 
-import core.Effect;
 import core.Item;
 import core.Observer;
 import core.Subject;
+import core.effects.Effect;
+import core.effects.ItemProficiencyWatcher;
 import core.events.Damage;
 import core.events.Event;
+import core.events.TaskCollection;
 import core.events.groups.EventGroup;
 import core.tasks.Task;
 import dnd.combat.DamageDiceGroup;
@@ -31,11 +33,16 @@ public abstract class Entity extends GameObject implements Subject {
 	public static final int CHA = 5;
 
 	protected LinkedList<Observer> observers;
-
 	protected LinkedList<Effect> activeEffects;
 	protected LinkedList<EventGroup> eventQueue;
 	protected LinkedList<Task> availableTasks;
 	protected LinkedList<Task> baseTasks;
+	protected LinkedList<Item> inventory;
+	protected LinkedList<String> itemProficiencies;
+
+	protected Item mainhand;
+	protected Item offhand;
+	protected Item armor;
 
 	protected int experience;
 	protected int health;
@@ -45,10 +52,6 @@ public abstract class Entity extends GameObject implements Subject {
 	protected int level;
 	protected int[] abilityScores;
 	protected int[] baseAbilityScores;
-	protected LinkedList<Item> inventory;
-	protected Item mainhand;
-	protected Item offhand;
-	protected Item armor;
 
 	public Entity(String name, Vector pos, Vector rot) {
 		super(name, pos, rot);
@@ -62,6 +65,9 @@ public abstract class Entity extends GameObject implements Subject {
 		availableTasks = new LinkedList<Task>();
 		baseTasks = new LinkedList<Task>();
 		inventory = new LinkedList<Item>();
+		itemProficiencies = new LinkedList<String>();
+
+		addEffect(new ItemProficiencyWatcher(this));
 	}
 
 	public boolean addBaseTask(Task task) {
@@ -79,6 +85,10 @@ public abstract class Entity extends GameObject implements Subject {
 		activeEffects.add(e);
 		System.out.println("[JAVA] " + this + " given Effect " + e);
 		return true;
+	}
+
+	public void addItemProficiency(String proficiencyGroup) {
+		itemProficiencies.add(proficiencyGroup);
 	}
 
 	public void addObserver(Observer o) {
@@ -203,20 +213,23 @@ public abstract class Entity extends GameObject implements Subject {
 	}
 
 	public LinkedList<Task> getTasks() {
+		TaskCollection tc = new TaskCollection(this);
+		tc.addTasks(baseTasks);
+		try {
+			tc.addTasks(getMainhand().getCustomTasks());
+		} catch (NullPointerException ex) {
+		}
+		try {
+			tc.addTasks(getOffhand().getCustomTasks());
+		} catch (NullPointerException ex) {
+		}
+		try {
+			tc.addTasks(getArmor().getCustomTasks());
+		} catch (NullPointerException ex) {
+		}
+		processEvent(tc, this, this);
 		availableTasks.clear();
-		availableTasks.addAll(baseTasks);
-		try {
-			availableTasks.addAll(getMainhand().getCustomTasks());
-		} catch (NullPointerException ex) {
-		}
-		try {
-			availableTasks.addAll(getOffhand().getCustomTasks());
-		} catch (NullPointerException ex) {
-		}
-		try {
-			availableTasks.addAll(getArmor().getCustomTasks());
-		} catch (NullPointerException ex) {
-		}
+		availableTasks.addAll(tc.getTasks());
 		return availableTasks;
 	}
 
@@ -241,6 +254,10 @@ public abstract class Entity extends GameObject implements Subject {
 			effect.processEvent(e, source, target);
 		}
 		return false;
+	}
+
+	public boolean proficientWith(String proficiencyGroup) {
+		return proficiencyGroup == null || itemProficiencies.contains(proficiencyGroup);
 	}
 
 	public boolean queueEventGroup(EventGroup group) {
@@ -284,6 +301,7 @@ public abstract class Entity extends GameObject implements Subject {
 	}
 
 	private void takeDamage(int damage) {
+		// TODO: implement health decrementation here
 	}
 
 	public void updateObservers() {
