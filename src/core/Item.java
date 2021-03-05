@@ -18,13 +18,15 @@ public class Item extends Scriptable {
 	public static final String HEAVY = "Heavy";
 	public static final String LIGHT = "Light";
 	// Armor property tags
-	public static final String ARMOR = "Armor";
+	public static final String ARMOR = "Armor"; // Permits an item to be equipped as armor
+	public static final String ARMOR_HEAVY = "Heavy Armor";
+	public static final String ARMOR_LIGHT = "Light Armor";
+	public static final String ARMOR_MEDIUM = "Medium Armor";
 	public static final String MEDIUM = "Medium";
-	public static final String METALLIC = "Metallic";
+	public static final String METALLIC = "Metallic"; // Druids will typically not wear metal armor
 	public static final String SHIELD = "Shield";
 	public static final String STEALTH_DADV = "Stealth Disadvantage";
-	public static final String STR_13 = "STR 13";
-	public static final String STR_15 = "STR 15";
+	// TODO: add item lua function to determine stat prereqs for using item
 	// Weapon property tags
 	public static final String AMMUNITION = "Ammunition";
 	public static final String FINESSE = "Finesse";

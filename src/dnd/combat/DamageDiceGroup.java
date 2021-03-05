@@ -64,6 +64,12 @@ public class DamageDiceGroup extends DiceGroup {
 		return group;
 	}
 
+	public void makeVersatile() {
+		for (Die d : dice) {
+			d.upsize();
+		}
+	}
+
 	/**
 	 * This function requires roll() to be called before it reports any meaningful
 	 * data. It returns the sum of all contained dice plus the contained damage

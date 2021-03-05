@@ -37,6 +37,9 @@ public class WeaponAttack extends AttackRoll {
 		if (mainhand) {
 			damageDice.addBonus(source.getAbilityModifier(attackAbility));
 		}
+		if (source.getMainhand() == source.getOffhand() && source.getMainhand().hasTag(Item.VERSATILE)) {
+			damageDice.makeVersatile();
+		}
 		d.addDamageDiceGroup(damageDice);
 		d.invoke(source, null);
 		d.clone().invokeAsClone(source, target);

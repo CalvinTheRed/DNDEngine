@@ -59,8 +59,12 @@ public class Die {
 	 * @Override
 	 */
 	public Die clone() {
-		Die d = new Die(size);
-		d.roll = roll;
-		return d;
+		Die clone = new Die(size);
+		clone.roll = roll;
+		return clone;
+	}
+
+	public void upsize() {
+		size += 2;
 	}
 }

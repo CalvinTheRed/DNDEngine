@@ -128,18 +128,8 @@ public abstract class Entity extends GameObject implements Subject {
 		}
 	}
 
-	public void equipOffhand(Item item) {
-		if (!inventory.contains(item)) {
-			inventory.add(item);
-		}
-		offhand = item;
-		updateObservers();
-		if (item.hasTag(Item.TWO_HANDED)) {
-			mainhand = item;
-		}
-	}
-
 	public void equipMainhand(Item item) {
+		stowMainhand();
 		if (!inventory.contains(item)) {
 			inventory.add(item);
 		}
@@ -147,6 +137,18 @@ public abstract class Entity extends GameObject implements Subject {
 		updateObservers();
 		if (item.hasTag(Item.TWO_HANDED)) {
 			offhand = item;
+		}
+	}
+
+	public void equipOffhand(Item item) {
+		stowOffhand();
+		if (!inventory.contains(item)) {
+			inventory.add(item);
+		}
+		offhand = item;
+		updateObservers();
+		if (item.hasTag(Item.TWO_HANDED)) {
+			mainhand = item;
 		}
 	}
 
@@ -300,6 +302,24 @@ public abstract class Entity extends GameObject implements Subject {
 		observers.remove(o);
 	}
 
+	public void stowMainhand() {
+		if (mainhand != null) {
+			if (mainhand.hasTag(Item.TWO_HANDED)) {
+				offhand = null;
+			}
+			mainhand = null;
+		}
+	}
+
+	public void stowOffhand() {
+		if (offhand != null) {
+			if (offhand.hasTag(Item.TWO_HANDED)) {
+				mainhand = null;
+			}
+			offhand = null;
+		}
+	}
+
 	private void takeDamage(int damage) {
 		// TODO: implement health decrementation here
 	}
@@ -307,6 +327,18 @@ public abstract class Entity extends GameObject implements Subject {
 	public void updateObservers() {
 		for (Observer o : observers) {
 			o.update(this);
+		}
+	}
+
+	public void versatileSet() {
+		if (mainhand.hasTag(Item.VERSATILE) && offhand == null) {
+			offhand = mainhand;
+		}
+	}
+
+	public void versatileUnset() {
+		if (mainhand.hasTag(Item.VERSATILE) && offhand == mainhand) {
+			offhand = null;
 		}
 	}
 
