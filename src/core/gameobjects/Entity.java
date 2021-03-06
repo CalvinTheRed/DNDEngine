@@ -140,6 +140,7 @@ public abstract class Entity extends GameObject implements Subject {
 		if (item.hasTag(Item.TWO_HANDED)) {
 			offhand = item;
 		}
+		item.equip(this);
 	}
 
 	public void equipOffhand(Item item) {
@@ -152,6 +153,7 @@ public abstract class Entity extends GameObject implements Subject {
 		if (item.hasTag(Item.TWO_HANDED)) {
 			mainhand = item;
 		}
+		item.equip(this);
 	}
 
 	public void generateHealth(int hitDieSize) {

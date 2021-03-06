@@ -34,7 +34,7 @@ public class Item extends Scriptable {
 	public static final String IMPROVISED_THROWN = "Improvised Thrown";
 	public static final String LOADING = "Loading";
 	public static final String MAGICAL = "Magical";
-	public static final String RANGE = "Range";
+	public static final String RANGED = "Ranged";
 	public static final String REACH = "Reach";
 	public static final String SILVERED = "Silvered";
 	public static final String THROWN = "Thrown";
@@ -122,7 +122,7 @@ public class Item extends Scriptable {
 			}
 		}
 
-		if (hasTag(RANGE)) {
+		if (hasTag(RANGED)) {
 			events.add(new WeaponAttack(this, Entity.DEX, WeaponAttack.RANGED, true));
 		}
 
@@ -155,7 +155,7 @@ public class Item extends Scriptable {
 	public double[] getRange(String attackType) {
 		double[] range = new double[2];
 		Varargs va = globals.get("range").invoke();
-		if (attackType == AttackRoll.RANGED && hasTag(RANGE)) {
+		if (attackType == AttackRoll.RANGED && hasTag(RANGED)) {
 			range[Event.SHORTRANGE] = va.todouble(3);
 			range[Event.LONGRANGE] = va.todouble(4);
 		} else {
