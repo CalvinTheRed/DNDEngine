@@ -1,10 +1,11 @@
 function define()
 	Item = luajava.bindClass("core.Item")
 	
-	item:setName("Can of tuna")
+	item:setName("Can of Tuna")
 	item:addTag(Item.LIGHT)
 	item:addTag(Item.SIMPLE_RANGED)
 	item:addTag(Item.RANGED)
+	item:addTag("Can of Tuna")
 end
 
 

@@ -7,6 +7,8 @@ import dnd.data.DamageType;
 import maths.dice.Die;
 
 public class WeaponAttack extends AttackRoll {
+	public static final String EVENT_TAG_ID = "Weapon Attack";
+	
 	protected Item medium;
 	protected boolean mainhand;
 
@@ -19,6 +21,7 @@ public class WeaponAttack extends AttackRoll {
 		this.mainhand = mainhand;
 		name = attackType + " Attack (" + (medium == null ? "Fist" : medium.toString()) + ", "
 				+ Entity.getAbility(attackAbility) + ")";
+		addTag(EVENT_TAG_ID);
 	}
 
 	public Item getMedium() {
