@@ -5,9 +5,9 @@ import java.util.LinkedList;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
-import core.events.AttackRoll;
 import core.events.Event;
-import core.events.WeaponAttack;
+import core.events.contests.AttackRoll;
+import core.events.contests.WeaponAttack;
 import core.gameobjects.Entity;
 import core.tasks.Task;
 import dnd.combat.DamageDiceGroup;

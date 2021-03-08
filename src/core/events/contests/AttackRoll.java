@@ -1,11 +1,21 @@
-package core.events;
+package core.events.contests;
 
+import org.luaj.vm2.Varargs;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+
+import core.events.ArmorClassCalculation;
+import core.events.Damage;
+import core.events.Event;
 import core.gameobjects.Entity;
 import dnd.VirtualBoard;
+import dnd.combat.DamageDiceGroup;
 import maths.Vector;
+import maths.dice.Die;
 
-public abstract class AttackRoll extends DiceContest {
+public class AttackRoll extends DiceContest {
 	public static final String EVENT_TAG_ID = "Attack Roll";
+
+	public static final String SPELL = "Spell";
 
 	public static final String MELEE = "Melee";
 	public static final String RANGED = "Ranged";
@@ -22,7 +32,11 @@ public abstract class AttackRoll extends DiceContest {
 		this.attackAbility = attackAbility;
 		setRadius(0.0);
 		addTag(Event.SINGLE_TARGET);
-		addTag(AttackRoll.EVENT_TAG_ID);
+		addTag(EVENT_TAG_ID);
+		if (globals != null) {
+			globals.set("event", CoerceJavaToLua.coerce(this));
+			globals.get("define").invoke();
+		}
 	}
 
 	public int getAttackAbility() {
@@ -48,9 +62,11 @@ public abstract class AttackRoll extends DiceContest {
 		addBonus(source.getAbilityModifier(attackAbility));
 		roll();
 
-		while (source.processEvent(this, source, target) || target.processEvent(this, source, target))
-			;
-
+		/*
+		 * TODO: create a second after-the-fact wave of event processing while
+		 * (source.processEvent(this, source, target) || target.processEvent(this,
+		 * source, target)) ;
+		 */
 		ArmorClassCalculation acc = new ArmorClassCalculation(source);
 		source.processEvent(acc, source, source);
 		if (getRoll() >= acc.getAC()) {
@@ -59,6 +75,27 @@ public abstract class AttackRoll extends DiceContest {
 		} else {
 			System.out.println("[JAVA] Attack roll miss! (" + getRawRoll() + "+" + bonus + ":" + acc.getAC() + ")");
 		}
+	}
+
+	@Override
+	protected void invokeFallout(Entity source) {
+		Damage d = new Damage(this);
+		DamageDiceGroup damageDice;
+
+		if (getRawRoll() == Die.CRITICAL_HIT) {
+			d.addTag(AttackRoll.CRITICAL_HIT);
+		}
+
+		globals.set("source", CoerceJavaToLua.coerce(source));
+		Varargs va = globals.get("damage").invoke();
+		damageDice = (DamageDiceGroup) (va.touserdata(1));
+
+		d.addDamageDiceGroup(damageDice);
+		d.invoke(source, null);
+		d.clone().invokeAsClone(source, target);
+
+		globals.set("target", CoerceJavaToLua.coerce(target));
+		globals.get("additionalEffects").invoke();
 	}
 
 }

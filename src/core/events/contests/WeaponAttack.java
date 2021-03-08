@@ -1,6 +1,7 @@
-package core.events;
+package core.events.contests;
 
 import core.Item;
+import core.events.Damage;
 import core.gameobjects.Entity;
 import dnd.combat.DamageDiceGroup;
 import dnd.data.DamageType;

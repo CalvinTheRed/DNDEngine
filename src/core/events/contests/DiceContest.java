@@ -1,10 +1,14 @@
-package core.events;
+package core.events.contests;
 
+import core.events.Event;
 import core.gameobjects.Entity;
 import maths.dice.Die;
 
 public abstract class DiceContest extends Event {
 	public static final String EVENT_TAG_ID = "Dice Contest";
+
+	public static final String ADVANTAGE = "Advantage";
+	public static final String DISADVANTAGE = "Disadvantage";
 
 	protected Die d20;
 	protected int bonus;
@@ -33,8 +37,8 @@ public abstract class DiceContest extends Event {
 
 	protected void roll() {
 		d20.roll();
-		boolean hasAdvantage = hasTag("Advantage");
-		boolean hasDisadvantage = hasTag("Disadvantage");
+		boolean hasAdvantage = hasTag(ADVANTAGE);
+		boolean hasDisadvantage = hasTag(DISADVANTAGE);
 		if (hasAdvantage && !hasDisadvantage) {
 			System.out.println("[JAVA] Rolling with advantage!");
 			int roll = d20.getRoll();

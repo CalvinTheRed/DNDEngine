@@ -34,7 +34,7 @@ end
 
 
 function damage()
-	ar = luajava.bindClass("core.events.AttackRoll")
+	ar = luajava.bindClass("core.events.contests.AttackRoll")
 	dt = luajava.bindClass("dnd.data.DamageType")
 	
 	if attackType == ar.MELEE then

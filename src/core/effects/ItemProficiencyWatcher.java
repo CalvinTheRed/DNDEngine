@@ -3,7 +3,7 @@ package core.effects;
 import core.Item;
 import core.events.ArmorClassCalculation;
 import core.events.Event;
-import core.events.WeaponAttack;
+import core.events.contests.WeaponAttack;
 import core.gameobjects.Entity;
 
 public class ItemProficiencyWatcher extends Effect {

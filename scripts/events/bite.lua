@@ -3,11 +3,10 @@ function define()
 	Entity = luajava.bindClass("core.gameobjects.Entity")
 	Event = luajava.bindClass("core.events.Event")
 	
-	event:setName("Fire Bolt (" .. Entity:getAbility(event:getAttackAbility()) .. ")")
-	event:setAttackType(ar.RANGED)
-	event:setRange(120.0, 120.0)
-	event:addTag("Fire Bolt")
-	event:addTag(ar.SPELL)
+	event:setName("Bite")
+	event:setAttackType(ar.MELEE)
+	event:setRange(5.0, 5.0)
+	event:addTag("Bite")
 	event:addTag(Event.SINGLE_TARGET)
 end
 
@@ -32,6 +31,7 @@ function damage()
 		numDice = 2
 	end
 	
-	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", numDice, 10, dt.FIRE)
+	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", numDice, 10, dt.PIERCING)
+	damageDice:addBonus(source:getAbilityModifier(event:getAttackAbility()))
 	return damageDice
 end

@@ -8,6 +8,6 @@ end
 
 
 function invokeEvent()
-	effect = luajava.newInstance("core.Effect", "scripts/effects/dodge.lua", source, target)
+	effect = luajava.newInstance("core.effects.Effect", "scripts/effects/dodge.lua", source, target)
 	target:addEffect(effect)
 end

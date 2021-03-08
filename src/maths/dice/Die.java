@@ -32,7 +32,7 @@ public class Die {
 	 */
 	public void roll() {
 //		if (size == 20) {
-//			roll = 20;
+//			roll = CRITICAL_HIT;
 //			return;
 //		}
 		roll = Die.r.nextInt(size) + 1;

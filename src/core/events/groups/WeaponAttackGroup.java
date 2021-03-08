@@ -3,8 +3,8 @@ package core.events.groups;
 import core.Item;
 import core.Observer;
 import core.Subject;
-import core.events.AttackRoll;
-import core.events.WeaponAttack;
+import core.events.contests.AttackRoll;
+import core.events.contests.WeaponAttack;
 import core.gameobjects.Entity;
 
 public class WeaponAttackGroup extends EventGroup implements Observer {

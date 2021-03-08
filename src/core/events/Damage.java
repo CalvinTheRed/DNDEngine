@@ -2,6 +2,7 @@ package core.events;
 
 import java.util.LinkedList;
 
+import core.events.contests.AttackRoll;
 import core.gameobjects.Entity;
 import dnd.combat.DamageDiceGroup;
 import maths.Vector;
