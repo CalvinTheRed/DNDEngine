@@ -26,8 +26,8 @@ public class TaskCollection extends Event {
 		tasks.addAll(tasklist);
 	}
 
-	public void removeTask(Task t) {
-		tasks.remove(t);
+	public void removeTask(Task task) {
+		tasks.remove(task);
 	}
 
 	public LinkedList<Task> getTasks() {

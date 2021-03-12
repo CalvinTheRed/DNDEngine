@@ -1,16 +1,14 @@
 function define()
-	ar = luajava.bindClass("core.events.contests.AttackRoll")
-	dc = luajava.bindClass("core.events.contests.DiceContest")
+	AttackRoll = luajava.bindClass("core.events.contests.AttackRoll")
 	Entity = luajava.bindClass("core.gameobjects.Entity")
 	Event = luajava.bindClass("core.events.Event")
 	
 	event:setName("Ice Knife (" .. Entity:getAbility(event:getAttackAbility()) .. ")")
-	event:setAttackType(ar.RANGED)
+	event:setAttackType(AttackRoll.RANGED)
 	event:setRange(60.0, 60.0)
 	
-	event:addTag(dc.SPELL)
 	event:addTag(Event.SINGLE_TARGET)
-	
+	event:addTag(Event.SPELL)
 	event:addTag("Ice Knife")
 end
 
@@ -30,9 +28,8 @@ end
 
 
 function damage()
-	ar = luajava.bindClass("core.events.contests.AttackRoll")
-	dt = luajava.bindClass("dnd.data.DamageType")
+	DamageType = luajava.bindClass("dnd.data.DamageType")
 	
-	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 1, 10, dt.PIERCING_MAGICAL)
+	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 1, 10, DamageType.PIERCING_MAGICAL)
 	return damageDice
 end

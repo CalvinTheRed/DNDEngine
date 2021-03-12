@@ -13,12 +13,10 @@ import dnd.combat.DamageDiceGroup;
 import maths.Vector;
 
 public class SavingThrow extends DiceContest {
-	public static final String EVENT_TAG_ID = "Saving Throw";
-
 	public static final String HALF_DAMAGE_ON_PASS = "Half Damage on Pass";
 
-	Damage d;
-	LinkedList<Entity> targets;
+	protected Damage d;
+	protected LinkedList<Entity> targets;
 	protected int saveAbility;
 	protected int dcAbility;
 
@@ -26,7 +24,7 @@ public class SavingThrow extends DiceContest {
 		super(script);
 		targets = new LinkedList<Entity>();
 		this.dcAbility = dcAbility;
-		addTag(EVENT_TAG_ID);
+		addTag(SavingThrow.getEventID());
 		if (globals != null) {
 			globals.set("event", CoerceJavaToLua.coerce(this));
 			globals.get("define").invoke();
@@ -72,6 +70,15 @@ public class SavingThrow extends DiceContest {
 			return;
 		}
 
+		Varargs va = globals.get("damage").invoke();
+
+		int index = 1;
+		while (va.isuserdata(index)) {
+			d.addDamageDiceGroup((DamageDiceGroup) va.touserdata(index));
+			index++;
+		}
+		d.invoke(source, null);
+
 		// Give the source a chance to modify the Event before it gets cloned to each of
 		// its targets
 		// TODO: consider adding preProcess(Event e) method?
@@ -90,15 +97,6 @@ public class SavingThrow extends DiceContest {
 		globals.get("define").invoke();
 		while (source.processEvent(this, source, target) || target.processEvent(this, source, target)) {
 		}
-
-		Varargs va = globals.get("damage").invoke();
-
-		int index = 1;
-		while (va.isuserdata(index)) {
-			d.addDamageDiceGroup((DamageDiceGroup) va.touserdata(index));
-			index++;
-		}
-		d.invoke(source, null);
 
 		roll();
 
@@ -138,6 +136,10 @@ public class SavingThrow extends DiceContest {
 
 	public void setSaveAbility(int saveAbility) {
 		this.saveAbility = saveAbility;
+	}
+
+	public static String getEventID() {
+		return "Saving Throw";
 	}
 
 }

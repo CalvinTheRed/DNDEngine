@@ -1,18 +1,15 @@
 function define()
-	dc = luajava.bindClass("core.events.contests.DiceContest")
 	Entity = luajava.bindClass("core.gameobjects.Entity")
 	Event = luajava.bindClass("core.events.Event")
 	
 	event:setName("Sacred Flame (" .. Entity:getAbility(event:getDCAbility()) .. ")")
 	event:setSaveAbility(Entity.DEX)
+	event:setRange(0.0, 0.0)
 	
-	event:addTag(dc.SPELL)
 	event:addTag(Event.SINGLE_TARGET)
-	
+	event:addTag(Event.SPELL)
+	event:addTag(Event.CANTRIP)
 	event:addTag("Sacred Flame")
-	event:addTag("Cantrip")
-	event:addTag("Dex")
-	
 end
 
 
@@ -28,7 +25,7 @@ end
 
 
 function damage()
-	dt = luajava.bindClass("dnd.data.DamageType")
+	DamageType = luajava.bindClass("dnd.data.DamageType")
 	
 	level = source:getLevel()
 	numDice = 1
@@ -40,6 +37,6 @@ function damage()
 		numDice = 2
 	end
 	
-	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", numDice, 8, dt.RADIANT)
+	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", numDice, 8, DamageType.RADIANT)
 	return damageDice
 end

@@ -13,11 +13,9 @@ import maths.Vector;
 import maths.dice.Die;
 
 public class AttackRoll extends DiceContest {
-	public static final String EVENT_TAG_ID = "Attack Roll";
-
-	public static final String MELEE = "Melee";
-	public static final String RANGED = "Ranged";
-	public static final String THROWN = "Thrown";
+	public static final String MELEE = "Melee Attack";
+	public static final String RANGED = "Ranged Attack";
+	public static final String THROWN = "Thrown Attack";
 
 	public static final String CRITICAL_HIT = "Critical Hit";
 	public static final String CRITICAL_MISS = "Critical Miss";
@@ -31,7 +29,7 @@ public class AttackRoll extends DiceContest {
 		this.attackAbility = attackAbility;
 		setRadius(0.0);
 		addTag(Event.SINGLE_TARGET);
-		addTag(EVENT_TAG_ID);
+		addTag(AttackRoll.getEventID());
 		if (globals != null) {
 			globals.set("event", CoerceJavaToLua.coerce(this));
 			globals.get("define").invoke();
@@ -121,6 +119,10 @@ public class AttackRoll extends DiceContest {
 
 	protected void invokeFalloutOnMiss(Entity source) {
 
+	}
+
+	public static String getEventID() {
+		return "Attack Roll";
 	}
 
 }

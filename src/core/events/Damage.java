@@ -20,7 +20,7 @@ public class Damage extends Event {
 	public final static String EVENT_TAG_ID = "Damage";
 
 	protected LinkedList<DamageDiceGroup> damageDice;
-	Event parent;
+	protected Event parent;
 
 	public Damage(Event parent) {
 		super(null);
@@ -65,10 +65,6 @@ public class Damage extends Event {
 	}
 
 	public void invokeHalvedAsClone(Entity source, Entity target) {
-		for (DamageDiceGroup group : damageDice) {
-			group.addBonus(-group.getBonus() / 2);
-		}
-
 		while (source.processEvent(this, source, target))
 			;
 		// Separation here to ensure sequentially prior Effects on the source
@@ -79,6 +75,10 @@ public class Damage extends Event {
 		// always behaves in a reactionary manner to Damage Events.
 		while (target.processEvent(this, source, target))
 			;
+
+		for (DamageDiceGroup group : damageDice) {
+			group.halve();
+		}
 		target.receiveDamage(this);
 	}
 

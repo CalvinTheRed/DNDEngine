@@ -5,11 +5,8 @@ import core.gameobjects.Entity;
 import maths.dice.Die;
 
 public abstract class DiceContest extends Event {
-	public static final String EVENT_TAG_ID = "Dice Contest";
-
 	public static final String ADVANTAGE = "Advantage";
 	public static final String DISADVANTAGE = "Disadvantage";
-	public static final String SPELL = "Spell";
 
 	protected Die d20;
 	protected int bonus;
@@ -17,7 +14,7 @@ public abstract class DiceContest extends Event {
 	public DiceContest(String script) {
 		super(script);
 		d20 = new Die(20);
-		addTag(DiceContest.EVENT_TAG_ID);
+		addTag(DiceContest.getEventID());
 	}
 
 	public void addBonus(int bonus) {
@@ -59,6 +56,10 @@ public abstract class DiceContest extends Event {
 		} else {
 			System.out.println("[JAVA] Rolling with both advantage and disadvantage!");
 		}
+	}
+
+	public static String getEventID() {
+		return "Dice Contest";
 	}
 
 	protected abstract void invokeFallout(Entity source);

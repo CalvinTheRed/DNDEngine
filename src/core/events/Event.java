@@ -23,6 +23,8 @@ public class Event extends Scriptable {
 	public static final String SINGLE_TARGET = "Single Target";
 	public static final String SPHERE = "Sphere";
 
+	public static final String SPELL = "Spell";
+
 	protected Vector targetPos;
 	protected String name;
 	protected double shortrange;
@@ -51,7 +53,7 @@ public class Event extends Scriptable {
 	}
 
 	public void invoke(Entity source, Vector targetPos) {
-		System.out.println("[JAVA] " + source + " invokes Event " + this);
+		System.out.println("[JAVA] " + source + " invokes event " + this);
 
 		LinkedList<Entity> targets = new LinkedList<Entity>();
 		if (hasTag(CONE)) {

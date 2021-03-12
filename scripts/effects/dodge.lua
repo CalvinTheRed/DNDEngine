@@ -5,16 +5,17 @@ end
 
 
 function processEvent()
-	ar = luajava.bindClass("core.events.contests.AttackRoll")
-	dc = luajava.bindClass("core.events.contests.DiceContest")
+	AttackRoll = luajava.bindClass("core.events.contests.AttackRoll")
+	DiceContest = luajava.bindClass("core.events.contests.DiceContest")
+	SavingThrow = luajava.bindClass("core.events.contests.SavingThrow")
 	
 	if target == effect:getTarget() then
-		if event:hasTag(ar.EVENT_TAG_ID) then
+		if event:hasTag(AttackRoll:getEventID()) then
 			event:applyEffect(effect)
-			event:addTag(dc.DISADVANTAGE)
-		elseif event:hasTag("Saving Throw") and event:hasTag("Dex") then
+			event:addTag(DiceContest.DISADVANTAGE)
+		elseif event:hasTag(SavingThrow:getEventID()) then
 			event:applyEffect(effect)
-			event:addTag(dc.ADVANTAGE)
+			event:addTag(DiceContest.ADVANTAGE)
 		else
 			print("[LUA]  No changes made to " .. event:toString())
 		end

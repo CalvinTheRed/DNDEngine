@@ -87,7 +87,7 @@ public abstract class Entity extends GameObject implements Subject {
 			return false;
 		}
 		activeEffects.add(e);
-		System.out.println("[JAVA] " + this + " given Effect " + e);
+		System.out.println("[JAVA] " + this + " given effect " + e);
 		return true;
 	}
 

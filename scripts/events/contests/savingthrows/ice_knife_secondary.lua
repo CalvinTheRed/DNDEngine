@@ -1,16 +1,15 @@
 function define()
-	dc = luajava.bindClass("core.events.contests.DiceContest")
 	Entity = luajava.bindClass("core.gameobjects.Entity")
 	Event = luajava.bindClass("core.events.Event")
 	
 	event:setName("Ice Knife (" .. Entity:getAbility(event:getDCAbility()) .. ", Secondary)")
 	event:setSaveAbility(Entity.DEX)
+	event:setRange(0.0, 0.0)
+	event:setRadius(5.0)
 	
-	event:addTag(dc.SPELL)
 	event:addTag(Event.SPHERE)
-	
+	event:addTag(Event.SPELL)
 	event:addTag("Ice Knife")
-	event:addTag("Dex")
 end
 
 
@@ -26,8 +25,10 @@ end
 
 
 function damage()
-	dt = luajava.bindClass("dnd.data.DamageType")
+	DamageType = luajava.bindClass("dnd.data.DamageType")
 	
-	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 2, 6, dt.COLD)
+	-- need to find a way to get the spell slot level for internal calculations
+	
+	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 2, 6, DamageType.COLD)
 	return damageDice
 end
