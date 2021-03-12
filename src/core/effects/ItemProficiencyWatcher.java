@@ -7,10 +7,12 @@ import core.events.contests.WeaponAttack;
 import core.gameobjects.Entity;
 
 public class ItemProficiencyWatcher extends Effect {
+	public static final String EFFECT_TAG_ID = "Item Proficiency Watcher";
 
 	public ItemProficiencyWatcher(Entity source) {
 		super(null, source, source);
 		name = "Item Proficiency Watcher";
+		addTag(EFFECT_TAG_ID);
 	}
 
 	@Override

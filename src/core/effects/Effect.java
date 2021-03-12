@@ -1,5 +1,7 @@
 package core.effects;
 
+import java.util.LinkedList;
+
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import core.Scriptable;
@@ -19,6 +21,7 @@ public class Effect extends Scriptable {
 	protected Entity target;
 	protected String name;
 	protected boolean ended;
+	protected LinkedList<String> tags;
 
 	/**
 	 * Constructor for class Effect
@@ -35,11 +38,24 @@ public class Effect extends Scriptable {
 		super(script);
 		this.source = source;
 		this.target = target;
+		tags = new LinkedList<String>();
 		ended = false;
 		if (globals != null) {
 			globals.set("effect", CoerceJavaToLua.coerce(this));
 			globals.get("define").invoke();
 		}
+	}
+
+	public void addTag(String tag) {
+		tags.add(tag);
+	}
+
+	public boolean hasTag(String tag) {
+		return tags.contains(tag);
+	}
+
+	public LinkedList<String> getTags() {
+		return tags;
 	}
 
 	/**
