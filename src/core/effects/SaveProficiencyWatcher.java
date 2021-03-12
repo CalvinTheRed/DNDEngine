@@ -17,10 +17,8 @@ public class SaveProficiencyWatcher extends Effect {
 	public boolean processEvent(Event e, Entity source, Entity target) {
 		try {
 			if (e instanceof SavingThrow) {
-				SavingThrow st = (SavingThrow) e;
+				// SavingThrow st = (SavingThrow) e;
 				// TODO: implement saving throw proficiencies and complete this
-				st.applyEffect(this);
-				return true;
 			}
 		} catch (Exception ex) {
 		}

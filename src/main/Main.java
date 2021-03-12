@@ -1,6 +1,6 @@
 package main;
 
-import core.events.contests.SavingThrow;
+import core.events.contests.AttackRoll;
 import core.events.groups.EventGroup;
 import core.gameobjects.Entity;
 import core.gameobjects.Zombie;
@@ -16,7 +16,7 @@ public class Main {
 		Zombie z = new Zombie(new Vector(0, 0, 0), new Vector(0, 0, 0));
 
 		EventGroup group = new EventGroup();
-		group.addEvent(new SavingThrow("scripts/events/contests/sacred_flame.lua", Entity.DEX));
+		group.addEvent(new AttackRoll("scripts/events/contests/attackrolls/ice_knife.lua", Entity.INT));
 
 		z.queueEventGroup(group);
 		z.invokeQueuedEvent(0, 0, z.getPos());

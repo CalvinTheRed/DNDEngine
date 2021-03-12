@@ -83,7 +83,7 @@ public class AttackRoll extends DiceContest {
 			 */
 			if (globals != null) {
 				globals.set("source", CoerceJavaToLua.coerce(source));
-				globals.set("targetPos", CoerceJavaToLua.coerce(targetPos));
+				globals.set("target", CoerceJavaToLua.coerce(target));
 				globals.get("additionalEffectsOnMiss").invoke();
 			} else {
 				// TODO: is this ever going to be used?
