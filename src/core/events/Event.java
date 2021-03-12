@@ -10,13 +10,6 @@ import core.gameobjects.Entity;
 import dnd.VirtualBoard;
 import maths.Vector;
 
-/**
- * An abstract class which represents the act of doing something (casting a
- * spell, making a weapon attack, making a saving throw, etc)
- * 
- * @author calvi
- *
- */
 public class Event extends Scriptable {
 
 	public static final int SHORTRANGE = 0;
@@ -42,10 +35,6 @@ public class Event extends Scriptable {
 		super(script);
 		appliedEffects = new LinkedList<Effect>();
 		tags = new LinkedList<String>();
-		if (globals != null) {
-			globals.set("event", CoerceJavaToLua.coerce(this));
-			globals.get("define").invoke();
-		}
 	}
 
 	@Override
@@ -65,20 +54,20 @@ public class Event extends Scriptable {
 		System.out.println("[JAVA] " + source + " invokes Event " + this);
 
 		LinkedList<Entity> targets = new LinkedList<Entity>();
-		if (hasTag("Cone")) {
+		if (hasTag(CONE)) {
 			targets.addAll(VirtualBoard.entitiesInCone2(targetPos, source.getRot(), getRange()[DEFAULTRANGE]));
-		} else if (hasTag("Cube")) {
+		} else if (hasTag(CUBE)) {
 			targets.addAll(VirtualBoard.entitiesInCube(targetPos, source.getRot(), radius));
-		} else if (hasTag("Line")) {
+		} else if (hasTag(LINE)) {
 			targets.addAll(VirtualBoard.entitiesInLine(targetPos, source.getRot(), getRange()[DEFAULTRANGE], radius));
-		} else if (hasTag("Single Target")) {
+		} else if (hasTag(SINGLE_TARGET)) {
 			targets.add(VirtualBoard.entityAt(targetPos));
-		} else if (hasTag("Sphere")) {
+		} else if (hasTag(SPHERE)) {
 			targets.addAll(VirtualBoard.entitiesInSphere(targetPos, radius));
 		} else {
 			System.out
 					.println("[JAVA] ERR: event " + this + " has no targeting tags! (Choose from among the following)");
-			System.out.println("       \"Cone\",\"Cube\",\"Line\",\"Single Target\",\"Sphere\"");
+			System.out.println("       Event.CONE, Event.CUBE, Event.LINE, Event.SINGLE_TARGET, Event.SPHERE");
 			return;
 		}
 
@@ -93,7 +82,7 @@ public class Event extends Scriptable {
 
 	}
 
-	private void invokeAsClone(Entity source, Entity target) {
+	public void invokeAsClone(Entity source, Entity target) {
 		globals.set("source", CoerceJavaToLua.coerce(source));
 		globals.set("target", CoerceJavaToLua.coerce(target));
 		globals.set("event", CoerceJavaToLua.coerce(this));

@@ -1,14 +1,18 @@
 function define()
-	ar = luajava.bindClass("core.events.contests.AttackRoll")
+	dc = luajava.bindClass("core.events.contests.DiceContest")
 	Entity = luajava.bindClass("core.gameobjects.Entity")
 	Event = luajava.bindClass("core.events.Event")
 	
-	event:setName("Fire Bolt (" .. Entity:getAbility(event:getAttackAbility()) .. ")")
-	event:setAttackType(ar.RANGED)
-	event:setRange(120.0, 120.0)
-	event:addTag("Fire Bolt")
-	event:addTag(ar.SPELL)
+	event:setName("Sacred Flame (" .. Entity:getAbility(event:getDCAbility()) .. ")")
+	event:setSaveAbility(Entity.DEX)
+	
+	event:addTag(dc.SPELL)
 	event:addTag(Event.SINGLE_TARGET)
+	
+	event:addTag("Sacred Flame")
+	event:addTag("Cantrip")
+	event:addTag("Dex")
+	
 end
 
 
@@ -18,8 +22,12 @@ end
 
 
 
+function additionalEffectsOnPass()
+end
+
+
+
 function damage()
-	ar = luajava.bindClass("core.events.contests.AttackRoll")
 	dt = luajava.bindClass("dnd.data.DamageType")
 	
 	level = source:getLevel()
@@ -32,6 +40,6 @@ function damage()
 		numDice = 2
 	end
 	
-	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", numDice, 10, dt.FIRE)
+	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", numDice, 8, dt.RADIANT)
 	return damageDice
 end

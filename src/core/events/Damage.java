@@ -42,7 +42,7 @@ public class Damage extends Event {
 
 	@Override
 	public void invoke(Entity source, Vector targetPos) {
-		System.out.println("[JAVA] " + parent + " invokes Event " + this);
+		System.out.println("[JAVA] " + parent + " invokes event " + this);
 
 		// TODO: preprocessEvent(Event e) ?
 		while (source.processEvent(this, source, null))
@@ -51,6 +51,24 @@ public class Damage extends Event {
 	}
 
 	public void invokeAsClone(Entity source, Entity target) {
+		while (source.processEvent(this, source, target))
+			;
+		// Separation here to ensure sequentially prior Effects on the source
+		// (such as the Dragon Sorcerer's Elemental Affinity) do not come
+		// before sequentially latter Effects on the target (such as Rogue's
+		// Evasion). The target shall never have a relevant sequentially
+		// prior Effect in relation to the source's Effects, as the target
+		// always behaves in a reactionary manner to Damage Events.
+		while (target.processEvent(this, source, target))
+			;
+		target.receiveDamage(this);
+	}
+
+	public void invokeHalvedAsClone(Entity source, Entity target) {
+		for (DamageDiceGroup group : damageDice) {
+			group.addBonus(-group.getBonus() / 2);
+		}
+
 		while (source.processEvent(this, source, target))
 			;
 		// Separation here to ensure sequentially prior Effects on the source

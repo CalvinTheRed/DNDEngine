@@ -9,6 +9,7 @@ public abstract class DiceContest extends Event {
 
 	public static final String ADVANTAGE = "Advantage";
 	public static final String DISADVANTAGE = "Disadvantage";
+	public static final String SPELL = "Spell";
 
 	protected Die d20;
 	protected int bonus;

@@ -9,7 +9,7 @@ import maths.dice.Die;
 
 public class WeaponAttack extends AttackRoll {
 	public static final String EVENT_TAG_ID = "Weapon Attack";
-	
+
 	protected Item medium;
 	protected boolean mainhand;
 
@@ -44,7 +44,7 @@ public class WeaponAttack extends AttackRoll {
 			damageDice = medium.getDamageDice(attackType);
 			if (source.getMainhand() == source.getOffhand() && source.getMainhand().hasTag(Item.VERSATILE)) {
 				damageDice.makeVersatile();
-			}		
+			}
 		}
 		if (mainhand) {
 			damageDice.addBonus(source.getAbilityModifier(attackAbility));

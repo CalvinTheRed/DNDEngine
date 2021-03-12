@@ -1,5 +1,6 @@
 package core.effects;
 
+import core.events.DiceCheckCalculation;
 import core.events.Event;
 import core.events.contests.AttackRoll;
 import core.gameobjects.Entity;
@@ -16,12 +17,19 @@ public class SpellProficiencyWatcher extends Effect {
 		try {
 			if (e instanceof AttackRoll) {
 				AttackRoll ar = (AttackRoll) e;
-				if (ar.hasTag(AttackRoll.SPELL)) {
+				if (ar.hasTag(AttackRoll.SPELL) && source == getTarget()) {
 					ar.applyEffect(this);
 					ar.addBonus(source.getProficiencyBonus());
 					return true;
 				}
-			} // TODO: else if e instanceof DiceCheckCalculation ...
+			} else if (e instanceof DiceCheckCalculation) {
+				DiceCheckCalculation dcc = (DiceCheckCalculation) e;
+				if (target == getTarget()) {
+					dcc.applyEffect(this);
+					dcc.addBonus(source.getProficiencyBonus());
+					return true;
+				}
+			}
 		} catch (Exception ex) {
 		}
 		return false;

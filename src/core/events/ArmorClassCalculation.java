@@ -6,6 +6,8 @@ import core.gameobjects.Entity;
 import maths.Vector;
 
 public class ArmorClassCalculation extends Event {
+	private static final int DEFAULT_BASE_AC = 10;
+
 	public static final String EVENT_TAG_ID = "Armor Class Calculation";
 
 	protected Entity parent;
@@ -19,7 +21,7 @@ public class ArmorClassCalculation extends Event {
 		this.parent = parent;
 		name = "Armor Class Calculation";
 		abilityBonusLimit = Integer.MAX_VALUE;
-		baseAC = 10;
+		baseAC = DEFAULT_BASE_AC;
 		bonus = 0;
 		acAbilityIndices = new LinkedList<Integer>();
 		acAbilityIndices.add(Entity.DEX);

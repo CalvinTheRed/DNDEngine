@@ -148,7 +148,11 @@ public class DamageDiceGroup extends DiceGroup {
 		return NORMAL;
 	}
 
-	// TODO: add function to halve damage here, then replace in Evasion and Fireball
+	// TODO: verify this function works as intended
+	public void halve() {
+		int sum = this.getSum();
+		addBonus(-(sum + 1) / 2);
+	}
 
 	/**
 	 * This function is a specialized form of setDamageType(). It makes the damage

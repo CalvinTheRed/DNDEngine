@@ -15,13 +15,12 @@ import maths.dice.Die;
 public class AttackRoll extends DiceContest {
 	public static final String EVENT_TAG_ID = "Attack Roll";
 
-	public static final String SPELL = "Spell";
-
 	public static final String MELEE = "Melee";
 	public static final String RANGED = "Ranged";
 	public static final String THROWN = "Thrown";
 
 	public static final String CRITICAL_HIT = "Critical Hit";
+	public static final String CRITICAL_MISS = "Critical Miss";
 
 	protected String attackType;
 	protected int attackAbility;
@@ -37,6 +36,7 @@ public class AttackRoll extends DiceContest {
 			globals.set("event", CoerceJavaToLua.coerce(this));
 			globals.get("define").invoke();
 		}
+
 	}
 
 	public int getAttackAbility() {
@@ -53,6 +53,8 @@ public class AttackRoll extends DiceContest {
 
 	@Override
 	public void invoke(Entity source, Vector targetPos) {
+		System.out.println("[JAVA] " + source + " invokes Event " + this);
+
 		target = VirtualBoard.entityAt(targetPos);
 
 		while (source.processEvent(this, source, target) || target.processEvent(this, source, target))
@@ -74,28 +76,51 @@ public class AttackRoll extends DiceContest {
 			invokeFallout(source);
 		} else {
 			System.out.println("[JAVA] Attack roll miss! (" + getRawRoll() + "+" + bonus + ":" + acc.getAC() + ")");
+			/*
+			 * Some attack roll events, such as the Ice Knife spell, have secondary
+			 * consequences which come to pass even if the attack roll misses its target.
+			 * These globals calls provide an opportunity to enact such behavior.
+			 */
+			if (globals != null) {
+				globals.set("source", CoerceJavaToLua.coerce(source));
+				globals.set("targetPos", CoerceJavaToLua.coerce(targetPos));
+				globals.get("additionalEffectsOnMiss").invoke();
+			} else {
+				// TODO: is this ever going to be used?
+				invokeFalloutOnMiss(source);
+			}
+
 		}
 	}
 
 	@Override
 	protected void invokeFallout(Entity source) {
 		Damage d = new Damage(this);
-		DamageDiceGroup damageDice;
 
 		if (getRawRoll() == Die.CRITICAL_HIT) {
-			d.addTag(AttackRoll.CRITICAL_HIT);
+			d.addTag(CRITICAL_HIT);
+		} else if (getRawRoll() == Die.CRITICAL_FAIL) {
+			d.addTag(CRITICAL_MISS);
 		}
 
 		globals.set("source", CoerceJavaToLua.coerce(source));
 		Varargs va = globals.get("damage").invoke();
-		damageDice = (DamageDiceGroup) (va.touserdata(1));
 
-		d.addDamageDiceGroup(damageDice);
+		int index = 1;
+		while (va.isuserdata(index)) {
+			d.addDamageDiceGroup((DamageDiceGroup) va.touserdata(index));
+			index++;
+		}
+
 		d.invoke(source, null);
 		d.clone().invokeAsClone(source, target);
 
 		globals.set("target", CoerceJavaToLua.coerce(target));
 		globals.get("additionalEffects").invoke();
+	}
+
+	protected void invokeFalloutOnMiss(Entity source) {
+
 	}
 
 }

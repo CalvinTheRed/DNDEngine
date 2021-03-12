@@ -7,6 +7,7 @@ import core.Observer;
 import core.Subject;
 import core.effects.Effect;
 import core.effects.ItemProficiencyWatcher;
+import core.effects.SaveProficiencyWatcher;
 import core.effects.SpellProficiencyWatcher;
 import core.events.Damage;
 import core.events.Event;
@@ -70,6 +71,7 @@ public abstract class Entity extends GameObject implements Subject {
 
 		addEffect(new ItemProficiencyWatcher(this));
 		addEffect(new SpellProficiencyWatcher(this));
+		addEffect(new SaveProficiencyWatcher(this));
 	}
 
 	public boolean addBaseTask(Task task) {
