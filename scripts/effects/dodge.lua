@@ -5,15 +5,16 @@ end
 
 
 function processEvent()
-	AttackRoll = luajava.bindClass("core.events.contests.AttackRoll")
+	Entity = luajava.bindClass("core.gameobjects.Entity")
 	DiceContest = luajava.bindClass("core.events.contests.DiceContest")
+	AttackRoll = luajava.bindClass("core.events.contests.AttackRoll")
 	SavingThrow = luajava.bindClass("core.events.contests.SavingThrow")
 	
 	if target == effect:getTarget() then
 		if event:hasTag(AttackRoll:getEventID()) then
 			event:applyEffect(effect)
 			event:addTag(DiceContest.DISADVANTAGE)
-		elseif event:hasTag(SavingThrow:getEventID()) then
+		elseif event:hasTag(SavingThrow:getEventID()) and event:getSaveAbility() == Entity.DEX then
 			event:applyEffect(effect)
 			event:addTag(DiceContest.ADVANTAGE)
 		else
