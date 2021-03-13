@@ -5,12 +5,10 @@ import core.events.contests.SavingThrow;
 import core.gameobjects.Entity;
 
 public class SaveProficiencyWatcher extends Effect {
-	public static final String EFFECT_TAG_ID = "Save Proficiency Watcher";
-
 	public SaveProficiencyWatcher(Entity source) {
 		super(null, source, source);
 		name = "Saving Throw Proficiency Watcher";
-		addTag(EFFECT_TAG_ID);
+		addTag(SaveProficiencyWatcher.getEffectID());
 	}
 
 	@Override
@@ -23,6 +21,10 @@ public class SaveProficiencyWatcher extends Effect {
 		} catch (Exception ex) {
 		}
 		return false;
+	}
+
+	public static String getEffectID() {
+		return "Save Proficiency Watcher";
 	}
 
 }

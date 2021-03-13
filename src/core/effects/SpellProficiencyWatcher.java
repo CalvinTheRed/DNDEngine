@@ -6,12 +6,10 @@ import core.events.contests.AttackRoll;
 import core.gameobjects.Entity;
 
 public class SpellProficiencyWatcher extends Effect {
-	public static final String EFFECT_TAG_ID = "Spell Proficiency Watcher";
-
 	public SpellProficiencyWatcher(Entity source) {
 		super(null, source, source);
 		name = "Spell Proficiency Watcher";
-		addTag(EFFECT_TAG_ID);
+		addTag(SpellProficiencyWatcher.getEffectID());
 	}
 
 	@Override
@@ -35,6 +33,10 @@ public class SpellProficiencyWatcher extends Effect {
 		} catch (Exception ex) {
 		}
 		return false;
+	}
+
+	public static String getEffectID() {
+		return "Spell Proficiency Watcher";
 	}
 
 }

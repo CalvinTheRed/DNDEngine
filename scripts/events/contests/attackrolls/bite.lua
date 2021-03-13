@@ -1,10 +1,10 @@
 function define()
-	ar = luajava.bindClass("core.events.contests.AttackRoll")
+	AttackRoll = luajava.bindClass("core.events.contests.AttackRoll")
 	Entity = luajava.bindClass("core.gameobjects.Entity")
 	Event = luajava.bindClass("core.events.Event")
 	
 	event:setName("Bite")
-	event:setAttackType(ar.MELEE)
+	event:setAttackType(AttackRoll.MELEE)
 	event:setRange(5.0, 5.0)
 	event:addTag("Bite")
 	event:addTag(Event.SINGLE_TARGET)
@@ -18,8 +18,7 @@ end
 
 
 function damage()
-	ar = luajava.bindClass("core.events.contests.AttackRoll")
-	dt = luajava.bindClass("dnd.data.DamageType")
+	DamageType = luajava.bindClass("dnd.data.DamageType")
 	
 	level = source:getLevel()
 	numDice = 1
@@ -31,7 +30,7 @@ function damage()
 		numDice = 2
 	end
 	
-	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", numDice, 10, dt.PIERCING)
+	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", numDice, 10, DamageType.PIERCING)
 	damageDice:addBonus(source:getAbilityModifier(event:getAttackAbility()))
 	return damageDice
 end

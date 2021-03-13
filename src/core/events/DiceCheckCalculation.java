@@ -6,8 +6,6 @@ import maths.Vector;
 public class DiceCheckCalculation extends Event {
 	private static final int BASE_DC = 8;
 
-	public static final String EVENT_TAG_ID = "Dice Check Calculation";
-
 	protected Entity parent;
 	protected int dcAbility;
 	protected int bonus;
@@ -18,7 +16,7 @@ public class DiceCheckCalculation extends Event {
 		this.dcAbility = dcAbility;
 		name = "Dice Check Calculation";
 		bonus = 0;
-		addTag(EVENT_TAG_ID);
+		addTag(DiceCheckCalculation.getEventID());
 	}
 
 	public void addBonus(int bonus) {
@@ -35,6 +33,10 @@ public class DiceCheckCalculation extends Event {
 
 	public Entity getParent() {
 		return parent;
+	}
+
+	public static String getEventID() {
+		return "Dice Check Calculation";
 	}
 
 	@Override

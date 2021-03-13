@@ -8,8 +8,6 @@ import maths.Vector;
 public class ArmorClassCalculation extends Event {
 	private static final int DEFAULT_BASE_AC = 10;
 
-	public static final String EVENT_TAG_ID = "Armor Class Calculation";
-
 	protected Entity parent;
 	protected LinkedList<Integer> acAbilityIndices;
 	protected int abilityBonusLimit;
@@ -26,7 +24,7 @@ public class ArmorClassCalculation extends Event {
 		acAbilityIndices = new LinkedList<Integer>();
 		acAbilityIndices.add(Entity.DEX);
 		addTag(Event.SINGLE_TARGET);
-		addTag(ArmorClassCalculation.EVENT_TAG_ID);
+		addTag(ArmorClassCalculation.getEventID());
 	}
 
 	public void addBonus(int bonus) {
@@ -67,6 +65,10 @@ public class ArmorClassCalculation extends Event {
 
 	public void setAbilityBonusLimit(int limit) {
 		abilityBonusLimit = limit;
+	}
+
+	public static String getEventID() {
+		return "Armor Class Calculation";
 	}
 
 	@Override

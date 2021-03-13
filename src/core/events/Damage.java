@@ -17,8 +17,6 @@ import maths.dice.Die;
  *
  */
 public class Damage extends Event {
-	public final static String EVENT_TAG_ID = "Damage";
-
 	protected LinkedList<DamageDiceGroup> damageDice;
 	protected Event parent;
 
@@ -28,7 +26,7 @@ public class Damage extends Event {
 		this.parent = parent;
 		name = "Damage (" + parent + ")";
 		addTag(Event.SINGLE_TARGET);
-		addTag(Damage.EVENT_TAG_ID);
+		addTag(Damage.getEventID());
 	}
 
 	public Damage clone() {
@@ -120,6 +118,10 @@ public class Damage extends Event {
 
 	public Event getParent() {
 		return parent;
+	}
+
+	public static String getEventID() {
+		return "Damage";
 	}
 
 }
