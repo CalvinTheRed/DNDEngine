@@ -9,6 +9,9 @@ import java.util.Random;
  *
  */
 public class Die {
+	public static final int CRITICAL_FAIL = 1;
+	public static final int CRITICAL_HIT = 20;
+
 	protected int size;
 	protected int roll;
 
@@ -28,6 +31,10 @@ public class Die {
 	 * This function rolls the Die
 	 */
 	public void roll() {
+//		if (size == 20) {
+//			roll = CRITICAL_FAIL;
+//			return;
+//		}
 		roll = Die.r.nextInt(size) + 1;
 	}
 
@@ -59,8 +66,12 @@ public class Die {
 	 * @Override
 	 */
 	public Die clone() {
-		Die d = new Die(size);
-		d.roll = roll;
-		return d;
+		Die clone = new Die(size);
+		clone.roll = roll;
+		return clone;
+	}
+
+	public void upsize() {
+		size += 2;
 	}
 }

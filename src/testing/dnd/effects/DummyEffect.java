@@ -1,13 +1,13 @@
 package testing.dnd.effects;
 
-import dnd.effects.Effect;
-import dnd.events.Event;
-import gameobjects.entities.Entity;
+import core.effects.Effect;
+import core.events.Event;
+import core.gameobjects.Entity;
 
 public class DummyEffect extends Effect {
 
-	public DummyEffect(Entity source, Entity target, String name, boolean sequencingPriority) {
-		super(source, target, name, sequencingPriority);
+	public DummyEffect(Entity source, Entity target) {
+		super("", source, target);
 	}
 
 	@Override
