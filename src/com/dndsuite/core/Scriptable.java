@@ -36,13 +36,19 @@ public abstract class Scriptable {
 		return tags;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	/*
+	 * -----------------------------------------------------------------------------
+	 * Functions used from Lua define function -------------------------------------
+	 * -----------------------------------------------------------------------------
+	 */
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }
