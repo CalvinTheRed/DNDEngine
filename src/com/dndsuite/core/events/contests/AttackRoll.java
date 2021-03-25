@@ -30,11 +30,6 @@ public class AttackRoll extends DiceContest {
 		setRadius(0.0);
 		addTag(Event.SINGLE_TARGET);
 		addTag(AttackRoll.getEventID());
-		if (globals != null) {
-			globals.set("event", CoerceJavaToLua.coerce(this));
-			globals.get("define").invoke();
-		}
-
 	}
 
 	public int getAttackAbility() {

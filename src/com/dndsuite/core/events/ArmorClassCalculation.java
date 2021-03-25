@@ -17,12 +17,12 @@ public class ArmorClassCalculation extends Event {
 	public ArmorClassCalculation(Entity parent) {
 		super(null);
 		this.parent = parent;
-		name = "Armor Class Calculation";
+		acAbilityIndices = new LinkedList<Integer>();
 		abilityBonusLimit = Integer.MAX_VALUE;
 		baseAC = DEFAULT_BASE_AC;
 		bonus = 0;
-		acAbilityIndices = new LinkedList<Integer>();
 		acAbilityIndices.add(Entity.DEX);
+		setName(ArmorClassCalculation.getEventID());
 		addTag(Event.SINGLE_TARGET);
 		addTag(ArmorClassCalculation.getEventID());
 	}

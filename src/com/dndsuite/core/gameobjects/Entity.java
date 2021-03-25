@@ -55,9 +55,8 @@ public abstract class Entity extends GameObject implements Subject {
 	protected int[] abilityScores;
 	protected int[] baseAbilityScores;
 
-	public Entity(String name, Vector pos, Vector rot) {
-		super(name, pos, rot);
-		this.name = name;
+	public Entity(String script, Vector pos, Vector rot) {
+		super(script, pos, rot);
 
 		abilityScores = new int[6];
 		baseAbilityScores = new int[6];

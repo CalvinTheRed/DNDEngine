@@ -8,8 +8,6 @@ import com.dndsuite.dnd.data.DamageType;
 import com.dndsuite.maths.dice.Die;
 
 public class WeaponAttack extends AttackRoll {
-	public static final String EVENT_TAG_ID = "Weapon Attack";
-
 	protected Item medium;
 	protected boolean mainhand;
 
@@ -17,12 +15,12 @@ public class WeaponAttack extends AttackRoll {
 		super(null, attackAbility);
 		this.medium = medium;
 		this.attackType = attackType;
+		this.mainhand = mainhand;
 		// TODO: check this vv
 		setRange(medium == null ? 5.0 : medium.getReach(), medium == null ? 5.0 : medium.getReach());
-		this.mainhand = mainhand;
-		name = attackType + " Attack (" + (medium == null ? "Fist" : medium.toString()) + ", "
-				+ Entity.getAbility(attackAbility) + ")";
-		addTag(EVENT_TAG_ID);
+		setName(attackType + " Attack (" + (medium == null ? "Fist" : medium.toString()) + ", "
+				+ Entity.getAbility(attackAbility) + ")");
+		addTag(WeaponAttack.getEventID());
 	}
 
 	public Item getMedium() {
@@ -53,6 +51,10 @@ public class WeaponAttack extends AttackRoll {
 		d.addDamageDiceGroup(damageDice);
 		d.invoke(source, null);
 		d.clone().invokeAsClone(source, target);
+	}
+
+	public static String getEventID() {
+		return "Weapon Attack";
 	}
 
 }

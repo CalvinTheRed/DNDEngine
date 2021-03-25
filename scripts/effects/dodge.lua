@@ -1,21 +1,21 @@
 function define()
-	effect:setName("Dodge")
+	self:setName("Dodge")
 end
 
 
 
 function processEvent()
-	Entity = luajava.bindClass("core.gameobjects.Entity")
-	DiceContest = luajava.bindClass("core.events.contests.DiceContest")
-	AttackRoll = luajava.bindClass("core.events.contests.AttackRoll")
-	SavingThrow = luajava.bindClass("core.events.contests.SavingThrow")
+	Entity = luajava.bindClass("com.dndsuite.core.gameobjects.Entity")
+	DiceContest = luajava.bindClass("com.dndsuite.core.events.contests.DiceContest")
+	AttackRoll = luajava.bindClass("com.dndsuite.core.events.contests.AttackRoll")
+	SavingThrow = luajava.bindClass("com.dndsuite.core.events.contests.SavingThrow")
 	
-	if target == effect:getTarget() then
+	if target == self:getTarget() then
 		if event:hasTag(AttackRoll:getEventID()) then
-			event:applyEffect(effect)
+			event:applyEffect(self)
 			event:addTag(DiceContest.DISADVANTAGE)
 		elseif event:hasTag(SavingThrow:getEventID()) and event:getSaveAbility() == Entity.DEX then
-			event:applyEffect(effect)
+			event:applyEffect(self)
 			event:addTag(DiceContest.ADVANTAGE)
 		else
 			print("[LUA]  No changes made to " .. event:toString())
@@ -28,8 +28,8 @@ end
 
 
 function processEventSafe()
-	print("[LUA]  Effect " .. effect:toString() .. " processing event " .. event:toString() .. "...")
+	print("[LUA]  Effect " .. self:toString() .. " processing event " .. event:toString() .. "...")
 	if not pcall(processEvent) then
-		print("[LUA]  Effect " .. effect:toString() .. " already applied to event " .. event:toString())
+		print("[LUA]  Effect " .. self:toString() .. " already applied to event " .. event:toString())
 	end
 end

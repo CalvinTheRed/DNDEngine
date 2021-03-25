@@ -84,14 +84,8 @@ public class Item extends Scriptable {
 	public static final String WARHAMMER = "Warhammer";
 	public static final String WHIP = "Whip";
 
-	protected String name;
-	protected LinkedList<String> tags;
-
 	public Item(String script) {
 		super(script);
-		tags = new LinkedList<String>();
-		globals.set("item", CoerceJavaToLua.coerce(this));
-		globals.get("define").invoke();
 	}
 
 	public void equip(Entity subject) {
@@ -127,10 +121,6 @@ public class Item extends Scriptable {
 		}
 
 		return events;
-	}
-
-	public LinkedList<String> getTags() {
-		return tags;
 	}
 
 	public LinkedList<Task> getCustomTasks() {
@@ -178,23 +168,6 @@ public class Item extends Scriptable {
 	public void unequip(Entity subject) {
 		globals.set("subject", CoerceJavaToLua.coerce(subject));
 		globals.get("unequip").invoke();
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void addTag(String tag) {
-		tags.add(tag);
-	}
-
-	public boolean hasTag(String tag) {
-		return tags.contains(tag);
-	}
-
-	@Override
-	public String toString() {
-		return name;
 	}
 
 }

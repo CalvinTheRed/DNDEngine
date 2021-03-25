@@ -22,9 +22,9 @@ public class Damage extends Event {
 
 	public Damage(Event parent) {
 		super(null);
-		damageDice = new LinkedList<DamageDiceGroup>();
 		this.parent = parent;
-		name = "Damage (" + parent + ")";
+		damageDice = new LinkedList<DamageDiceGroup>();
+		setName(Damage.getEventID() + " (" + parent + ")");
 		addTag(Event.SINGLE_TARGET);
 		addTag(Damage.getEventID());
 	}

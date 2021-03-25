@@ -35,8 +35,8 @@ class EffectTester {
 	@Test
 	@DisplayName("Effect contructor works")
 	void test1() {
-		DummyEntity source = new DummyEntity("Dummy Entity", new Vector(0, 0, 0), new Vector(1, 0, 0));
-		DummyEntity target = new DummyEntity("Dummy Entity", new Vector(0, 0, 0), new Vector(1, 0, 0));
+		DummyEntity source = new DummyEntity(new Vector(0, 0, 0), new Vector(1, 0, 0));
+		DummyEntity target = new DummyEntity(new Vector(0, 0, 0), new Vector(1, 0, 0));
 		DummyEffect e = new DummyEffect(source, target);
 		assertEquals(e.getSource(), source);
 		assertEquals(e.getTarget(), target);

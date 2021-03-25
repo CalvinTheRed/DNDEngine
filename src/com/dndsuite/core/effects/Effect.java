@@ -1,7 +1,5 @@
 package com.dndsuite.core.effects;
 
-import java.util.LinkedList;
-
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import com.dndsuite.core.Scriptable;
@@ -19,9 +17,7 @@ import com.dndsuite.core.gameobjects.Entity;
 public class Effect extends Scriptable {
 	protected Entity source;
 	protected Entity target;
-	protected String name;
 	protected boolean ended;
-	protected LinkedList<String> tags;
 
 	/**
 	 * Constructor for class Effect
@@ -38,24 +34,7 @@ public class Effect extends Scriptable {
 		super(script);
 		this.source = source;
 		this.target = target;
-		tags = new LinkedList<String>();
 		ended = false;
-		if (globals != null) {
-			globals.set("effect", CoerceJavaToLua.coerce(this));
-			globals.get("define").invoke();
-		}
-	}
-
-	public void addTag(String tag) {
-		tags.add(tag);
-	}
-
-	public boolean hasTag(String tag) {
-		return tags.contains(tag);
-	}
-
-	public LinkedList<String> getTags() {
-		return tags;
 	}
 
 	/**
@@ -106,22 +85,12 @@ public class Effect extends Scriptable {
 	 */
 	public boolean processEvent(Event e, Entity source, Entity target) {
 		globals.set("event", CoerceJavaToLua.coerce(e));
-		globals.set("effect", CoerceJavaToLua.coerce(this));
 		globals.set("source", CoerceJavaToLua.coerce(source));
 		globals.set("target", CoerceJavaToLua.coerce(target));
 		globals.get("processEventSafe").invoke();
 		return false;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	// TODO: add processTask() abstract function?
-
-	@Override
-	public final String toString() {
-		return name;
-	}
 
 }

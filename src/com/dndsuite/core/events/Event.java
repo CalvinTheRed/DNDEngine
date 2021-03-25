@@ -26,17 +26,14 @@ public class Event extends Scriptable {
 	public static final String SPELL = "Spell";
 
 	protected Vector targetPos;
-	protected String name;
 	protected double shortrange;
 	protected double longrange;
 	protected double radius;
 	protected LinkedList<Effect> appliedEffects;
-	protected LinkedList<String> tags;
 
 	public Event(String script) {
 		super(script);
 		appliedEffects = new LinkedList<Effect>();
-		tags = new LinkedList<String>();
 	}
 
 	@Override
@@ -87,27 +84,9 @@ public class Event extends Scriptable {
 	public void invokeAsClone(Entity source, Entity target) {
 		globals.set("source", CoerceJavaToLua.coerce(source));
 		globals.set("target", CoerceJavaToLua.coerce(target));
-		globals.set("event", CoerceJavaToLua.coerce(this));
-		globals.get("define").invoke();
 		while (source.processEvent(this, source, target) || target.processEvent(this, source, target))
 			;
 		globals.get("invokeEvent").invoke();
-	}
-
-	public void addTag(String tag) {
-		tags.add(tag);
-	}
-
-	public boolean hasTag(String tag) {
-		return tags.contains(tag);
-	}
-
-	public LinkedList<String> getTags() {
-		return tags;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public void setRange(double shortrange, double longrange) {
@@ -139,8 +118,4 @@ public class Event extends Scriptable {
 		appliedEffects.clear();
 	}
 
-	@Override
-	public String toString() {
-		return name;
-	}
 }

@@ -1,15 +1,15 @@
 function define()
-	Entity = luajava.bindClass("core.gameobjects.Entity")
-	Event = luajava.bindClass("core.events.Event")
+	Entity = luajava.bindClass("com.dndsuite.core.gameobjects.Entity")
+	Event = luajava.bindClass("com.dndsuite.core.events.Event")
 	
-	event:setName("Sacred Flame (" .. Entity:getAbility(event:getDCAbility()) .. ")")
-	event:setSaveAbility(Entity.DEX)
-	event:setRange(0.0, 0.0)
+	self:setName("Sacred Flame (" .. Entity:getAbility(self:getDCAbility()) .. ")")
+	self:setSaveAbility(Entity.DEX)
+	self:setRange(0.0, 0.0)
 	
-	event:addTag(Event.SINGLE_TARGET)
-	event:addTag(Event.SPELL)
-	event:addTag(Event.CANTRIP)
-	event:addTag("Sacred Flame")
+	self:addTag(Event.SINGLE_TARGET)
+	self:addTag(Event.SPELL)
+	self:addTag(Event.CANTRIP)
+	self:addTag("Sacred Flame")
 end
 
 
@@ -25,7 +25,7 @@ end
 
 
 function damage()
-	DamageType = luajava.bindClass("dnd.data.DamageType")
+	DamageType = luajava.bindClass("com.dndsuite.dnd.data.DamageType")
 	
 	level = source:getLevel()
 	numDice = 1
@@ -37,6 +37,6 @@ function damage()
 		numDice = 2
 	end
 	
-	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", numDice, 8, DamageType.RADIANT)
+	damageDice = luajava.newInstance("com.dndsuite.dnd.combat.DamageDiceGroup", numDice, 8, DamageType.RADIANT)
 	return damageDice
 end

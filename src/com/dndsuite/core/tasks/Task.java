@@ -17,7 +17,6 @@ import com.dndsuite.core.gameobjects.Entity;
  *
  */
 public class Task extends Scriptable {
-	protected String name;
 	protected LinkedList<EventGroup> eventGroups;
 	// TODO: action economy cost
 
@@ -29,10 +28,6 @@ public class Task extends Scriptable {
 	public Task(String script) {
 		super(script);
 		eventGroups = new LinkedList<EventGroup>();
-		if (globals != null) {
-			globals.set("task", CoerceJavaToLua.coerce(this));
-			globals.get("define").invoke();
-		}
 	}
 
 	/**
@@ -70,12 +65,4 @@ public class Task extends Scriptable {
 		return true;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public String toString() {
-		return name;
-	}
 }

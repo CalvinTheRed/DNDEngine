@@ -12,6 +12,7 @@ public class TaskCollection extends Event {
 	public TaskCollection(Entity parent) {
 		super(null);
 		tasks = new LinkedList<Task>();
+		setName(TaskCollection.getEventID());
 		addTag(Event.SINGLE_TARGET);
 		addTag(TaskCollection.getEventID());
 	}

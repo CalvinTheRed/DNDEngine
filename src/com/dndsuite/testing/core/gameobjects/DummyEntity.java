@@ -5,8 +5,8 @@ import com.dndsuite.maths.Vector;
 
 public class DummyEntity extends Entity {
 
-	public DummyEntity(String name, Vector pos, Vector rot) {
-		super(name, pos, rot);
+	public DummyEntity(Vector pos, Vector rot) {
+		super(null, pos, rot);
 	}
 
 }

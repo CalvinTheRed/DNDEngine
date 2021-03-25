@@ -1,12 +1,12 @@
 function define()
-	Item = luajava.bindClass("core.Item")
+	Item = luajava.bindClass("com.dndsuite.core.Item")
 	
-	item:setName("Dagger")
-	item:addTag(Item.FINESSE)
-	item:addTag(Item.LIGHT)
-	item:addTag(Item.THROWN)
-	item:addTag(Item.SIMPLE_MELEE)
-	item:addTag(Item.DAGGER)
+	self:setName("Dagger")
+	self:addTag(Item.FINESSE)
+	self:addTag(Item.LIGHT)
+	self:addTag(Item.THROWN)
+	self:addTag(Item.SIMPLE_MELEE)
+	self:addTag(Item.DAGGER)
 end
 
 
@@ -29,16 +29,16 @@ end
 
 
 function damage()
-	ar = luajava.bindClass("core.events.contests.AttackRoll")
-	dt = luajava.bindClass("dnd.data.DamageType")
+	AttackRoll = luajava.bindClass("com.dndsuite.core.events.contests.AttackRoll")
+	DamageType = luajava.bindClass("com.dndsuite.dnd.data.DamageType")
 	
-	if attackType == ar.MELEE then
-		damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 1, 4, dt.PIERCING)
+	if attackType == AttackRoll.MELEE then
+		damageDice = luajava.newInstance("com.dndsuite.dnd.combat.DamageDiceGroup", 1, 4, DamageType.PIERCING)
 		return damageDice
-	elseif attackType == ar.RANGED then
+	elseif attackType == AttackRoll.RANGED then
 		return nil
-	elseif attackType == ar.THROWN then
-		damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 1, 4, dt.PIERCING)
+	elseif attackType == AttackRoll.THROWN then
+		damageDice = luajava.newInstance("com.dndsuite.dnd.combat.DamageDiceGroup", 1, 4, DamageType.PIERCING)
 		return damageDice
 	end
 	

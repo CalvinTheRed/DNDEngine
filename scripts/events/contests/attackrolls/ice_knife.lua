@@ -1,21 +1,21 @@
 function define()
-	AttackRoll = luajava.bindClass("core.events.contests.AttackRoll")
-	Entity = luajava.bindClass("core.gameobjects.Entity")
-	Event = luajava.bindClass("core.events.Event")
+	AttackRoll = luajava.bindClass("com.dndsuite.core.events.contests.AttackRoll")
+	Entity = luajava.bindClass("com.dndsuite.core.gameobjects.Entity")
+	Event = luajava.bindClass("com.dndsuite.core.events.Event")
 	
-	event:setName("Ice Knife (" .. Entity:getAbility(event:getAttackAbility()) .. ")")
-	event:setAttackType(AttackRoll.RANGED)
-	event:setRange(60.0, 60.0)
+	self:setName("Ice Knife (" .. Entity:getAbility(self:getAttackAbility()) .. ")")
+	self:setAttackType(AttackRoll.RANGED)
+	self:setRange(60.0, 60.0)
 	
-	event:addTag(Event.SINGLE_TARGET)
-	event:addTag(Event.SPELL)
-	event:addTag("Ice Knife")
+	self:addTag(Event.SINGLE_TARGET)
+	self:addTag(Event.SPELL)
+	self:addTag("Ice Knife")
 end
 
 
 
 function additionalEffects()
-	secondaryEvent = luajava.newInstance("core.events.contests.SavingThrow", "scripts/events/contests/savingthrows/ice_knife_secondary.lua", event:getAttackAbility())
+	secondaryEvent = luajava.newInstance("com.dndsuite.core.events.contests.SavingThrow", "scripts/events/contests/savingthrows/ice_knife_secondary.lua", self:getAttackAbility())
 	secondaryEvent:invoke(source, target:getPos())
 end
 
@@ -28,8 +28,8 @@ end
 
 
 function damage()
-	DamageType = luajava.bindClass("dnd.data.DamageType")
+	DamageType = luajava.bindClass("com.dndsuite.dnd.data.DamageType")
 	
-	damageDice = luajava.newInstance("dnd.combat.DamageDiceGroup", 1, 10, DamageType.PIERCING_MAGICAL)
+	damageDice = luajava.newInstance("com.dndsuite.dnd.combat.DamageDiceGroup", 1, 10, DamageType.PIERCING_MAGICAL)
 	return damageDice
 end

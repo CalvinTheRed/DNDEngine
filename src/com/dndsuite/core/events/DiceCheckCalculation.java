@@ -14,8 +14,8 @@ public class DiceCheckCalculation extends Event {
 		super(null);
 		this.parent = parent;
 		this.dcAbility = dcAbility;
-		name = "Dice Check Calculation";
 		bonus = 0;
+		setName(DiceCheckCalculation.getEventID());
 		addTag(DiceCheckCalculation.getEventID());
 	}
 

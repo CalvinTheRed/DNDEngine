@@ -13,7 +13,7 @@ import com.dndsuite.maths.Vector;
 public class Zombie extends Entity {
 
 	public Zombie(Vector pos, Vector rot) {
-		super("Zombie", pos, rot);
+		super(null, pos, rot);
 
 		experience = 50;
 		level = 3;
@@ -32,7 +32,7 @@ public class Zombie extends Entity {
 		generateHealth(8);
 
 		Task task;
-		task = new Attack(this, 3);
+		task = new Attack(this, 1);
 		addBaseTask(task);
 
 		getTasks(); // populate initial availableTasks list

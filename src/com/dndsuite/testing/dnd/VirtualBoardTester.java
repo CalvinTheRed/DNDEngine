@@ -40,7 +40,7 @@ public class VirtualBoardTester {
 	@Test
 	@DisplayName("GameObjects can be added to the VirtualBoard")
 	void test1() {
-		Entity e = new DummyEntity("Dummy Entity", new Vector(0, 0, 0), new Vector(1, 0, 0));
+		Entity e = new DummyEntity(new Vector(0, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
 		assertTrue(VirtualBoard.containsGameObject(e));
 	}
@@ -48,7 +48,7 @@ public class VirtualBoardTester {
 	@Test
 	@DisplayName("Particular GameObjects can be removed from the VirtualBoard")
 	void test2() {
-		Entity e = new DummyEntity("Dummy Entity", new Vector(0, 0, 0), new Vector(1, 0, 0));
+		Entity e = new DummyEntity(new Vector(0, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
 		VirtualBoard.removeGameObject(e);
 		assertFalse(VirtualBoard.containsGameObject(e));
@@ -57,7 +57,7 @@ public class VirtualBoardTester {
 	@Test
 	@DisplayName("VirtualBoard can have its GameObject list cleared")
 	void test3() {
-		Entity e = new DummyEntity("Dummy Entity", new Vector(0, 0, 0), new Vector(1, 0, 0));
+		Entity e = new DummyEntity(new Vector(0, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
 		VirtualBoard.clearGameObjects();
 		assertFalse(VirtualBoard.containsGameObject(e));
@@ -67,7 +67,7 @@ public class VirtualBoardTester {
 	@DisplayName("VirtualBoard can locate Entities at particular locations")
 	void test4() {
 		Vector pos = new Vector(0, 0, 0);
-		Entity e = new DummyEntity("Dummy Entity", pos, new Vector(1, 0, 0));
+		Entity e = new DummyEntity(pos, new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
 		assertEquals(VirtualBoard.entityAt(pos), e);
 		assertEquals(VirtualBoard.entityAt(pos.add(new Vector(1, 1, 1))), null);
@@ -81,7 +81,7 @@ public class VirtualBoardTester {
 
 		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
 			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
-				Entity e = new DummyEntity("Dummy Entity", new Vector(i, 0, k), new Vector(1, 0, 0));
+				Entity e = new DummyEntity(new Vector(i, 0, k), new Vector(1, 0, 0));
 				fullList.add(e);
 				VirtualBoard.addGameObject(e);
 			}
@@ -109,7 +109,7 @@ public class VirtualBoardTester {
 
 		for (int i = -(int) radius - 1; i <= (int) radius + 1; i++) {
 			for (int k = -(int) radius - 1; k <= (int) radius + 1; k++) {
-				Entity e = new DummyEntity("Dummy Entity", new Vector(i, 0, k), new Vector(1, 0, 0));
+				Entity e = new DummyEntity(new Vector(i, 0, k), new Vector(1, 0, 0));
 				fullList.add(e);
 				VirtualBoard.addGameObject(e);
 			}
@@ -135,7 +135,7 @@ public class VirtualBoardTester {
 
 		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
 			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
-				Entity e = new DummyEntity("Dummy Entity", new Vector(i, 0, k), new Vector(1, 0, 0));
+				Entity e = new DummyEntity(new Vector(i, 0, k), new Vector(1, 0, 0));
 				fullList.add(e);
 				VirtualBoard.addGameObject(e);
 			}
@@ -162,7 +162,7 @@ public class VirtualBoardTester {
 
 		for (int i = -(int) radius - 1; i <= (int) radius + 1; i++) {
 			for (int k = -(int) radius - 1; k <= (int) radius + 1; k++) {
-				Entity e = new DummyEntity("Dummy Entity", new Vector(i, 0, k), new Vector(1, 0, 0));
+				Entity e = new DummyEntity(new Vector(i, 0, k), new Vector(1, 0, 0));
 				fullList.add(e);
 				VirtualBoard.addGameObject(e);
 			}

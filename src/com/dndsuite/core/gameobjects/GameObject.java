@@ -1,5 +1,6 @@
 package com.dndsuite.core.gameobjects;
 
+import com.dndsuite.core.Scriptable;
 import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.maths.Vector;
 
@@ -10,8 +11,7 @@ import com.dndsuite.maths.Vector;
  * @author calvi
  *
  */
-public abstract class GameObject {
-	protected String name;
+public abstract class GameObject extends Scriptable {
 	protected Vector pos;
 	protected Vector rot;
 
@@ -24,17 +24,12 @@ public abstract class GameObject {
 	 * @param rot  ({@code Vector}) a Vector in parallel with the direction the
 	 *             GameObject is facing
 	 */
-	public GameObject(String name, Vector pos, Vector rot) {
-		this.name = name;
+	public GameObject(String script, Vector pos, Vector rot) {
+		super(script);
 		this.pos = pos;
 		this.rot = rot;
 
 		VirtualBoard.addGameObject(this);
-	}
-
-	@Override
-	public String toString() {
-		return name;
 	}
 
 	/**

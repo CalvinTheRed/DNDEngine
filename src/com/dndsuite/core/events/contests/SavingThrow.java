@@ -25,10 +25,6 @@ public class SavingThrow extends DiceContest {
 		targets = new LinkedList<Entity>();
 		this.dcAbility = dcAbility;
 		addTag(SavingThrow.getEventID());
-		if (globals != null) {
-			globals.set("event", CoerceJavaToLua.coerce(this));
-			globals.get("define").invoke();
-		}
 		d = new Damage(this);
 	}
 
@@ -70,6 +66,7 @@ public class SavingThrow extends DiceContest {
 			return;
 		}
 
+		globals.set("source", CoerceJavaToLua.coerce(source));
 		Varargs va = globals.get("damage").invoke();
 
 		int index = 1;
