@@ -257,4 +257,8 @@ public final class VirtualBoard {
 		return entities;
 	}
 
+	public static LinkedList<GameObject> getGameObjects() {
+		return gameObjects;
+	}
+
 }
