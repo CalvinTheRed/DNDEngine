@@ -6,12 +6,12 @@ end
 
 function processEvent()
 	AttackRoll = luajava.bindClass("com.dndsuite.core.events.contests.AttackRoll")
-	DamageDealt = luajava.bindClass("com.dndsuite.core.events.DamageDealt")
+	Damage = luajava.bindClass("com.dndsuite.core.events.Damage")
 	DamageType = luajava.bindClass("com.dndsuite.dnd.data.DamageType")
 	Entity = luajava.bindClass("com.dndsuite.core.gameobjects.Entity")
 	
 	if target == self:getTarget() then
-		if event:hasTag(DamageDealt:getEventID()) then
+		if event:hasTag(Damage:getEventID()) then
 			if event:getDamage() >= target:getHealth() then
 				if event:hasDamageType(DamageType.RADIANT) then
 					print("[LUA]  Undead Fortitude countered by radiant damage")

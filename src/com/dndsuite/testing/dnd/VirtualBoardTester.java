@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.dndsuite.core.gameobjects.Entity;
+import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.maths.Vector;
 import com.dndsuite.testing.core.gameobjects.DummyEntity;
@@ -42,7 +43,7 @@ public class VirtualBoardTester {
 	void test1() {
 		Entity e = new DummyEntity(new Vector(0, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
-		assertTrue(VirtualBoard.containsGameObject(e));
+		assertTrue(VirtualBoard.contains(e));
 	}
 
 	@Test
@@ -51,7 +52,7 @@ public class VirtualBoardTester {
 		Entity e = new DummyEntity(new Vector(0, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
 		VirtualBoard.removeGameObject(e);
-		assertFalse(VirtualBoard.containsGameObject(e));
+		assertFalse(VirtualBoard.contains(e));
 	}
 
 	@Test
@@ -59,25 +60,31 @@ public class VirtualBoardTester {
 	void test3() {
 		Entity e = new DummyEntity(new Vector(0, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
+		assertTrue(VirtualBoard.contains(e));
 		VirtualBoard.clearGameObjects();
-		assertFalse(VirtualBoard.containsGameObject(e));
+		assertFalse(VirtualBoard.contains(e));
 	}
 
 	@Test
-	@DisplayName("VirtualBoard can locate Entities at particular locations")
+	@DisplayName("VirtualBoard can locate the nearest GameObject")
 	void test4() {
-		Vector pos = new Vector(0, 0, 0);
-		Entity e = new DummyEntity(pos, new Vector(1, 0, 0));
+		Entity e;
+		e = new DummyEntity(new Vector(0, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
-		assertEquals(VirtualBoard.entityAt(pos), e);
-		assertEquals(VirtualBoard.entityAt(pos.add(new Vector(1, 1, 1))), null);
+		e = new DummyEntity(new Vector(1, 0, 0), new Vector(1, 0, 0));
+		VirtualBoard.addGameObject(e);
+		e = new DummyEntity(new Vector(2, 0, 0), new Vector(1, 0, 0));
+		VirtualBoard.addGameObject(e);
+
+		assertEquals(VirtualBoard.nearestObject(new Vector(2, 0, 0), new String[] {}), e);
+		assertEquals(VirtualBoard.nearestObject(new Vector(2.1, 0, 0), new String[] {}), e);
 	}
 
 	@Test
-	@DisplayName("VirtualBoard can locate Entities within a particular cone")
+	@DisplayName("VirtualBoard can locate GameObjects within a particular cone")
 	void test5() {
 		double length = 10.0;
-		LinkedList<Entity> fullList = new LinkedList<Entity>();
+		LinkedList<GameObject> fullList = new LinkedList<GameObject>();
 
 		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
 			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
@@ -88,9 +95,10 @@ public class VirtualBoardTester {
 		}
 
 		// An entity located at the source should not be returned by entitiesInCone()
-		LinkedList<Entity> list = VirtualBoard.entitiesInCone2(new Vector(0, 0, 0), new Vector(1, 0, 0), length);
+		LinkedList<GameObject> list = VirtualBoard.objectsInCone(new Vector(0, 0, 0), new Vector(1, 0, 0), length,
+				new String[] {});
 
-		for (Entity e : fullList) {
+		for (GameObject e : fullList) {
 			if (e.getPos().x() >= 0 && e.getPos().x() <= length
 					&& Math.abs(e.getPos().z()) <= Math.sin(Math.toRadians(22.5)) * e.getPos().x()
 					&& !e.getPos().equalTo(new Vector(0, 0, 0))) {
@@ -102,10 +110,10 @@ public class VirtualBoardTester {
 	}
 
 	@Test
-	@DisplayName("VirtualBoard can locate Entities within a particular cube")
+	@DisplayName("VirtualBoard can locate GameObjects within a particular cube")
 	void test6() {
 		double radius = 10.0;
-		LinkedList<Entity> fullList = new LinkedList<Entity>();
+		LinkedList<GameObject> fullList = new LinkedList<GameObject>();
 
 		for (int i = -(int) radius - 1; i <= (int) radius + 1; i++) {
 			for (int k = -(int) radius - 1; k <= (int) radius + 1; k++) {
@@ -115,9 +123,10 @@ public class VirtualBoardTester {
 			}
 		}
 
-		LinkedList<Entity> list = VirtualBoard.entitiesInCube(new Vector(0, 0, 0), new Vector(1, 0, 0), radius);
+		LinkedList<GameObject> list = VirtualBoard.objectsInCube(new Vector(0, 0, 0), new Vector(1, 0, 0), radius,
+				new String[] {});
 
-		for (Entity e : fullList) {
+		for (GameObject e : fullList) {
 			if (Math.abs(e.getPos().x()) <= radius && Math.abs(e.getPos().z()) <= radius) {
 				assertTrue(list.contains(e));
 			} else {
@@ -127,11 +136,11 @@ public class VirtualBoardTester {
 	}
 
 	@Test
-	@DisplayName("VirtualBoard can locate Entities within a particular line (cylinder)")
+	@DisplayName("VirtualBoard can locate GameObjects within a particular line (cylinder)")
 	void test7() {
 		double length = 10.0;
 		double radius = 5.0;
-		LinkedList<Entity> fullList = new LinkedList<Entity>();
+		LinkedList<GameObject> fullList = new LinkedList<GameObject>();
 
 		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
 			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
@@ -142,9 +151,10 @@ public class VirtualBoardTester {
 		}
 
 		// An entity located at the source should not be returned by entitiesInLine()
-		LinkedList<Entity> list = VirtualBoard.entitiesInLine(new Vector(0, 0, 0), new Vector(1, 0, 0), length, radius);
+		LinkedList<GameObject> list = VirtualBoard.objectsInLine(new Vector(0, 0, 0), new Vector(1, 0, 0), length,
+				radius, new String[] {});
 
-		for (Entity e : fullList) {
+		for (GameObject e : fullList) {
 			if (e.getPos().x() >= 0 && e.getPos().x() <= length && Math.abs(e.getPos().z()) <= radius
 					&& !e.getPos().equalTo(new Vector(0, 0, 0))) {
 				assertTrue(list.contains(e));
@@ -155,10 +165,10 @@ public class VirtualBoardTester {
 	}
 
 	@Test
-	@DisplayName("VirtualBoard can locate Entities within a particular sphere")
+	@DisplayName("VirtualBoard can locate GameObjects within a particular sphere")
 	void test8() {
 		double radius = 10.0;
-		LinkedList<Entity> fullList = new LinkedList<Entity>();
+		LinkedList<GameObject> fullList = new LinkedList<GameObject>();
 
 		for (int i = -(int) radius - 1; i <= (int) radius + 1; i++) {
 			for (int k = -(int) radius - 1; k <= (int) radius + 1; k++) {
@@ -168,9 +178,9 @@ public class VirtualBoardTester {
 			}
 		}
 
-		LinkedList<Entity> list = VirtualBoard.entitiesInSphere(new Vector(0, 0, 0), radius);
+		LinkedList<GameObject> list = VirtualBoard.objectsInSphere(new Vector(0, 0, 0), radius, new String[] {});
 
-		for (Entity e : fullList) {
+		for (GameObject e : fullList) {
 			if (e.getPos().mag() <= radius) {
 				assertTrue(list.contains(e));
 			} else {

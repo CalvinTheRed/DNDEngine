@@ -9,38 +9,54 @@ import com.dndsuite.maths.Vector;
 public class ArmorClassCalculation extends Event {
 	private static final int DEFAULT_BASE_AC = 10;
 
-	protected Entity parent;
+	protected Entity subject;
 	protected LinkedList<Integer> acAbilityIndices;
 	protected int abilityBonusLimit;
 	protected int baseAC;
 	protected int bonus;
 
-	public ArmorClassCalculation(Entity parent) {
-		super(null);
-		this.parent = parent;
+	public ArmorClassCalculation(Entity subject) {
+		super(null, -1);
+		this.subject = subject;
 		acAbilityIndices = new LinkedList<Integer>();
+		setName(ArmorClassCalculation.getEventID());
+		addTag(ArmorClassCalculation.getEventID());
+	}
+
+	@Override
+	public ArmorClassCalculation clone() {
+		ArmorClassCalculation clone = (ArmorClassCalculation) super.clone();
+		clone.subject = subject;
+		clone.acAbilityIndices = new LinkedList<Integer>();
+		clone.acAbilityIndices.addAll(acAbilityIndices);
+		clone.abilityBonusLimit = abilityBonusLimit;
+		clone.baseAC = baseAC;
+		clone.bonus = bonus;
+		return clone;
+	}
+
+	@Override
+	public void invoke(Entity source, Vector targetPos) {
 		acAbilityIndices.add(Entity.DEX);
 		bonus = 0;
-		setName(ArmorClassCalculation.getEventID());
-		addTag(Event.SINGLE_TARGET);
-		addTag(ArmorClassCalculation.getEventID());
 
-		if (parent.getArmor() == null) {
+		if (subject.getArmor() == null) {
 			baseAC = DEFAULT_BASE_AC;
 			abilityBonusLimit = Integer.MAX_VALUE;
 		} else {
-			Item armor = parent.getArmor();
+			Item armor = subject.getArmor();
 			baseAC = armor.getAC();
 			abilityBonusLimit = armor.getACAbilityBonusLimit();
 		}
-	}
-
-	public void addBonus(int bonus) {
-		this.bonus += bonus;
+		super.invoke(source, targetPos);
 	}
 
 	public void addACAbilityIndex(int index) {
 		acAbilityIndices.add(index);
+	}
+
+	public void addBonus(int bonus) {
+		this.bonus += bonus;
 	}
 
 	public void clearACAbilityIndices() {
@@ -50,7 +66,7 @@ public class ArmorClassCalculation extends Event {
 	public int getAC() {
 		int ac = baseAC + bonus;
 		for (int abilityIndex : acAbilityIndices) {
-			ac += Math.min(abilityBonusLimit, parent.getAbilityModifier(abilityIndex));
+			ac += Math.min(abilityBonusLimit, subject.getAbilityModifier(abilityIndex));
 		}
 		return ac;
 	}
@@ -63,24 +79,25 @@ public class ArmorClassCalculation extends Event {
 		return bonus;
 	}
 
-	public Entity getParent() {
-		return parent;
+	public Entity getSubject() {
+		return subject;
 	}
 
-	public void setBaseAC(int baseAC) {
-		this.baseAC = baseAC;
+	public void resetACAbilityIndices() {
+		clearACAbilityIndices();
+		addACAbilityIndex(Entity.DEX);
 	}
 
 	public void setAbilityBonusLimit(int limit) {
 		abilityBonusLimit = limit;
 	}
 
-	public static String getEventID() {
-		return "Armor Class Calculation";
+	public void setBaseAC(int baseAC) {
+		this.baseAC = baseAC;
 	}
 
-	@Override
-	public void invoke(Entity source, Vector targetPos) {
+	public static String getEventID() {
+		return "Armor Class Calculation";
 	}
 
 }

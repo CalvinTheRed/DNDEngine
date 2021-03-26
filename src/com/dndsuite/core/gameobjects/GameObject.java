@@ -8,6 +8,7 @@ import com.dndsuite.core.Scriptable;
 import com.dndsuite.core.Subject;
 import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.events.DamageCalculation;
+import com.dndsuite.core.events.Event;
 import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.dnd.combat.DamageDiceGroup;
 import com.dndsuite.maths.Vector;
@@ -57,6 +58,13 @@ public abstract class GameObject extends Scriptable implements Subject {
 		for (Observer o : observers) {
 			o.update(this);
 		}
+	}
+
+	public boolean processEvent(Event e, Entity source, GameObject target) {
+		for (Effect effect : activeEffects) {
+			effect.processEvent(e, source, target);
+		}
+		return false;
 	}
 
 	public LinkedList<Item> getInventory() {

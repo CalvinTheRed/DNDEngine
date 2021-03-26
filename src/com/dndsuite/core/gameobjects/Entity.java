@@ -4,10 +4,6 @@ import java.util.LinkedList;
 
 import com.dndsuite.core.Item;
 import com.dndsuite.core.effects.Effect;
-import com.dndsuite.core.effects.ItemProficiencyWatcher;
-import com.dndsuite.core.effects.SaveProficiencyWatcher;
-import com.dndsuite.core.effects.SpellProficiencyWatcher;
-import com.dndsuite.core.events.Event;
 import com.dndsuite.core.events.TaskCollection;
 import com.dndsuite.core.events.groups.EventGroup;
 import com.dndsuite.core.tasks.Task;
@@ -128,13 +124,6 @@ public class Entity extends GameObject {
 		return false;
 	}
 
-	public boolean processEvent(Event e, Entity source, Entity target) {
-		for (Effect effect : activeEffects) {
-			effect.processEvent(e, source, target);
-		}
-		return false;
-	}
-
 	public boolean proficientWith(String proficiencyGroup) {
 		return proficiencyGroup == null || itemProficiencies.contains(proficiencyGroup);
 	}
@@ -223,10 +212,6 @@ public class Entity extends GameObject {
 		itemProficiencies = new LinkedList<String>();
 		abilityScores = new int[6];
 		baseAbilityScores = new int[6];
-
-		addEffect(new ItemProficiencyWatcher(this));
-		addEffect(new SpellProficiencyWatcher(this));
-		addEffect(new SaveProficiencyWatcher(this));
 	}
 
 	public void setLevel(int level) {

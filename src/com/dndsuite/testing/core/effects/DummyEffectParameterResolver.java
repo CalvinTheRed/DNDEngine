@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 
 import com.dndsuite.core.gameobjects.Entity;
 
-// TODO: remove once a better example of parameter resolver is implemented
 public class DummyEffectParameterResolver implements ParameterResolver {
 
 	public static Entity Source;
@@ -16,7 +15,6 @@ public class DummyEffectParameterResolver implements ParameterResolver {
 	@Override
 	public Object resolveParameter(ParameterContext arg0, ExtensionContext arg1) throws ParameterResolutionException {
 		if (arg0.getParameter().getType() == DummyEffect.class) {
-			// TODO: does priority interfere with this tester?
 			return new DummyEffect(Source, Target);
 		}
 		return null;

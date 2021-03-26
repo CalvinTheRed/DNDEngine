@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.dndsuite.core.events.contests.AttackRoll;
 import com.dndsuite.core.gameobjects.Entity;
+import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.dnd.combat.DamageDiceGroup;
 import com.dndsuite.maths.Vector;
 import com.dndsuite.maths.dice.Die;
@@ -13,71 +14,32 @@ public class DamageCalculation extends Event {
 	protected Event parent;
 
 	public DamageCalculation(Event parent) {
-		super(null);
+		super(null, -1);
 		this.parent = parent;
 		damageDice = new LinkedList<DamageDiceGroup>();
 		setName(DamageCalculation.getEventID() + " (" + parent + ")");
-		addTag(Event.SINGLE_TARGET);
 		addTag(DamageCalculation.getEventID());
 	}
 
+	@Override
 	public DamageCalculation clone() {
-		DamageCalculation clone = new DamageCalculation(parent);
-		for (DamageDiceGroup group : damageDice) {
-			clone.addDamageDiceGroup(group.clone());
-		}
-		clone.name = name;
-		clone.tags.clear();
-		clone.tags.addAll(tags);
+		DamageCalculation clone = (DamageCalculation) super.clone();
+		clone.damageDice = new LinkedList<DamageDiceGroup>();
+		clone.damageDice.addAll(damageDice);
+		clone.parent = parent;
 		return clone;
 	}
 
 	@Override
 	public void invoke(Entity source, Vector targetPos) {
-		System.out.println("[JAVA] " + parent + " invokes event " + this);
-
-		// TODO: preprocessEvent(Event e) ?
-		while (source.processEvent(this, source, null))
-			;
 		roll();
+		super.invoke(source, targetPos);
 	}
 
-	public void invokeAsClone(Entity source, Entity target) {
-		while (source.processEvent(this, source, target))
-			;
-		// Separation here to ensure sequentially prior Effects on the source
-		// (such as the Dragon Sorcerer's Elemental Affinity) do not come
-		// before sequentially latter Effects on the target (such as Rogue's
-		// Evasion). The target shall never have a relevant sequentially
-		// prior Effect in relation to the source's Effects, as the target
-		// always behaves in a reactionary manner to Damage Events.
-		while (target.processEvent(this, source, target))
-			;
-		target.processDamage(this);
-
-		DamageDealt dd = new DamageDealt(this);
-		dd.invoke(source, target.getPos());
-	}
-
-	public void invokeHalvedAsClone(Entity source, Entity target) {
-		while (source.processEvent(this, source, target))
-			;
-		// Separation here to ensure sequentially prior Effects on the source
-		// (such as the Dragon Sorcerer's Elemental Affinity) do not come
-		// before sequentially latter Effects on the target (such as Rogue's
-		// Evasion). The target shall never have a relevant sequentially
-		// prior Effect in relation to the source's Effects, as the target
-		// always behaves in a reactionary manner to Damage Events.
-		while (target.processEvent(this, source, target))
-			;
-
-		for (DamageDiceGroup group : damageDice) {
-			group.halve();
-		}
-		target.processDamage(this);
-
-		DamageDealt dd = new DamageDealt(this);
-		dd.invoke(source, target.getPos());
+	@Override
+	public void invokeEvent(Entity source, GameObject target) {
+		Damage d = new Damage(this);
+		d.invoke(source, target.getPos());
 	}
 
 	public void addDamageDiceGroup(DamageDiceGroup newGroup) {

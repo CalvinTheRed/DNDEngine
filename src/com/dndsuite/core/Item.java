@@ -6,8 +6,6 @@ import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import com.dndsuite.core.events.Event;
-import com.dndsuite.core.events.contests.AttackRoll;
-import com.dndsuite.core.events.contests.WeaponAttack;
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.core.tasks.Task;
 import com.dndsuite.dnd.combat.DamageDiceGroup;
@@ -110,19 +108,21 @@ public class Item extends Scriptable {
 	public LinkedList<Event> getMainhandAttackOptions() {
 		LinkedList<Event> events = new LinkedList<Event>();
 
-		events.add(new WeaponAttack(this, Entity.STR, WeaponAttack.MELEE, true));
-		events.add(new WeaponAttack(this, Entity.STR, WeaponAttack.THROWN, true));
+		// TODO: fix this
 
-		if (hasTag(FINESSE)) {
-			events.add(new WeaponAttack(this, Entity.DEX, WeaponAttack.MELEE, true));
-			if (hasTag(THROWN)) {
-				events.add(new WeaponAttack(this, Entity.DEX, WeaponAttack.THROWN, true));
-			}
-		}
-
-		if (hasTag(RANGED)) {
-			events.add(new WeaponAttack(this, Entity.DEX, WeaponAttack.RANGED, true));
-		}
+//		events.add(new WeaponAttack(this, Entity.STR, WeaponAttack.MELEE, true));
+//		events.add(new WeaponAttack(this, Entity.STR, WeaponAttack.THROWN, true));
+//
+//		if (hasTag(FINESSE)) {
+//			events.add(new WeaponAttack(this, Entity.DEX, WeaponAttack.MELEE, true));
+//			if (hasTag(THROWN)) {
+//				events.add(new WeaponAttack(this, Entity.DEX, WeaponAttack.THROWN, true));
+//			}
+//		}
+//
+//		if (hasTag(RANGED)) {
+//			events.add(new WeaponAttack(this, Entity.DEX, WeaponAttack.RANGED, true));
+//		}
 
 		return events;
 	}
@@ -147,16 +147,8 @@ public class Item extends Scriptable {
 	}
 
 	public double[] getRange(String attackType) {
-		double[] range = new double[2];
-		Varargs va = globals.get("range").invoke();
-		if (attackType == AttackRoll.RANGED && hasTag(RANGED)) {
-			range[Event.SHORTRANGE] = va.todouble(3);
-			range[Event.LONGRANGE] = va.todouble(4);
-		} else {
-			range[Event.SHORTRANGE] = va.todouble(1);
-			range[Event.LONGRANGE] = va.todouble(2);
-		}
-		return range;
+		// TODO fix this
+		return new double[] { 0.0, 0.0 };
 	}
 
 	public double getReach() {

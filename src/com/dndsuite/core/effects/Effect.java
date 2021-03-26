@@ -5,6 +5,7 @@ import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import com.dndsuite.core.Scriptable;
 import com.dndsuite.core.events.Event;
 import com.dndsuite.core.gameobjects.Entity;
+import com.dndsuite.core.gameobjects.GameObject;
 
 public class Effect extends Scriptable {
 	protected Entity source;
@@ -34,7 +35,7 @@ public class Effect extends Scriptable {
 		return ended;
 	}
 
-	public boolean processEvent(Event e, Entity source, Entity target) {
+	public boolean processEvent(Event e, GameObject source, GameObject target) {
 		globals.set("event", CoerceJavaToLua.coerce(e));
 		globals.set("source", CoerceJavaToLua.coerce(source));
 		globals.set("target", CoerceJavaToLua.coerce(target));

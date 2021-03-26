@@ -28,33 +28,26 @@ public abstract class Scriptable {
 		tags.add(tag);
 	}
 
-	public boolean hasTag(String tag) {
-		return tags.contains(tag);
+	protected void cloneDataTo(Scriptable s) {
+		s.tags.clear();
+		s.tags.addAll(tags);
 	}
 
 	public LinkedList<String> getTags() {
 		return tags;
 	}
 
-	public void printTags() {
-		for (String tag : tags) {
-			System.out.println(tag);
-		}
+	public boolean hasTag(String tag) {
+		return tags.contains(tag);
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
 	public String toString() {
 		return name;
-	}
-
-	/*
-	 * -----------------------------------------------------------------------------
-	 * Functions used from Lua define function -------------------------------------
-	 * -----------------------------------------------------------------------------
-	 */
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 }
