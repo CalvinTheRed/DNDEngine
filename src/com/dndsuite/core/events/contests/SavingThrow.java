@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
-import com.dndsuite.core.events.Damage;
+import com.dndsuite.core.events.DamageCalculation;
 import com.dndsuite.core.events.DiceCheckCalculation;
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.dnd.VirtualBoard;
@@ -15,7 +15,7 @@ import com.dndsuite.maths.Vector;
 public class SavingThrow extends DiceContest {
 	public static final String HALF_DAMAGE_ON_PASS = "Half Damage on Pass";
 
-	protected Damage d;
+	protected DamageCalculation damageCalculation;
 	protected LinkedList<Entity> targets;
 	protected int saveAbility;
 	protected int dcAbility;
@@ -25,7 +25,7 @@ public class SavingThrow extends DiceContest {
 		targets = new LinkedList<Entity>();
 		this.dcAbility = dcAbility;
 		addTag(SavingThrow.getEventID());
-		d = new Damage(this);
+		damageCalculation = new DamageCalculation(this);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class SavingThrow extends DiceContest {
 		clone.appliedEffects.addAll(appliedEffects);
 		clone.tags.clear();
 		clone.tags.addAll(tags);
-		clone.d = d.clone();
+		clone.damageCalculation = damageCalculation.clone();
 		clone.targets.addAll(targets);
 		clone.saveAbility = saveAbility;
 		clone.dcAbility = dcAbility;
@@ -71,10 +71,10 @@ public class SavingThrow extends DiceContest {
 
 		int index = 1;
 		while (va.isuserdata(index)) {
-			d.addDamageDiceGroup((DamageDiceGroup) va.touserdata(index));
+			damageCalculation.addDamageDiceGroup((DamageDiceGroup) va.touserdata(index));
 			index++;
 		}
-		d.invoke(source, null);
+		damageCalculation.invoke(source, null);
 
 		// Give the source a chance to modify the Event before it gets cloned to each of
 		// its targets
@@ -103,14 +103,14 @@ public class SavingThrow extends DiceContest {
 		if (getRoll() < dcc.getDC()) {
 			System.out.println("[JAVA] " + target + " failed its saving throw! (" + getRawRoll() + "+" + bonus + ":"
 					+ dcc.getDC() + ")");
-			d.clone().invokeAsClone(source, target);
+			damageCalculation.clone().invokeAsClone(source, target);
 			globals.set("target", CoerceJavaToLua.coerce(target));
 			globals.get("additionalEffects").invoke();
 		} else {
 			System.out.println("[JAVA] " + target + " passed its saving throw! (" + getRawRoll() + "+" + bonus + ":"
 					+ dcc.getDC() + ")");
 			if (hasTag(HALF_DAMAGE_ON_PASS)) {
-				d.clone().invokeHalvedAsClone(source, target);
+				damageCalculation.clone().invokeHalvedAsClone(source, target);
 			}
 			globals.set("target", CoerceJavaToLua.coerce(target));
 			globals.get("additionalEffectsOnPass").invoke();

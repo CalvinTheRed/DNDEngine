@@ -36,6 +36,12 @@ public abstract class Scriptable {
 		return tags;
 	}
 
+	public void printTags() {
+		for (String tag : tags) {
+			System.out.println(tag);
+		}
+	}
+
 	@Override
 	public String toString() {
 		return name;

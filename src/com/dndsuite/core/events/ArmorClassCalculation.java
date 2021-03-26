@@ -2,6 +2,7 @@ package com.dndsuite.core.events;
 
 import java.util.LinkedList;
 
+import com.dndsuite.core.Item;
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.maths.Vector;
 
@@ -18,13 +19,20 @@ public class ArmorClassCalculation extends Event {
 		super(null);
 		this.parent = parent;
 		acAbilityIndices = new LinkedList<Integer>();
-		abilityBonusLimit = Integer.MAX_VALUE;
-		baseAC = DEFAULT_BASE_AC;
-		bonus = 0;
 		acAbilityIndices.add(Entity.DEX);
+		bonus = 0;
 		setName(ArmorClassCalculation.getEventID());
 		addTag(Event.SINGLE_TARGET);
 		addTag(ArmorClassCalculation.getEventID());
+
+		if (parent.getArmor() == null) {
+			baseAC = DEFAULT_BASE_AC;
+			abilityBonusLimit = Integer.MAX_VALUE;
+		} else {
+			Item armor = parent.getArmor();
+			baseAC = armor.getAC();
+			abilityBonusLimit = armor.getACAbilityBonusLimit();
+		}
 	}
 
 	public void addBonus(int bonus) {

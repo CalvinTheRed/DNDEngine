@@ -7,7 +7,9 @@ import com.dndsuite.core.Observer;
 import com.dndsuite.core.Scriptable;
 import com.dndsuite.core.Subject;
 import com.dndsuite.core.effects.Effect;
+import com.dndsuite.core.events.DamageCalculation;
 import com.dndsuite.dnd.VirtualBoard;
+import com.dndsuite.dnd.combat.DamageDiceGroup;
 import com.dndsuite.maths.Vector;
 
 public abstract class GameObject extends Scriptable implements Subject {
@@ -67,6 +69,52 @@ public abstract class GameObject extends Scriptable implements Subject {
 
 	public boolean removeFromInventory(Item item) {
 		return inventory.remove(item);
+	}
+
+	public void processDamage(DamageCalculation dc) {
+		for (DamageDiceGroup group : dc.getDamageDice()) {
+			int adjustment;
+			if (group.getEffectiveness() == DamageDiceGroup.RESISTED) {
+				adjustment = group.getSum() - Math.max(1, group.getSum() / 2);
+				group.addBonus(adjustment);
+			} else if (group.getEffectiveness() == DamageDiceGroup.ENHANCED) {
+				adjustment = group.getSum();
+				group.addBonus(adjustment);
+			} else if (group.getEffectiveness() == DamageDiceGroup.NO_EFFECT) {
+				adjustment = -group.getSum();
+				group.addBonus(adjustment);
+			}
+			System.out.println("[JAVA] " + this + " takes " + group.getSum() + " " + group.getDamageType() + " damage");
+		}
+	}
+
+	public void takeDamage(int damage) {
+		// TODO: implement damage taking
+	}
+
+	public void clearEndedEffects() {
+		for (int i = 0; i < activeEffects.size(); i++) {
+			if (activeEffects.get(i).isEnded()) {
+				activeEffects.remove(i);
+				i--;
+			}
+		}
+	}
+
+	public int getHealth() {
+		return health;
+	}
+
+	public int getHealthBase() {
+		return healthBase;
+	}
+
+	public int healthMax() {
+		return healthMax;
+	}
+
+	public int getHealthTmp() {
+		return healthTmp;
 	}
 
 	/*

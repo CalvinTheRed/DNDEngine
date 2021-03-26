@@ -4,7 +4,7 @@ import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import com.dndsuite.core.events.ArmorClassCalculation;
-import com.dndsuite.core.events.Damage;
+import com.dndsuite.core.events.DamageCalculation;
 import com.dndsuite.core.events.Event;
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.dnd.VirtualBoard;
@@ -62,8 +62,8 @@ public class AttackRoll extends DiceContest {
 		 * (source.processEvent(this, source, target) || target.processEvent(this,
 		 * source, target)) ;
 		 */
-		ArmorClassCalculation acc = new ArmorClassCalculation(source);
-		source.processEvent(acc, source, source);
+		ArmorClassCalculation acc = new ArmorClassCalculation(target);
+		source.processEvent(acc, source, target);
 		if (getRoll() >= acc.getAC()) {
 			System.out.println("[JAVA] Attack roll hit! (" + getRawRoll() + "+" + bonus + ":" + acc.getAC() + ")");
 			invokeFallout(source);
@@ -88,12 +88,12 @@ public class AttackRoll extends DiceContest {
 
 	@Override
 	protected void invokeFallout(Entity source) {
-		Damage d = new Damage(this);
+		DamageCalculation dc = new DamageCalculation(this);
 
 		if (getRawRoll() == Die.CRITICAL_HIT) {
-			d.addTag(CRITICAL_HIT);
+			dc.addTag(CRITICAL_HIT);
 		} else if (getRawRoll() == Die.CRITICAL_FAIL) {
-			d.addTag(CRITICAL_MISS);
+			dc.addTag(CRITICAL_MISS);
 		}
 
 		globals.set("source", CoerceJavaToLua.coerce(source));
@@ -101,19 +101,20 @@ public class AttackRoll extends DiceContest {
 
 		int index = 1;
 		while (va.isuserdata(index)) {
-			d.addDamageDiceGroup((DamageDiceGroup) va.touserdata(index));
+			dc.addDamageDiceGroup((DamageDiceGroup) va.touserdata(index));
 			index++;
 		}
 
-		d.invoke(source, null);
-		d.clone().invokeAsClone(source, target);
+		dc.invoke(source, null);
+		dc.clone().invokeAsClone(source, target);
 
 		globals.set("target", CoerceJavaToLua.coerce(target));
 		globals.get("additionalEffects").invoke();
 	}
 
 	protected void invokeFalloutOnMiss(Entity source) {
-
+		// TODO: is this ever going to get used internally, or will lua scripts always
+		// drive this idea?
 	}
 
 	public static String getEventID() {

@@ -1,7 +1,7 @@
 package com.dndsuite.core.events.contests;
 
 import com.dndsuite.core.Item;
-import com.dndsuite.core.events.Damage;
+import com.dndsuite.core.events.DamageCalculation;
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.dnd.combat.DamageDiceGroup;
 import com.dndsuite.dnd.data.DamageType;
@@ -29,7 +29,7 @@ public class WeaponAttack extends AttackRoll {
 
 	@Override
 	protected void invokeFallout(Entity source) {
-		Damage d = new Damage(this);
+		DamageCalculation d = new DamageCalculation(this);
 		DamageDiceGroup damageDice;
 
 		if (getRawRoll() == Die.CRITICAL_HIT) {

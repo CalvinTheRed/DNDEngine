@@ -8,33 +8,27 @@ import com.dndsuite.dnd.combat.DamageDiceGroup;
 import com.dndsuite.maths.Vector;
 import com.dndsuite.maths.dice.Die;
 
-/**
- * A class which represents damage dealt from a single source (though that
- * single source may deal multiple types of damage at once, such as in the case
- * of the Meteor Swarm spell).
- * 
- * @author calvi
- *
- */
-public class Damage extends Event {
+public class DamageCalculation extends Event {
 	protected LinkedList<DamageDiceGroup> damageDice;
 	protected Event parent;
 
-	public Damage(Event parent) {
+	public DamageCalculation(Event parent) {
 		super(null);
 		this.parent = parent;
 		damageDice = new LinkedList<DamageDiceGroup>();
-		setName(Damage.getEventID() + " (" + parent + ")");
+		setName(DamageCalculation.getEventID() + " (" + parent + ")");
 		addTag(Event.SINGLE_TARGET);
-		addTag(Damage.getEventID());
+		addTag(DamageCalculation.getEventID());
 	}
 
-	public Damage clone() {
-		Damage clone = new Damage(parent);
+	public DamageCalculation clone() {
+		DamageCalculation clone = new DamageCalculation(parent);
 		for (DamageDiceGroup group : damageDice) {
 			clone.addDamageDiceGroup(group.clone());
 		}
 		clone.name = name;
+		clone.tags.clear();
+		clone.tags.addAll(tags);
 		return clone;
 	}
 
@@ -59,7 +53,10 @@ public class Damage extends Event {
 		// always behaves in a reactionary manner to Damage Events.
 		while (target.processEvent(this, source, target))
 			;
-		target.receiveDamage(this);
+		target.processDamage(this);
+
+		DamageDealt dd = new DamageDealt(this);
+		dd.invoke(source, target.getPos());
 	}
 
 	public void invokeHalvedAsClone(Entity source, Entity target) {
@@ -77,7 +74,10 @@ public class Damage extends Event {
 		for (DamageDiceGroup group : damageDice) {
 			group.halve();
 		}
-		target.receiveDamage(this);
+		target.processDamage(this);
+
+		DamageDealt dd = new DamageDealt(this);
+		dd.invoke(source, target.getPos());
 	}
 
 	public void addDamageDiceGroup(DamageDiceGroup newGroup) {
@@ -121,7 +121,7 @@ public class Damage extends Event {
 	}
 
 	public static String getEventID() {
-		return "Damage";
+		return "Damage Calculation";
 	}
 
 }

@@ -3,26 +3,16 @@ package com.dndsuite.core.gameobjects;
 import java.util.LinkedList;
 
 import com.dndsuite.core.Item;
-import com.dndsuite.core.Observer;
 import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.effects.ItemProficiencyWatcher;
 import com.dndsuite.core.effects.SaveProficiencyWatcher;
 import com.dndsuite.core.effects.SpellProficiencyWatcher;
-import com.dndsuite.core.events.Damage;
 import com.dndsuite.core.events.Event;
 import com.dndsuite.core.events.TaskCollection;
 import com.dndsuite.core.events.groups.EventGroup;
 import com.dndsuite.core.tasks.Task;
-import com.dndsuite.dnd.combat.DamageDiceGroup;
 import com.dndsuite.maths.Vector;
 
-/**
- * An abstract class which represents a game piece which has the ability to
- * perform actions
- * 
- * @author calvi
- *
- */
 public class Entity extends GameObject {
 	public static final String ABERRATION = "Aberration";
 	public static final String BEAST = "Beast";
@@ -62,6 +52,7 @@ public class Entity extends GameObject {
 
 	public Entity(String script, Vector pos, Vector rot) {
 		super(script, pos, rot);
+		addTag(Entity.getGameObjectID());
 	}
 
 	public int getAbilityModifier(int ability) {
@@ -156,38 +147,6 @@ public class Entity extends GameObject {
 		return false;
 	}
 
-	public void receiveDamage(Damage d) {
-		System.out.println("[JAVA] " + this + " received " + d);
-		for (DamageDiceGroup group : d.getDamageDice()) {
-			int damage = 0;
-			if (group.getEffectiveness() == DamageDiceGroup.NORMAL) {
-				damage = group.getSum();
-				System.out.println("[JAVA] " + this + " takes " + damage + " " + group.getDamageType()
-						+ " damage (bonus: " + group.getBonus() + ")");
-			} else if (group.getEffectiveness() == DamageDiceGroup.RESISTED) {
-				damage = Math.max(1, group.getSum() / 2);
-				System.out.println("[JAVA] " + this + " takes " + damage + " " + group.getDamageType()
-						+ " damage (bonus: " + group.getBonus() + ") (resistant)");
-			} else if (group.getEffectiveness() == DamageDiceGroup.ENHANCED) {
-				damage = group.getSum() * 2;
-				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: "
-						+ group.getBonus() + ") (vulnerable)");
-			} else if (group.getEffectiveness() == DamageDiceGroup.NEUTRALIZED) {
-				damage = group.getSum();
-				System.out.println("[JAVA] " + this + " takes " + damage + " " + group.getDamageType()
-						+ " damage (bonus: " + group.getBonus() + ") (resistant and vulnerable)");
-			} else if (group.getEffectiveness() == DamageDiceGroup.NO_EFFECT) {
-				System.out.println("[JAVA] " + this + " takes 0 " + group.getDamageType() + " damage (bonus: "
-						+ group.getBonus() + ") (immune)");
-			}
-			takeDamage(damage);
-		}
-	}
-
-	public void removeObserver(Observer o) {
-		observers.remove(o);
-	}
-
 	public void stowMainhand() {
 		if (mainhand != null) {
 			if (mainhand.hasTag(Item.TWO_HANDED)) {
@@ -204,10 +163,6 @@ public class Entity extends GameObject {
 			}
 			offhand = null;
 		}
-	}
-
-	private void takeDamage(int damage) {
-		// TODO: implement health decrementation here
 	}
 
 	public void versatileSet() {
@@ -228,15 +183,6 @@ public class Entity extends GameObject {
 			return true;
 		}
 		return false;
-	}
-
-	public void clearEndedEffects() {
-		for (int i = 0; i < activeEffects.size(); i++) {
-			if (activeEffects.get(i).isEnded()) {
-				activeEffects.remove(i);
-				i--;
-			}
-		}
 	}
 
 	public void clearEventQueue() {
@@ -260,6 +206,10 @@ public class Entity extends GameObject {
 		return "";
 	}
 
+	public static String getGameObjectID() {
+		return "Entity";
+	}
+
 	/*
 	 * -----------------------------------------------------------------------------
 	 * Functions used from Lua define function -------------------------------------
@@ -277,6 +227,14 @@ public class Entity extends GameObject {
 		addEffect(new ItemProficiencyWatcher(this));
 		addEffect(new SpellProficiencyWatcher(this));
 		addEffect(new SaveProficiencyWatcher(this));
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public void setExperience(int experience) {
+		this.experience = experience;
 	}
 
 	public boolean addBaseTask(Task task) {

@@ -5,10 +5,18 @@ function define()
 	-- Set name
 	self:setName("Zombie")
 	
+	-- Apply all relevant tags
+	Entity = luajava.bindClass("com.dndsuite.core.gameobjects.Entity")
+	self:addTag(Entity.UNDEAD)
+	
+	-- Set challenge data
+	self:setLevel(3)
+	self:setExperience(50)
+	
 	-- Set health data
-	self:setHealth(22)
-	self:setHealthBase(22)
-	self:setHealthMax(22)
+	self:setHealth(1) -- 22
+	self:setHealthBase(1)
+	self:setHealthMax(1)
 	self:setHealthTmp(0)
 	
 	-- Populate inventory
@@ -23,6 +31,8 @@ function define()
 	self:addBaseTask(task)
 	
 	-- Add active effects
+	effect = luajava.newInstance("com.dndsuite.core.effects.Effect", "scripts/effects/undead_fortitude.lua", self, self)
+	self:addEffect(effect)
 	
 	-- Add item proficiencies
 	

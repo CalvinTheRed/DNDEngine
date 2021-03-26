@@ -100,7 +100,11 @@ public class Item extends Scriptable {
 
 	public int getACAbilityBonusLimit() {
 		Varargs va = globals.get("acAbilityBonusLimit").invoke();
-		return va.toint(1);
+		int limit = va.toint(1);
+		if (limit == -1) {
+			return Integer.MAX_VALUE;
+		}
+		return limit;
 	}
 
 	public LinkedList<Event> getMainhandAttackOptions() {
