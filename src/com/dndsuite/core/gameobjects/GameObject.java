@@ -7,6 +7,7 @@ import com.dndsuite.core.Observer;
 import com.dndsuite.core.Scriptable;
 import com.dndsuite.core.Subject;
 import com.dndsuite.core.effects.Effect;
+import com.dndsuite.core.events.Damage;
 import com.dndsuite.core.events.DamageCalculation;
 import com.dndsuite.core.events.Event;
 import com.dndsuite.dnd.VirtualBoard;
@@ -96,8 +97,24 @@ public abstract class GameObject extends Scriptable implements Subject {
 		}
 	}
 
-	public void takeDamage(int damage) {
-		// TODO: implement damage taking
+	public void takeDamage(Damage d) {
+		int damage = d.getDamage();
+		if (healthTmp > 0) {
+			int delta = healthTmp - damage;
+			if (delta <= 0) {
+				healthTmp = 0;
+				damage += delta;
+			}
+			health -= damage;
+			if (health <= 0) {
+				if (d.hasTag(Damage.WITHSTOOD)) {
+					health = 1;
+				} else {
+					health = 0;
+					// TODO: GameObject death stuff here
+				}
+			}
+		}
 	}
 
 	public void clearEndedEffects() {
@@ -123,6 +140,10 @@ public abstract class GameObject extends Scriptable implements Subject {
 
 	public int getHealthTmp() {
 		return healthTmp;
+	}
+
+	public int getHealthTotal() {
+		return health + healthTmp;
 	}
 
 	/*

@@ -14,9 +14,9 @@ function define()
 	self:setExperience(50)
 	
 	-- Set health data
-	self:setHealth(1) -- 22
-	self:setHealthBase(1)
-	self:setHealthMax(1)
+	self:setHealth(22)
+	self:setHealthBase(22)
+	self:setHealthMax(22)
 	self:setHealthTmp(0)
 	
 	-- Populate inventory
@@ -25,13 +25,13 @@ function define()
 	self:prepEntity()
 	
 	-- Add base tasks
-	task = luajava.newInstance("com.dndsuite.core.tasks.Attack", self, 1)
-	self:addBaseTask(task)
-	task = luajava.newInstance("com.dndsuite.core.tasks.Task", "scripts/tasks/dodge.lua")
+	task = luajava.newInstance("com.dndsuite.core.tasks.Task", "scripts/tasks/zombie_slam.lua")
 	self:addBaseTask(task)
 	
 	-- Add active effects
 	effect = luajava.newInstance("com.dndsuite.core.effects.Effect", "scripts/effects/undead_fortitude.lua", self, self)
+	self:addEffect(effect)
+	effect = luajava.newInstance("com.dndsuite.core.effects.Effect", "scripts/effects/poison_damage_immunity.lua", self, self)
 	self:addEffect(effect)
 	
 	-- Add item proficiencies

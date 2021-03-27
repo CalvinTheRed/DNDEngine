@@ -34,17 +34,6 @@ public abstract class DiceContest extends Event {
 		this.bonus += bonus;
 	}
 
-	@Override
-	public DiceContest clone() {
-		DiceContest clone = (DiceContest) super.clone(); // TODO <------- this is a problem, casting does not work in
-														 // this direction
-		clone.bonus = bonus;
-		clone.parent = parent;
-		clone.target = target;
-		clone.d20 = d20.clone();
-		return clone;
-	}
-
 	public int getBonus() {
 		return bonus;
 	}
@@ -62,46 +51,49 @@ public abstract class DiceContest extends Event {
 	}
 
 	@Override
-	protected void invokeEvent(Entity source, GameObject target) {
+	public void invokeEvent(Entity source, GameObject target) {
+		if (target.hasTag(Entity.getGameObjectID())) {
+			addBonus(((Entity) target).getAbilityModifier(eventAbility));
+		}
 		while (source.processEvent(this, source, target))
 			;
 		roll();
 	}
 
-	protected void roll() {
+	public void roll() {
 		d20.roll();
 		boolean hasAdvantage = hasTag(ADVANTAGE);
 		boolean hasDisadvantage = hasTag(DISADVANTAGE);
 		if (hasAdvantage && hasDisadvantage) {
-			System.out.println("[JAVA] Rolling with both advantage and disadvantage!");
+			System.out.println("[JAVA] Rolling with both advantage and disadvantage");
 		} else if (hasAdvantage) {
-			System.out.println("[JAVA] Rolling with advantage!");
+			System.out.println("[JAVA] Rolling with advantage");
 			int roll = d20.getRoll();
 			d20.roll();
 			if (d20.getRoll() > roll) {
 				roll = d20.getRoll();
 			}
 		} else if (hasDisadvantage) {
-			System.out.println("[JAVA] Rolling with disadvantage!");
+			System.out.println("[JAVA] Rolling with disadvantage");
 			int roll = d20.getRoll();
 			d20.roll();
 			if (d20.getRoll() < roll) {
 				roll = d20.getRoll();
 			}
 		} else {
-			System.out.println("[JAVA] Rolling normally!");
+			System.out.println("[JAVA] Rolling normally");
 		}
 
-		if (hasTag(AttackRoll.getEventID()) && !target.hasTag(Entity.getGameObjectID())) {
-			// All attack rolls against game objects which have no stat block (which are not
-			// Entities) are guaranteed to land.
-			addTag(SET_PASS);
-		}
-
-		if (hasTag(SavingThrow.getEventID()) && !target.hasTag(Entity.getGameObjectID())) {
-			// All game objects which have no stat block (which are not Entities) are
-			// guaranteed to fail any saving throws they are required to make.
-			addTag(SET_FAIL);
+		if (!target.hasTag(Entity.getGameObjectID())) {
+			if (hasTag(AttackRoll.getEventID())) {
+				// All attack rolls against game objects which have no stat block (which are not
+				// Entities) are guaranteed to land.
+				addTag(SET_PASS);
+			} else if (hasTag(SavingThrow.getEventID())) {
+				// All game objects which have no stat block (which are not Entities) are
+				// guaranteed to fail any saving throws they are required to make.
+				addTag(SET_FAIL);
+			}
 		}
 	}
 

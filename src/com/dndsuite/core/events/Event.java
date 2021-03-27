@@ -29,6 +29,14 @@ public class Event extends Scriptable {
 		targets = new LinkedList<GameObject>();
 	}
 
+	public void addTarget(GameObject target) {
+		targets.add(target);
+	}
+
+	public void addTargets(LinkedList<GameObject> targets) {
+		this.targets.addAll(targets);
+	}
+
 	public void applyEffect(Effect e) throws Exception {
 		if (appliedEffects.contains(e)) {
 			throw new Exception("Effect already applied");
@@ -50,8 +58,6 @@ public class Event extends Scriptable {
 		clone.radius = radius;
 		clone.appliedEffects = new LinkedList<Effect>();
 		clone.appliedEffects.addAll(appliedEffects);
-		clone.tags = new LinkedList<String>();
-		clone.tags.addAll(tags);
 		return clone;
 	}
 
@@ -93,6 +99,8 @@ public class Event extends Scriptable {
 		}
 
 		for (GameObject target : targets) {
+			Event clone = clone();
+			clone.globals.set("globals", CoerceJavaToLua.coerce(globals));
 			clone().invokeAsClone(source, target);
 		}
 	}
@@ -110,11 +118,15 @@ public class Event extends Scriptable {
 		}
 	}
 
-	protected void invokeEvent(Entity source, GameObject target) {
+	public void invokeEvent(Entity source, GameObject target) {
 		/*
 		 * This function represents the "invokeEvent()" function in Lua scripts, defined
 		 * within Java. This function shall be overridden by child classes of Event.
 		 */
+	}
+
+	public boolean removeTarget(GameObject target) {
+		return targets.remove(target);
 	}
 
 	public void setName(String name) {

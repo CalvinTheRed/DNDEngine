@@ -3,52 +3,25 @@ package com.dndsuite.core.events;
 import java.util.LinkedList;
 
 import com.dndsuite.core.Item;
+import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.gameobjects.Entity;
-import com.dndsuite.maths.Vector;
+import com.dndsuite.core.gameobjects.GameObject;
 
 public class ArmorClassCalculation extends Event {
 	private static final int DEFAULT_BASE_AC = 10;
 
-	protected Entity subject;
+	protected GameObject subject;
 	protected LinkedList<Integer> acAbilityIndices;
 	protected int abilityBonusLimit;
 	protected int baseAC;
 	protected int bonus;
 
-	public ArmorClassCalculation(Entity subject) {
+	public ArmorClassCalculation(GameObject subject) {
 		super(null, -1);
 		this.subject = subject;
 		acAbilityIndices = new LinkedList<Integer>();
 		setName(ArmorClassCalculation.getEventID());
 		addTag(ArmorClassCalculation.getEventID());
-	}
-
-	@Override
-	public ArmorClassCalculation clone() {
-		ArmorClassCalculation clone = (ArmorClassCalculation) super.clone();
-		clone.subject = subject;
-		clone.acAbilityIndices = new LinkedList<Integer>();
-		clone.acAbilityIndices.addAll(acAbilityIndices);
-		clone.abilityBonusLimit = abilityBonusLimit;
-		clone.baseAC = baseAC;
-		clone.bonus = bonus;
-		return clone;
-	}
-
-	@Override
-	public void invoke(Entity source, Vector targetPos) {
-		acAbilityIndices.add(Entity.DEX);
-		bonus = 0;
-
-		if (subject.getArmor() == null) {
-			baseAC = DEFAULT_BASE_AC;
-			abilityBonusLimit = Integer.MAX_VALUE;
-		} else {
-			Item armor = subject.getArmor();
-			baseAC = armor.getAC();
-			abilityBonusLimit = armor.getACAbilityBonusLimit();
-		}
-		super.invoke(source, targetPos);
 	}
 
 	public void addACAbilityIndex(int index) {
@@ -63,10 +36,33 @@ public class ArmorClassCalculation extends Event {
 		acAbilityIndices.clear();
 	}
 
+	@Override
+	public ArmorClassCalculation clone() {
+		ArmorClassCalculation clone = new ArmorClassCalculation(subject);
+		cloneDataTo(clone);
+		clone.shortrange = shortrange;
+		clone.longrange = longrange;
+		clone.radius = radius;
+		clone.appliedEffects = new LinkedList<Effect>();
+		clone.appliedEffects.addAll(appliedEffects);
+		clone.tags = new LinkedList<String>();
+		clone.tags.addAll(tags);
+
+		clone.acAbilityIndices.clear();
+		clone.acAbilityIndices.addAll(acAbilityIndices);
+		clone.abilityBonusLimit = abilityBonusLimit;
+		clone.baseAC = baseAC;
+		clone.bonus = bonus;
+		return clone;
+	}
+
 	public int getAC() {
+		if (!(subject instanceof Entity)) {
+			return 0;
+		}
 		int ac = baseAC + bonus;
 		for (int abilityIndex : acAbilityIndices) {
-			ac += Math.min(abilityBonusLimit, subject.getAbilityModifier(abilityIndex));
+			ac += Math.min(abilityBonusLimit, ((Entity) subject).getAbilityModifier(abilityIndex));
 		}
 		return ac;
 	}
@@ -79,8 +75,28 @@ public class ArmorClassCalculation extends Event {
 		return bonus;
 	}
 
-	public Entity getSubject() {
+	public GameObject getSubject() {
 		return subject;
+	}
+
+	@Override
+	public void invokeEvent(Entity source, GameObject target) {
+		acAbilityIndices.add(Entity.DEX);
+		bonus = 0;
+
+		if (subject instanceof Entity) {
+			if (((Entity) subject).getArmor() == null) {
+				baseAC = DEFAULT_BASE_AC;
+				abilityBonusLimit = Integer.MAX_VALUE;
+			} else {
+				Item armor = ((Entity) subject).getArmor();
+				baseAC = armor.getAC();
+				abilityBonusLimit = armor.getACAbilityBonusLimit();
+			}
+		}
+
+		while (target.processEvent(this, source, target))
+			;
 	}
 
 	public void resetACAbilityIndices() {

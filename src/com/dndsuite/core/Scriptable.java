@@ -31,6 +31,7 @@ public abstract class Scriptable {
 	protected void cloneDataTo(Scriptable s) {
 		s.tags.clear();
 		s.tags.addAll(tags);
+		s.globals = globals; // TODO: does cloning globals cause problems?
 	}
 
 	public LinkedList<String> getTags() {

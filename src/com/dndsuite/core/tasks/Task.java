@@ -33,7 +33,7 @@ public class Task extends Scriptable {
 		// TODO: return false if insufficient action economy
 		// TODO: expend action economy
 		globals.set("invoker", CoerceJavaToLua.coerce(invoker));
-		globals.get("invokeTask").invoke();
+		globals.get("invokeTask").invoke(); // TODO: <--- this has a problem with the zombie_slam task for some reason...
 
 		return true;
 	}

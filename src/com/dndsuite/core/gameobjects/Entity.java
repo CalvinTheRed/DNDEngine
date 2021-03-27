@@ -49,6 +49,8 @@ public class Entity extends GameObject {
 	public Entity(String script, Vector pos, Vector rot) {
 		super(script, pos, rot);
 		addTag(Entity.getGameObjectID());
+		// TODO: remove the need for this to pre-populate availableTasks
+		getTasks();
 	}
 
 	public int getAbilityModifier(int ability) {
@@ -281,16 +283,14 @@ public class Entity extends GameObject {
 		updateObservers();
 	}
 
-	// TODO: find a more elegant solution to this
 	public void setAbilityScores(int[] abilityScores) {
-		for (int i = 0; i < this.abilityScores.length; i++) {
+		for (int i = 0; i < 6; i++) {
 			this.abilityScores[i] = abilityScores[i];
 		}
 	}
 
-	// TODO: find a more elegant solution to this
 	public void setBaseAbilityScores(int[] baseAbilityScores) {
-		for (int i = 0; i < this.baseAbilityScores.length; i++) {
+		for (int i = 0; i < 6; i++) {
 			this.baseAbilityScores[i] = baseAbilityScores[i];
 		}
 	}
