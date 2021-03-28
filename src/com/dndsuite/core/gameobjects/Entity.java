@@ -295,4 +295,8 @@ public class Entity extends GameObject {
 		}
 	}
 
+	public int getExperience() {
+		return experience;
+	}
+
 }
