@@ -1,4 +1,4 @@
-package com.dndsuite.testing.dnd;
+package com.dndsuite.dnd;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -15,12 +15,12 @@ import org.junit.jupiter.api.Test;
 
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.core.gameobjects.GameObject;
-import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.maths.Vector;
-import com.dndsuite.testing.core.gameobjects.DummyEntity;
 
 public class VirtualBoardTester {
 
+	Entity e;
+	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
 	}
@@ -31,6 +31,7 @@ public class VirtualBoardTester {
 
 	@BeforeEach
 	void setUp() throws Exception {
+		e = new Entity("scripts/test/dummy.lua",new Vector(0, 0, 0), new Vector(1, 0, 0));
 	}
 
 	@AfterEach
@@ -41,7 +42,6 @@ public class VirtualBoardTester {
 	@Test
 	@DisplayName("GameObjects can be added to the VirtualBoard")
 	void test1() {
-		Entity e = new DummyEntity(new Vector(0, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
 		assertTrue(VirtualBoard.contains(e));
 	}
@@ -49,7 +49,6 @@ public class VirtualBoardTester {
 	@Test
 	@DisplayName("Particular GameObjects can be removed from the VirtualBoard")
 	void test2() {
-		Entity e = new DummyEntity(new Vector(0, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
 		VirtualBoard.removeGameObject(e);
 		assertFalse(VirtualBoard.contains(e));
@@ -58,7 +57,6 @@ public class VirtualBoardTester {
 	@Test
 	@DisplayName("VirtualBoard can have its GameObject list cleared")
 	void test3() {
-		Entity e = new DummyEntity(new Vector(0, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
 		assertTrue(VirtualBoard.contains(e));
 		VirtualBoard.clearGameObjects();
@@ -68,12 +66,11 @@ public class VirtualBoardTester {
 	@Test
 	@DisplayName("VirtualBoard can locate the nearest GameObject")
 	void test4() {
-		Entity e;
-		e = new DummyEntity(new Vector(0, 0, 0), new Vector(1, 0, 0));
+		e = new Entity("scripts/test/dummy.lua", new Vector(0, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
-		e = new DummyEntity(new Vector(1, 0, 0), new Vector(1, 0, 0));
+		e = new Entity("scripts/test/dummy.lua", new Vector(1, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
-		e = new DummyEntity(new Vector(2, 0, 0), new Vector(1, 0, 0));
+		e = new Entity("scripts/test/dummy.lua", new Vector(2, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
 
 		assertEquals(VirtualBoard.nearestObject(new Vector(2, 0, 0), new String[] {}), e);
@@ -88,13 +85,13 @@ public class VirtualBoardTester {
 
 		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
 			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
-				Entity e = new DummyEntity(new Vector(i, 0, k), new Vector(1, 0, 0));
+				e = new Entity("scripts/test/dummy.lua", new Vector(i, 0, k), new Vector(1, 0, 0));
 				fullList.add(e);
 				VirtualBoard.addGameObject(e);
 			}
 		}
 
-		// An entity located at the source should not be returned by entitiesInCone()
+		// An Entity located at the source should not be returned by entitiesInCone()
 		LinkedList<GameObject> list = VirtualBoard.objectsInCone(new Vector(0, 0, 0), new Vector(1, 0, 0), length,
 				new String[] {});
 
@@ -117,7 +114,7 @@ public class VirtualBoardTester {
 
 		for (int i = -(int) radius - 1; i <= (int) radius + 1; i++) {
 			for (int k = -(int) radius - 1; k <= (int) radius + 1; k++) {
-				Entity e = new DummyEntity(new Vector(i, 0, k), new Vector(1, 0, 0));
+				e = new Entity("scripts/test/dummy.lua", new Vector(i, 0, k), new Vector(1, 0, 0));
 				fullList.add(e);
 				VirtualBoard.addGameObject(e);
 			}
@@ -144,13 +141,13 @@ public class VirtualBoardTester {
 
 		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
 			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
-				Entity e = new DummyEntity(new Vector(i, 0, k), new Vector(1, 0, 0));
+				e = new Entity("scripts/test/dummy.lua", new Vector(i, 0, k), new Vector(1, 0, 0));
 				fullList.add(e);
 				VirtualBoard.addGameObject(e);
 			}
 		}
 
-		// An entity located at the source should not be returned by entitiesInLine()
+		// An Entity("scripts/test/dummy.lua", located at the source should not be returned by entitiesInLine()
 		LinkedList<GameObject> list = VirtualBoard.objectsInLine(new Vector(0, 0, 0), new Vector(1, 0, 0), length,
 				radius, new String[] {});
 
@@ -172,7 +169,7 @@ public class VirtualBoardTester {
 
 		for (int i = -(int) radius - 1; i <= (int) radius + 1; i++) {
 			for (int k = -(int) radius - 1; k <= (int) radius + 1; k++) {
-				Entity e = new DummyEntity(new Vector(i, 0, k), new Vector(1, 0, 0));
+				e = new Entity("scripts/test/dummy.lua", new Vector(i, 0, k), new Vector(1, 0, 0));
 				fullList.add(e);
 				VirtualBoard.addGameObject(e);
 			}

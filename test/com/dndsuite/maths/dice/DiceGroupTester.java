@@ -1,4 +1,4 @@
-package com.dndsuite.testing.maths.dice;
+package com.dndsuite.maths.dice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

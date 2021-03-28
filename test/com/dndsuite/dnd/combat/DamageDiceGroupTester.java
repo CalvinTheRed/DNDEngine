@@ -1,4 +1,4 @@
-package com.dndsuite.testing.dnd.combat;
+package com.dndsuite.dnd.combat;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
