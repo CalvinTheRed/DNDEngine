@@ -14,6 +14,12 @@ import com.dndsuite.maths.Vector;
 
 public class Event extends Scriptable {
 	public static final String SPELL = "Spell";
+	
+	// TODO: create AbilityScoreCaculation event
+	// to avoid the issue of abilityScores[] vs
+	// baseAbilityScores distinction! Define the
+	// base scores, then let Effect objects
+	// determine the emergent scores.
 
 	protected int eventAbility;
 	protected double shortrange;

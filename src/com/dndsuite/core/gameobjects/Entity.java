@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.dndsuite.core.Item;
 import com.dndsuite.core.effects.Effect;
+import com.dndsuite.core.events.AbilityScoreCalculation;
 import com.dndsuite.core.events.TaskCollection;
 import com.dndsuite.core.events.groups.EventGroup;
 import com.dndsuite.core.tasks.Task;
@@ -43,7 +44,6 @@ public class Entity extends GameObject {
 
 	protected int experience;
 	protected int level;
-	protected int[] abilityScores;
 	protected int[] baseAbilityScores;
 
 	public Entity(String script, Vector pos, Vector rot) {
@@ -54,7 +54,9 @@ public class Entity extends GameObject {
 	}
 
 	public int getAbilityModifier(int ability) {
-		int abilityScoreBuffer = abilityScores[ability] - 10;
+		AbilityScoreCalculation asc = new AbilityScoreCalculation(ability, this);
+		
+		int abilityScoreBuffer = asc.getScore() - 10;
 		if (abilityScoreBuffer < 0) {
 			abilityScoreBuffer--;
 		}
@@ -63,6 +65,10 @@ public class Entity extends GameObject {
 
 	public Item getArmor() {
 		return armor;
+	}
+	
+	public int getBaseAbilityScore(int abilityIndex) {
+		return baseAbilityScores[abilityIndex];
 	}
 
 	public LinkedList<Effect> getEffects() {
@@ -212,7 +218,6 @@ public class Entity extends GameObject {
 		availableTasks = new LinkedList<Task>();
 		baseTasks = new LinkedList<Task>();
 		itemProficiencies = new LinkedList<String>();
-		abilityScores = new int[6];
 		baseAbilityScores = new int[6];
 	}
 
@@ -283,16 +288,8 @@ public class Entity extends GameObject {
 		updateObservers();
 	}
 
-	public void setAbilityScores(int[] abilityScores) {
-		for (int i = 0; i < 6; i++) {
-			this.abilityScores[i] = abilityScores[i];
-		}
-	}
-
-	public void setBaseAbilityScores(int[] baseAbilityScores) {
-		for (int i = 0; i < 6; i++) {
-			this.baseAbilityScores[i] = baseAbilityScores[i];
-		}
+	public void setBaseAbilityScore(int abilityIndex, int score) {
+		baseAbilityScores[abilityIndex] = score;
 	}
 
 	public int getExperience() {

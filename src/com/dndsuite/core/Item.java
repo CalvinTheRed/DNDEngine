@@ -108,7 +108,7 @@ public class Item extends Scriptable {
 	public LinkedList<Event> getMainhandAttackOptions() {
 		LinkedList<Event> events = new LinkedList<Event>();
 
-		// TODO: fix this
+		// TODO: fix Item-based attack events
 
 //		events.add(new WeaponAttack(this, Entity.STR, WeaponAttack.MELEE, true));
 //		events.add(new WeaponAttack(this, Entity.STR, WeaponAttack.THROWN, true));

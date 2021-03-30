@@ -1,4 +1,6 @@
 function define()
+	Entity = luajava.bindClass("com.dndsuite.core.gameobjects.Entity")
+	
 	-- Initialize GameObject fields
 	self:prepGameObject()
 	
@@ -6,7 +8,6 @@ function define()
 	self:setName("Zombie")
 	
 	-- Apply all relevant tags
-	Entity = luajava.bindClass("com.dndsuite.core.gameobjects.Entity")
 	self:addTag(Entity.UNDEAD)
 	
 	-- Set challenge data
@@ -38,7 +39,11 @@ function define()
 	
 	-- Set held and worn equipment
 	
-	-- Set ability score data
-	self:setBaseAbilityScores({13,6,16,3,6,5})
-	self:setAbilityScores({13,6,16,3,6,5})
+	-- Set ability scores
+	self:setBaseAbilityScore(Entity.STR, 13)
+	self:setBaseAbilityScore(Entity.DEX, 6)
+	self:setBaseAbilityScore(Entity.CON, 16)
+	self:setBaseAbilityScore(Entity.INT, 3)
+	self:setBaseAbilityScore(Entity.WIS, 6)
+	self:setBaseAbilityScore(Entity.CHA, 5)
 end

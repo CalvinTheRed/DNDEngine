@@ -51,11 +51,16 @@ class EntityTest {
 	@Test
 	@DisplayName("Net Ability Score Modifiers")
 	void test3() {
-		dummy.setAbilityScores(new int[] {16,10,16,9,9,9} );
-		assertEquals(3,dummy.getAbilityModifier(Entity.STR));
-		assertEquals(0,dummy.getAbilityModifier(Entity.DEX));
-		assertEquals(3,dummy.getAbilityModifier(Entity.CON));
-		assertEquals(-1,dummy.getAbilityModifier(Entity.INT));
+		dummy.setBaseAbilityScore(Entity.STR, 13);
+		dummy.setBaseAbilityScore(Entity.DEX, 12);
+		dummy.setBaseAbilityScore(Entity.CON, 11);
+		dummy.setBaseAbilityScore(Entity.INT, 10);
+		dummy.setBaseAbilityScore(Entity.WIS, 9);
+		dummy.setBaseAbilityScore(Entity.CHA, 8);
+		assertEquals(1,dummy.getAbilityModifier(Entity.STR));
+		assertEquals(1,dummy.getAbilityModifier(Entity.DEX));
+		assertEquals(0,dummy.getAbilityModifier(Entity.CON));
+		assertEquals(0,dummy.getAbilityModifier(Entity.INT));
 		assertEquals(-1,dummy.getAbilityModifier(Entity.WIS));
 		assertEquals(-1,dummy.getAbilityModifier(Entity.CHA));
 	}
