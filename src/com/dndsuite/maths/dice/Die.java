@@ -2,74 +2,43 @@ package com.dndsuite.maths.dice;
 
 import java.util.Random;
 
-/**
- * This class represents a fair die of N many sides
- * 
- * @author calvi
- *
- */
 public class Die {
-	// TODO: create static die switch (control and random)
-	// pass an array to control the values rolled by all
-	// dice, in order (this would require foreknowledge of
-	// which dice will be rolled to be useful)
-	
 	public static final int CRITICAL_FAIL = 1;
 	public static final int CRITICAL_HIT = 20;
-
+	private static boolean controlEnabled = false;
+	private static int queuePos;
+	private static int[] valueQueue;
+	
 	protected int size;
 	protected int roll;
 
 	private static final Random r = new Random();
 
-	/**
-	 * Constructor for class Die
-	 * 
-	 * @param size ({@code int}) the number of faces on the die
-	 */
 	public Die(int size) {
 		this.size = size;
 		roll = 0;
 	}
 
-	/**
-	 * This function rolls the Die
-	 */
 	public void roll() {
-//		if (size == 20) {
-//			roll = CRITICAL_FAIL;
-//			return;
-//		}
-		roll = Die.r.nextInt(size) + 1;
+		if (controlEnabled && queuePos == valueQueue.length) {
+			disableDiceControl();
+		}
+		if (controlEnabled) {
+			roll = valueQueue[queuePos];
+			queuePos++;
+		} else {
+			roll = Die.r.nextInt(size) + 1;
+		}
 	}
 
-	/**
-	 * This function returns the number of faces the Die has
-	 * 
-	 * @return {@code int} size
-	 */
 	public int getSize() {
 		return size;
 	}
 
-	/**
-	 * This function returns the last rolled value of the Die. If the Die has never
-	 * been rolled, this function returns 0
-	 * 
-	 * @return {@code int} last roll
-	 */
 	public int getRoll() {
 		return roll;
 	}
 
-	/**
-	 * This function returns a deep clone of the original Die object. The cloneis of
-	 * the same size and has the same value for the most recent roll
-	 * 
-	 * @return {@code Die} clone
-	 * 
-	 * @Override
-	 */
 	public Die clone() {
 		Die clone = new Die(size);
 		clone.roll = roll;
@@ -79,4 +48,15 @@ public class Die {
 	public void upsize() {
 		size += 2;
 	}
+	
+	public static void enableDiceControl(int[] queue) {
+		controlEnabled = true;
+		queuePos = 0;
+		valueQueue = queue;
+	}
+	
+	private static void disableDiceControl() {
+		controlEnabled = false;
+	}
+	
 }

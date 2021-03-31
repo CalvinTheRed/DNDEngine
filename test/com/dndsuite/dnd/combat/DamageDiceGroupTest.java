@@ -16,7 +16,7 @@ import com.dndsuite.dnd.combat.DamageDiceGroup;
 import com.dndsuite.dnd.data.DamageType;
 import com.dndsuite.maths.dice.Die;
 
-public class DamageDiceGroupTester {
+public class DamageDiceGroupTest {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -35,36 +35,38 @@ public class DamageDiceGroupTester {
 	}
 
 	@Test
-	@DisplayName("DamageDiceGroup constructor and type getter work")
+	@DisplayName("Sanity check")
 	void test1() {
 		int numDice = 4;
 		int dieSize = 1;
 		DamageType type = DamageType.ACID;
 		DamageDiceGroup damageDice = new DamageDiceGroup(numDice, dieSize, type);
-		assertEquals(damageDice.getDamageType(), type);
-		assertEquals(damageDice.getEffectiveness(), DamageDiceGroup.NORMAL);
 		LinkedList<Die> list = damageDice.getDice();
 		assertEquals(list.size(), numDice);
 		for (Die d : list) {
 			assertEquals(d.getSize(), dieSize);
 		}
+		assertEquals(damageDice.getDamageType(), type);
+		assertEquals(damageDice.getEffectiveness(), DamageDiceGroup.NORMAL);
 	}
 
 	@Test
-	@DisplayName("DamageDiceGroup type getters & setters work")
+	@DisplayName("Damage type support")
 	void test2() {
 		DamageType type;
 		DamageDiceGroup damageDice;
+		
 		type = DamageType.ACID;
 		damageDice = new DamageDiceGroup(0, 1, type);
 		assertEquals(damageDice.getDamageType(), type);
+		
 		type = DamageType.BLUDGEONING;
 		damageDice.setDamageType(type);
 		assertEquals(damageDice.getDamageType(), type);
 	}
 
 	@Test
-	@DisplayName("DamageDiceGroup can be made magical")
+	@DisplayName("Granting magical damage")
 	void test3() {
 		DamageDiceGroup damageDice;
 		damageDice = new DamageDiceGroup(0, 1, DamageType.BLUDGEONING);
@@ -88,7 +90,7 @@ public class DamageDiceGroupTester {
 	}
 
 	@Test
-	@DisplayName("DamageDiceGroup can be made non-magical")
+	@DisplayName("Revoking magical damage")
 	void test4() {
 		DamageDiceGroup damageDice;
 		damageDice = new DamageDiceGroup(0, 1, DamageType.BLUDGEONING_MAGICAL);
@@ -112,7 +114,7 @@ public class DamageDiceGroupTester {
 	}
 
 	@Test
-	@DisplayName("DamageDiceGroup can be made silvered")
+	@DisplayName("Granting silver damage")
 	void test5() {
 		DamageDiceGroup damageDice;
 		damageDice = new DamageDiceGroup(0, 1, DamageType.BLUDGEONING);
@@ -136,7 +138,7 @@ public class DamageDiceGroupTester {
 	}
 
 	@Test
-	@DisplayName("DamageDiceGroup can be made non-silvered")
+	@DisplayName("Revoking silver damage")
 	void test6() {
 		DamageDiceGroup damageDice;
 		damageDice = new DamageDiceGroup(0, 1, DamageType.BLUDGEONING_SILVERED);
@@ -160,7 +162,7 @@ public class DamageDiceGroupTester {
 	}
 
 	@Test
-	@DisplayName("Resistance, Immunity, and Vulnerability work")
+	@DisplayName("Damage effectiveness")
 	void test7() {
 		DamageDiceGroup damageDice;
 		// no modifiers
@@ -202,7 +204,7 @@ public class DamageDiceGroupTester {
 	}
 
 	@Test
-	@DisplayName("DamageDiceGroup object cloning works")
+	@DisplayName("Cloning")
 	void test8() {
 		DamageDiceGroup damageDice1 = new DamageDiceGroup(4, 4, null);
 		damageDice1.roll();
@@ -220,6 +222,7 @@ public class DamageDiceGroupTester {
 	@Test
 	@DisplayName("DamageDiceGroup getSum override works")
 	void test9() {
+		// This test meant to verify damage is always 1 or more
 		int numDice = 4;
 		DamageDiceGroup damageDice = new DamageDiceGroup(numDice, 1, null);
 		damageDice.roll();

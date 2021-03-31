@@ -29,7 +29,7 @@ class AttackTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		dummy = new Entity("scripts/test/dummy.lua", new Vector(0,0,0), new Vector(1,0,0));
+		dummy = new Entity("testing/entities/dummy.lua", new Vector(0,0,0), new Vector(1,0,0));
 		attack = new Attack(dummy);
 	}
 

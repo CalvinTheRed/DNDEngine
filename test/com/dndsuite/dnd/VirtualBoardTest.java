@@ -17,7 +17,7 @@ import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.maths.Vector;
 
-public class VirtualBoardTester {
+public class VirtualBoardTest {
 
 	Entity e;
 	
@@ -31,7 +31,7 @@ public class VirtualBoardTester {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		e = new Entity("scripts/test/dummy.lua",new Vector(0, 0, 0), new Vector(1, 0, 0));
+		e = new Entity("testing/entities/dummy.lua",new Vector(0, 0, 0), new Vector(1, 0, 0));
 	}
 
 	@AfterEach
@@ -66,11 +66,11 @@ public class VirtualBoardTester {
 	@Test
 	@DisplayName("VirtualBoard can locate the nearest GameObject")
 	void test4() {
-		e = new Entity("scripts/test/dummy.lua", new Vector(0, 0, 0), new Vector(1, 0, 0));
+		e = new Entity("testing/entities/dummy.lua", new Vector(0, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
-		e = new Entity("scripts/test/dummy.lua", new Vector(1, 0, 0), new Vector(1, 0, 0));
+		e = new Entity("testing/entities/dummy.lua", new Vector(1, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
-		e = new Entity("scripts/test/dummy.lua", new Vector(2, 0, 0), new Vector(1, 0, 0));
+		e = new Entity("testing/entities/dummy.lua", new Vector(2, 0, 0), new Vector(1, 0, 0));
 		VirtualBoard.addGameObject(e);
 
 		assertEquals(VirtualBoard.nearestObject(new Vector(2, 0, 0), new String[] {}), e);
@@ -85,7 +85,7 @@ public class VirtualBoardTester {
 
 		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
 			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
-				e = new Entity("scripts/test/dummy.lua", new Vector(i, 0, k), new Vector(1, 0, 0));
+				e = new Entity("testing/entities/dummy.lua", new Vector(i, 0, k), new Vector(1, 0, 0));
 				fullList.add(e);
 				VirtualBoard.addGameObject(e);
 			}
@@ -114,7 +114,7 @@ public class VirtualBoardTester {
 
 		for (int i = -(int) radius - 1; i <= (int) radius + 1; i++) {
 			for (int k = -(int) radius - 1; k <= (int) radius + 1; k++) {
-				e = new Entity("scripts/test/dummy.lua", new Vector(i, 0, k), new Vector(1, 0, 0));
+				e = new Entity("testing/entities/dummy.lua", new Vector(i, 0, k), new Vector(1, 0, 0));
 				fullList.add(e);
 				VirtualBoard.addGameObject(e);
 			}
@@ -141,7 +141,7 @@ public class VirtualBoardTester {
 
 		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
 			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
-				e = new Entity("scripts/test/dummy.lua", new Vector(i, 0, k), new Vector(1, 0, 0));
+				e = new Entity("testing/entities/dummy.lua", new Vector(i, 0, k), new Vector(1, 0, 0));
 				fullList.add(e);
 				VirtualBoard.addGameObject(e);
 			}
@@ -169,7 +169,7 @@ public class VirtualBoardTester {
 
 		for (int i = -(int) radius - 1; i <= (int) radius + 1; i++) {
 			for (int k = -(int) radius - 1; k <= (int) radius + 1; k++) {
-				e = new Entity("scripts/test/dummy.lua", new Vector(i, 0, k), new Vector(1, 0, 0));
+				e = new Entity("testing/entities/dummy.lua", new Vector(i, 0, k), new Vector(1, 0, 0));
 				fullList.add(e);
 				VirtualBoard.addGameObject(e);
 			}

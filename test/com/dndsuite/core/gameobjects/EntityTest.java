@@ -27,7 +27,7 @@ class EntityTest {
 	void setUp() throws Exception {
 		Vector here = new Vector();
 		Vector heading = new Vector();
-		dummy = new Entity("scripts/test/dummy.lua", here, heading);
+		dummy = new Entity("testing/entities/dummy.lua", here, heading);
 	}
 
 	@AfterEach

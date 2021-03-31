@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import com.dndsuite.maths.Vector;
 
-public class VectorTester {
+public class VectorTest {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {

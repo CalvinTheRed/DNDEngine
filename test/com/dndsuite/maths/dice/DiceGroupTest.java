@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import com.dndsuite.maths.dice.DiceGroup;
 import com.dndsuite.maths.dice.Die;
 
-public class DiceGroupTester {
+public class DiceGroupTest {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
