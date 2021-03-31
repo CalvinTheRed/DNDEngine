@@ -43,6 +43,6 @@ public class Effect extends Scriptable {
 		return false;
 	}
 
-	// TODO: add processTask() abstract function?
+	// TODO: add processTask() function?
 
 }

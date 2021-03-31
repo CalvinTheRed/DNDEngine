@@ -15,6 +15,8 @@ public class DiceCheckCalculation extends Event {
 	public DiceCheckCalculation(int dcAbility, Entity subject) {
 		super(null, dcAbility);
 		this.subject = subject;
+		setName(DiceCheckCalculation.getEventID());
+		addTag(DiceCheckCalculation.getEventID());
 	}
 
 	public void addBonus(int bonus) {
@@ -30,8 +32,6 @@ public class DiceCheckCalculation extends Event {
 		clone.radius = radius;
 		clone.appliedEffects = new LinkedList<Effect>();
 		clone.appliedEffects.addAll(appliedEffects);
-		clone.tags = new LinkedList<String>();
-		clone.tags.addAll(tags);
 
 		clone.bonus = bonus;
 		return clone;
@@ -54,6 +54,10 @@ public class DiceCheckCalculation extends Event {
 		bonus = 0;
 		while (target.processEvent(this, source, target))
 			;
+	}
+	
+	public static String getEventID() {
+		return "Dice Check Calculation";
 	}
 
 }

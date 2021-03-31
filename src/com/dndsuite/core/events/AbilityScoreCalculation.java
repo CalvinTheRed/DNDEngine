@@ -19,6 +19,8 @@ public class AbilityScoreCalculation extends Event {
 		bonus = 0;
 		setHigh = -1;
 		setLow = -1;
+		setName(AbilityScoreCalculation.getEventID());
+		addTag(AbilityScoreCalculation.getEventID());
 	}
 	
 	public void addBonus(int bonus) {
@@ -34,8 +36,6 @@ public class AbilityScoreCalculation extends Event {
 		clone.radius = radius;
 		clone.appliedEffects = new LinkedList<Effect>();
 		clone.appliedEffects.addAll(appliedEffects);
-		clone.tags = new LinkedList<String>();
-		clone.tags.addAll(tags);
 
 		clone.base = base;
 		clone.bonus = bonus;
@@ -69,6 +69,10 @@ public class AbilityScoreCalculation extends Event {
 		if (setLow == -1 || target < setLow) {
 			setLow = target;
 		}
+	}
+	
+	public static String getEventID() {
+		return "Ability Score Calculation";
 	}
 
 }

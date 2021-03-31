@@ -3,12 +3,10 @@ function define()
 	Item = luajava.bindClass("com.dndsuite.core.Item")
 	ItemAttack = luajava.bindClass("com.dndsuite.core.events.ItemAttack")
 	
-	self:setName("Dagger")
-	self:addTag(Item.FINESSE)
-	self:addTag(Item.LIGHT)
-	self:addTag(Item.THROWN)
-	self:addTag(Item.SIMPLE_MELEE)
-	self:addTag(Item.DAGGER)
+	self:setName("Longsword")
+	self:addTag(Item.MARTIAL_MELEE)
+	self:addTag(Item.LONGSWORD)
+	self:addTag(Item.VERSATILE)
 end
 
 
@@ -32,11 +30,11 @@ end
 
 function damage()
 	if attackType == ItemAttack.MELEE then
-		return luajava.newInstance("com.dndsuite.dnd.combat.DamageDiceGroup", 1, 4, DamageType.PIERCING)
+		return luajava.newInstance("com.dndsuite.dnd.combat.DamageDiceGroup", 1, 8, DamageType.SLASHING)
 	elseif attackType == ItemAttack.RANGED then
 		return nil
 	elseif attackType == ItemAttack.THROWN then
-		return luajava.newInstance("com.dndsuite.dnd.combat.DamageDiceGroup", 1, 4, DamageType.PIERCING)
+		return luajava.newInstance("com.dndsuite.dnd.combat.DamageDiceGroup", 1, 4, DamageType.BLUDGEONING)
 	end
 end
 
@@ -65,5 +63,5 @@ end
 
 
 function weight()
-	return 1.0
+	return 3.0
 end

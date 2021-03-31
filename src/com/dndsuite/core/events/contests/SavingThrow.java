@@ -26,8 +26,6 @@ public class SavingThrow extends DiceContest {
 		clone.radius = radius;
 		clone.appliedEffects = new LinkedList<Effect>();
 		clone.appliedEffects.addAll(appliedEffects);
-		clone.tags = new LinkedList<String>();
-		clone.tags.addAll(tags);
 
 		clone.d20 = d20.clone();
 		clone.bonus = bonus;

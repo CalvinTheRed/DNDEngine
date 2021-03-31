@@ -12,6 +12,8 @@ public abstract class Scriptable {
 	protected String name;
 	protected LinkedList<String> tags;
 
+	// TODO: create luaSet and luaGet functions
+	
 	public Scriptable(String script) {
 		this.script = script;
 		tags = new LinkedList<String>();

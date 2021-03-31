@@ -9,6 +9,11 @@ import java.util.Random;
  *
  */
 public class Die {
+	// TODO: create static die switch (control and random)
+	// pass an array to control the values rolled by all
+	// dice, in order (this would require foreknowledge of
+	// which dice will be rolled to be useful)
+	
 	public static final int CRITICAL_FAIL = 1;
 	public static final int CRITICAL_HIT = 20;
 

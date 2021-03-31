@@ -1,5 +1,7 @@
 function define()
+	DamageType = luajava.bindClass("com.dndsuite.dnd.data.DamageType")
 	Item = luajava.bindClass("com.dndsuite.core.Item")
+	ItemAttack = luajava.bindClass("com.dndsuite.core.events.ItemAttack")
 	
 	self:setName("Club")
 	self:addTag(Item.LIGHT)
@@ -22,26 +24,18 @@ end
 
 
 function customTasks()
-	task = luajava.newInstance("com.dndsuite.core.tasks.Task", "scripts/tasks/dodge.lua")
-	return task
 end
 
 
 
 function damage()
-	AttackRoll = luajava.bindClass("com.dndsuite.core.events.contests.AttackRoll")
-	DamageType = luajava.bindClass("com.dndsuite.dnd.data.DamageType")
-	
-	if attackType == AttackRoll.MELEE then
-		damageDice = luajava.newInstance("com.dndsuite.dnd.combat.DamageDiceGroup", 1, 4, DamageType.BLUDGEONING)
-		return damageDice
-	elseif attackType == AttackRoll.RANGED then
+	if attackType == ItemAttack.MELEE then
+		return luajava.newInstance("com.dndsuite.dnd.combat.DamageDiceGroup", 1, 4, DamageType.BLUDGEONING)
+	elseif attackType == ItemAttack.RANGED then
 		return nil
-	elseif attackType == AttackRoll.THROWN then
-		damageDice = luajava.newInstance("com.dndsuite.dnd.combat.DamageDiceGroup", 1, 4, DamageType.BLUDGEONING)
-		return damageDice
+	elseif attackType == ItemAttack.THROWN then
+		return luajava.newInstance("com.dndsuite.dnd.combat.DamageDiceGroup", 1, 4, DamageType.BLUDGEONING)
 	end
-	
 end
 
 

@@ -17,7 +17,8 @@ public final class VirtualBoard {
 	public static final double CONE_ARC_SIZE = Math.toRadians(45);
 
 	private static LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
-
+	// TODO: consider adding queuedGlobalEvents list here
+	
 	public static boolean addGameObject(GameObject o) {
 		if (gameObjects.contains(o)) {
 			return false;

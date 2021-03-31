@@ -6,6 +6,7 @@ import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import com.dndsuite.core.events.Event;
+import com.dndsuite.core.events.ItemAttack;
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.core.tasks.Task;
 import com.dndsuite.dnd.combat.DamageDiceGroup;
@@ -105,24 +106,23 @@ public class Item extends Scriptable {
 		return limit;
 	}
 
-	public LinkedList<Event> getMainhandAttackOptions() {
+	public LinkedList<Event> getItemAttackOptions() {
 		LinkedList<Event> events = new LinkedList<Event>();
-
-		// TODO: fix Item-based attack events
-
-//		events.add(new WeaponAttack(this, Entity.STR, WeaponAttack.MELEE, true));
-//		events.add(new WeaponAttack(this, Entity.STR, WeaponAttack.THROWN, true));
-//
-//		if (hasTag(FINESSE)) {
-//			events.add(new WeaponAttack(this, Entity.DEX, WeaponAttack.MELEE, true));
-//			if (hasTag(THROWN)) {
-//				events.add(new WeaponAttack(this, Entity.DEX, WeaponAttack.THROWN, true));
-//			}
-//		}
-//
-//		if (hasTag(RANGED)) {
-//			events.add(new WeaponAttack(this, Entity.DEX, WeaponAttack.RANGED, true));
-//		}
+		
+		events.add(new ItemAttack(Entity.STR, this, ItemAttack.MELEE));
+		events.add(new ItemAttack(Entity.STR, this, ItemAttack.THROWN));
+		
+		if (hasTag(Item.FINESSE)) {
+			events.add(new ItemAttack(Entity.DEX, this, ItemAttack.MELEE));
+			
+			if (hasTag(Item.THROWN)) {
+				events.add(new ItemAttack(Entity.DEX, this, ItemAttack.THROWN));
+			}
+		}
+		
+		if (hasTag(Item.RANGED)) {
+			events.add(new ItemAttack(Entity.DEX, this, ItemAttack.RANGED));
+		}
 
 		return events;
 	}
@@ -143,7 +143,7 @@ public class Item extends Scriptable {
 	public DamageDiceGroup getDamageDice(String attackType) {
 		globals.set("attackType", attackType);
 		Varargs va = globals.get("damage").invoke();
-		return (DamageDiceGroup) (va.touserdata(1, DamageDiceGroup.class));
+		return (DamageDiceGroup) va.touserdata(1);
 	}
 
 	public double[] getRange(String attackType) {

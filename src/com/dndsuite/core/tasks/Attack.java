@@ -1,45 +1,38 @@
 package com.dndsuite.core.tasks;
 
-import com.dndsuite.core.events.groups.EventGroup;
-import com.dndsuite.core.events.groups.WeaponAttackGroup;
+import com.dndsuite.core.events.groups.ItemAttackGroup;
 import com.dndsuite.core.gameobjects.Entity;
 
 public class Attack extends Task {
+	protected Entity subject;
 	protected int numAttacks;
 
-	public Attack(Entity subject, int numAttacks) {
+	public Attack(Entity subject) {
 		super(null);
-		for (int i = 0; i < numAttacks; i++) {
-			WeaponAttackGroup group = new WeaponAttackGroup();
-			subject.addObserver(group);
-			addEventGroup(group);
-		}
+		this.subject = subject;
+		addAttack();
 		subject.updateObservers();
-		this.numAttacks = numAttacks;
-		name = "Attack";
+		setName(Attack.getTaskID());
+		addTag(Attack.getTaskID());
+	}
+	
+	public void addAttack() {
+		ItemAttackGroup group = new ItemAttackGroup(ItemAttackGroup.MAINHAND);
+		subject.addObserver(group);
+		addEventGroup(group);
+		numAttacks++;
+	}
+	
+	public String getCost() {
+		return "Action";
 	}
 
 	public int getNumAttacks() {
 		return numAttacks;
 	}
 
-	public boolean invoke(Entity invoker) {
-		System.out.print("[JAVA] " + invoker + " invokes Task " + this + " (cost: ");
-
-		String cost = "Action";
-
-		System.out.println(cost + ")");
-
-		// TODO: return false if insufficient action economy
-		// TODO: expend action economy
-		for (EventGroup group : eventGroups) {
-			invoker.queueEventGroup(group);
-		}
-		return true;
-	}
-
-	public void setNumAttacks(int numAttacks) {
-		this.numAttacks = numAttacks;
+	public static String getTaskID() {
+		return "Attack";
 	}
 
 }

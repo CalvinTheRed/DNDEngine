@@ -96,7 +96,7 @@ public class Entity extends GameObject {
 	}
 
 	public LinkedList<Task> getTasks() {
-		TaskCollection tc = new TaskCollection(this);
+		TaskCollection tc = new TaskCollection();
 		tc.addTasks(baseTasks);
 		try {
 			tc.addTasks(getMainhand().getCustomTasks());

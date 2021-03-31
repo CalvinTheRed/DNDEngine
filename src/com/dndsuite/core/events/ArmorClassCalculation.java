@@ -45,8 +45,6 @@ public class ArmorClassCalculation extends Event {
 		clone.radius = radius;
 		clone.appliedEffects = new LinkedList<Effect>();
 		clone.appliedEffects.addAll(appliedEffects);
-		clone.tags = new LinkedList<String>();
-		clone.tags.addAll(tags);
 
 		clone.acAbilityIndices.clear();
 		clone.acAbilityIndices.addAll(acAbilityIndices);

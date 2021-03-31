@@ -16,6 +16,6 @@ end
 
 
 
-function getTaskCost()
+function cost()
 	return "Free"
 end

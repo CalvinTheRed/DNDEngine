@@ -23,19 +23,25 @@ public class Task extends Scriptable {
 	}
 
 	public boolean invoke(Entity invoker) {
-		System.out.print("[JAVA] " + invoker + " invokes Task " + this + " (cost: ");
-
-		Varargs vargs = globals.get("getTaskCost").invoke();
-		String cost = vargs.tojstring(1);
-
-		System.out.println(cost + ")");
+		System.out.println("[JAVA] " + invoker + " invokes Task " + this + " (cost: " + getCost() + ")");
 
 		// TODO: return false if insufficient action economy
 		// TODO: expend action economy
-		globals.set("invoker", CoerceJavaToLua.coerce(invoker));
-		globals.get("invokeTask").invoke();
-
+		if (globals != null) {
+			globals.set("invoker", CoerceJavaToLua.coerce(invoker));
+			globals.get("invokeTask").invoke();
+		} else {
+			for (EventGroup group : eventGroups) {
+				invoker.queueEventGroup(group);
+			}
+		}
+		
 		return true;
+	}
+	
+	public String getCost() {
+		Varargs vargs = globals.get("cost").invoke();
+		return vargs.tojstring(1);
 	}
 
 }
