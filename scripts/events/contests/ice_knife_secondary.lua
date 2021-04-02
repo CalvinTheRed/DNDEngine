@@ -4,7 +4,7 @@ function define()
 	Event = luajava.bindClass("com.dndsuite.core.events.Event")
 	VirtualBoard = luajava.bindClass("com.dndsuite.dnd.VirtualBoard")
 	
-	self:setName("Ice Knife (" .. Entity:getAbility(self:getEventAbility()) .. ", Secondary)")
+	self:setName("Ice Knife (" .. Entity:getAbilityString(self:getEventAbility()) .. ", Secondary)")
 	self:setRange(0.0, 0.0)
 	self:setRadius(5.0)
 	

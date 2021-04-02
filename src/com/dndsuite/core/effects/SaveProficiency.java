@@ -11,7 +11,7 @@ public class SaveProficiency extends Effect {
 	public SaveProficiency(Entity source, Entity target, int saveAbilityIndex) {
 		super(null, source, target);
 		this.saveAbilityIndex = saveAbilityIndex;
-		setName(SaveProficiency.getEffectID());
+		setName(SaveProficiency.getEffectID() + " (" + Entity.getAbilityString(saveAbilityIndex) + ")");
 		addTag(SaveProficiency.getEffectID());
 	}
 	
