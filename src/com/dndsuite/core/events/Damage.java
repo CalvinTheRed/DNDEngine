@@ -14,7 +14,7 @@ public class Damage extends Event {
 	public Damage(DamageCalculation parent) {
 		super(null, -1);
 		this.parent = parent;
-		setName(Damage.getEventID() + "(" + parent.getParent() + ")");
+		setName(Damage.getEventID() + " (" + parent.getParent() + ")");
 		addTag(Damage.getEventID());
 	}
 

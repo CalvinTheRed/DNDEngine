@@ -55,10 +55,10 @@ public class Entity extends GameObject {
 	}
 	
 	public boolean addEffect(Effect e) {
-		if (activeEffects.contains(e)) {
+		if (effects.contains(e)) {
 			return false;
 		}
-		activeEffects.add(e);
+		effects.add(e);
 		System.out.println("[JAVA] " + this + " given effect " + e);
 		return true;
 	}
@@ -146,7 +146,7 @@ public class Entity extends GameObject {
 	}
 
 	public LinkedList<Effect> getEffects() {
-		return activeEffects;
+		return effects;
 	}
 
 	public LinkedList<EventGroup> getEventQueue() {

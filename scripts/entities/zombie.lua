@@ -1,4 +1,5 @@
 function define()
+	DamageType = luajava.bindClass("com.dndsuite.dnd.data.DamageType")
 	Entity = luajava.bindClass("com.dndsuite.core.gameobjects.Entity")
 	
 	-- Set name
@@ -12,9 +13,9 @@ function define()
 	self:setExperience(50)
 	
 	-- Set health data
-	self:setHealth(22)
 	self:setHealthBase(22)
 	self:setHealthMax(22)
+	self:setHealth(22)
 	self:setHealthTmp(0)
 	
 	-- Populate inventory
@@ -28,9 +29,9 @@ function define()
 	-- Add active effects
 	effect = luajava.newInstance("com.dndsuite.core.effects.Effect", "scripts/effects/undead_fortitude.lua", self, self)
 	self:addEffect(effect)
-	effect = luajava.newInstance("com.dndsuite.core.effects.Effect", "scripts/effects/poison_damage_immunity.lua", self, self)
+	effect = luajava.newInstance("com.dndsuite.core.effects.DamageImmunity", self, self, DamageType.POISON)
 	self:addEffect(effect)
-	effect = luajava.newInstance("com.dndsuite.core.effects.Effect", "scripts/effects/wisdom_save_proficiency.lua", self, self)
+	effect = luajava.newInstance("com.dndsuite.core.effects.SaveProficiency", self, self, Entity.WIS)
 	self:addEffect(effect)
 	
 	-- Add item proficiencies

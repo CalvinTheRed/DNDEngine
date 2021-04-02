@@ -15,7 +15,7 @@ import com.dndsuite.dnd.combat.DamageDiceGroup;
 import com.dndsuite.maths.Vector;
 
 public abstract class GameObject extends Scriptable implements Subject {
-	protected LinkedList<Effect> activeEffects;
+	protected LinkedList<Effect> effects;
 	protected LinkedList<Item> inventory;
 	protected LinkedList<Observer> observers;
 	protected Vector pos;
@@ -42,12 +42,16 @@ public abstract class GameObject extends Scriptable implements Subject {
 	}
 	
 	public void clearEndedEffects() {
-		for (int i = 0; i < activeEffects.size(); i++) {
-			if (activeEffects.get(i).isEnded()) {
-				activeEffects.remove(i);
+		for (int i = 0; i < effects.size(); i++) {
+			if (effects.get(i).isEnded()) {
+				effects.remove(i);
 				i--;
 			}
 		}
+	}
+	
+	public LinkedList<Effect> getEffects() {
+		return effects;
 	}
 	
 	public int getHealth() {
@@ -100,7 +104,7 @@ public abstract class GameObject extends Scriptable implements Subject {
 	}
 	
 	public boolean processEvent(Event e, Entity source, GameObject target) {
-		for (Effect effect : activeEffects) {
+		for (Effect effect : effects) {
 			effect.processEvent(e, source, target);
 		}
 		return false;
@@ -115,6 +119,7 @@ public abstract class GameObject extends Scriptable implements Subject {
 		observers.remove(o);
 	}
 	
+	// NOTE: setHealthMax() must be called prior to this function
 	public void setHealth(int health) {
 		this.health = health;
 		if (this.health > healthMax) {
@@ -137,7 +142,7 @@ public abstract class GameObject extends Scriptable implements Subject {
 	@Override
 	protected void setup() {
 		super.setup();
-		activeEffects = new LinkedList<Effect>();
+		effects = new LinkedList<Effect>();
 		inventory = new LinkedList<Item>();
 		observers = new LinkedList<Observer>();
 	}

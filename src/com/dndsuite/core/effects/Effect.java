@@ -33,16 +33,24 @@ public class Effect extends Scriptable {
 		return ended;
 	}
 
-	public boolean processEvent(Event e, GameObject source, GameObject target) {
+	public void processEvent(Event e, Entity source, GameObject target) {
 		try {
 			passToLua("event", e);
 			passToLua("source", source);
 			passToLua("target", target);
 			invokeFromLua("processEventSafe");
 		} catch (Exception ex) {
-			
+			processEventSafe(e, source, target);
 		}
-		return false;
+	}
+	
+	protected void processEventSafe(Event e, Entity source, GameObject target) {
+		/*
+		 * This function to be overridden by derived classes
+		 * of Event. This function represents the invokeSafe()
+		 * Lua script function, and acts as a gateway to the
+		 * Effect logic.
+		 */
 	}
 
 	// TODO: add processTask() function?
