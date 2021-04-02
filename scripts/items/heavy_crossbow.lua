@@ -6,9 +6,10 @@ function define()
 	self:setName("Heavy Crossbow")
 	self:addTag(Item.HEAVY)
 	self:addTag(Item.LOADING)
+	self:addTag(Item.MARTIAL_RANGED)
 	self:addTag(Item.RANGED)
 	self:addTag(Item.TWO_HANDED)
-	self:addTag(Item.MARTIAL_RANGED)
+	self:addTag(Item.WEAPON)
 	self:addTag(Item.HEAVY_CROSSBOW)
 end
 

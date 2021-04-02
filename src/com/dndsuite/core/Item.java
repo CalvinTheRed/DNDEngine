@@ -22,7 +22,7 @@ public class Item extends Scriptable {
 	public static final String ARMOR_LIGHT = "Light Armor";
 	public static final String ARMOR_MEDIUM = "Medium Armor";
 	public static final String MEDIUM = "Medium";
-	public static final String METALLIC = "Metallic"; // Druids will typically not wear metal armor
+	public static final String METALLIC = "Metallic";
 	public static final String SHIELD = "Shield";
 	public static final String STEALTH_DADV = "Stealth Disadvantage";
 	// TODO: add item lua function to determine stat prereqs for using item
@@ -39,6 +39,7 @@ public class Item extends Scriptable {
 	public static final String THROWN = "Thrown";
 	public static final String TWO_HANDED = "Two Handed";
 	public static final String VERSATILE = "Versatile";
+	public static final String WEAPON = "Weapon";
 	// Weapon proficiency groups (categorical)
 	public static final String MARTIAL_MELEE = "Martial Melee";
 	public static final String MARTIAL_RANGED = "Martial Ranged";

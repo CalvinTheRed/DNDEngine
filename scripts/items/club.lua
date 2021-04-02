@@ -6,6 +6,7 @@ function define()
 	self:setName("Club")
 	self:addTag(Item.LIGHT)
 	self:addTag(Item.SIMPLE_MELEE)
+	self:addTag(Item.WEAPON)
 	self:addTag(Item.CLUB)
 end
 

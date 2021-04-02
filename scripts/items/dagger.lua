@@ -6,8 +6,9 @@ function define()
 	self:setName("Dagger")
 	self:addTag(Item.FINESSE)
 	self:addTag(Item.LIGHT)
-	self:addTag(Item.THROWN)
 	self:addTag(Item.SIMPLE_MELEE)
+	self:addTag(Item.THROWN)
+	self:addTag(Item.WEAPON)
 	self:addTag(Item.DAGGER)
 end
 

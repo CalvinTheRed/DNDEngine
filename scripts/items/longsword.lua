@@ -5,8 +5,9 @@ function define()
 	
 	self:setName("Longsword")
 	self:addTag(Item.MARTIAL_MELEE)
-	self:addTag(Item.LONGSWORD)
 	self:addTag(Item.VERSATILE)
+	self:addTag(Item.WEAPON)
+	self:addTag(Item.LONGSWORD)
 end
 
 
