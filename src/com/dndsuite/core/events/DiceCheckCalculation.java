@@ -1,8 +1,5 @@
 package com.dndsuite.core.events;
 
-import java.util.LinkedList;
-
-import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.core.gameobjects.GameObject;
 
@@ -30,8 +27,10 @@ public class DiceCheckCalculation extends Event {
 		clone.shortrange = shortrange;
 		clone.longrange = longrange;
 		clone.radius = radius;
-		clone.appliedEffects = new LinkedList<Effect>();
+		clone.appliedEffects.clear();
 		clone.appliedEffects.addAll(appliedEffects);
+		clone.targets.clear();
+		clone.targets.addAll(targets);
 
 		clone.bonus = bonus;
 		return clone;
@@ -44,6 +43,10 @@ public class DiceCheckCalculation extends Event {
 	public int getDC() {
 		return DEFAULT_BASE_DC + subject.getAbilityModifier(eventAbility) + bonus;
 	}
+	
+	public static String getEventID() {
+		return "Dice Check Calculation";
+	}
 
 	public Entity getSubject() {
 		return subject;
@@ -54,10 +57,6 @@ public class DiceCheckCalculation extends Event {
 		bonus = 0;
 		while (target.processEvent(this, source, target))
 			;
-	}
-	
-	public static String getEventID() {
-		return "Dice Check Calculation";
 	}
 
 }

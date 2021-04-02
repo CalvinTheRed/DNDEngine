@@ -204,7 +204,7 @@ public class DamageDiceGroupTest {
 	}
 
 	@Test
-	@DisplayName("Cloning")
+	@DisplayName("Damage cloning")
 	void test8() {
 		DamageDiceGroup damageDice1 = new DamageDiceGroup(4, 4, null);
 		damageDice1.roll();

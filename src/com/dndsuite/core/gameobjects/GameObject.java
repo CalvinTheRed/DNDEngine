@@ -15,15 +15,11 @@ import com.dndsuite.dnd.combat.DamageDiceGroup;
 import com.dndsuite.maths.Vector;
 
 public abstract class GameObject extends Scriptable implements Subject {
-	// TODO: move the following values to another subclass of GameObject later
-	public static final String OBJECT = "Object";
-	public static final String STRUCTURE = "Structure";
-
-	protected Vector pos;
-	protected Vector rot;
 	protected LinkedList<Effect> activeEffects;
 	protected LinkedList<Item> inventory;
 	protected LinkedList<Observer> observers;
+	protected Vector pos;
+	protected Vector rot;
 	protected int health;
 	protected int healthBase;
 	protected int healthMax;
@@ -36,6 +32,48 @@ public abstract class GameObject extends Scriptable implements Subject {
 		VirtualBoard.addGameObject(this);
 	}
 
+	@Override
+	public void addObserver(Observer o) {
+		observers.add(o);
+	}
+	
+	public void addToInventory(Item item) {
+		inventory.add(item);
+	}
+	
+	public void clearEndedEffects() {
+		for (int i = 0; i < activeEffects.size(); i++) {
+			if (activeEffects.get(i).isEnded()) {
+				activeEffects.remove(i);
+				i--;
+			}
+		}
+	}
+	
+	public int getHealth() {
+		return health;
+	}
+
+	public int getHealthBase() {
+		return healthBase;
+	}
+
+	public int getHealthMax() {
+		return healthMax;
+	}
+
+	public int getHealthTmp() {
+		return healthTmp;
+	}
+	
+	public int getHealthTotal() {
+		return health + healthTmp;
+	}
+	
+	public LinkedList<Item> getInventory() {
+		return inventory;
+	}
+	
 	public Vector getPos() {
 		return pos;
 	}
@@ -43,43 +81,7 @@ public abstract class GameObject extends Scriptable implements Subject {
 	public Vector getRot() {
 		return rot;
 	}
-
-	@Override
-	public void addObserver(Observer o) {
-		observers.add(o);
-	}
-
-	@Override
-	public void removeObserver(Observer o) {
-		observers.remove(o);
-	}
-
-	@Override
-	public void updateObservers() {
-		for (Observer o : observers) {
-			o.update(this);
-		}
-	}
-
-	public boolean processEvent(Event e, Entity source, GameObject target) {
-		for (Effect effect : activeEffects) {
-			effect.processEvent(e, source, target);
-		}
-		return false;
-	}
-
-	public LinkedList<Item> getInventory() {
-		return inventory;
-	}
-
-	public void addToInventory(Item item) {
-		inventory.add(item);
-	}
-
-	public boolean removeFromInventory(Item item) {
-		return inventory.remove(item);
-	}
-
+	
 	public void processDamage(DamageCalculation dc) {
 		for (DamageDiceGroup group : dc.getDamageDice()) {
 			int adjustment;
@@ -96,7 +98,50 @@ public abstract class GameObject extends Scriptable implements Subject {
 			System.out.println("[JAVA] " + this + " takes " + group.getSum() + " " + group.getDamageType() + " damage");
 		}
 	}
+	
+	public boolean processEvent(Event e, Entity source, GameObject target) {
+		for (Effect effect : activeEffects) {
+			effect.processEvent(e, source, target);
+		}
+		return false;
+	}
+	
+	public boolean removeFromInventory(Item item) {
+		return inventory.remove(item);
+	}
 
+	@Override
+	public void removeObserver(Observer o) {
+		observers.remove(o);
+	}
+	
+	public void setHealth(int health) {
+		this.health = health;
+		if (this.health > healthMax) {
+			this.health = healthMax;
+		}
+	}
+
+	public void setHealthBase(int healthBase) {
+		this.healthBase = healthBase;
+	}
+
+	public void setHealthMax(int healthMax) {
+		this.healthMax = healthMax;
+	}
+
+	public void setHealthTmp(int healthTmp) {
+		this.healthTmp = healthTmp;
+	}
+	
+	@Override
+	protected void setup() {
+		super.setup();
+		activeEffects = new LinkedList<Effect>();
+		inventory = new LinkedList<Item>();
+		observers = new LinkedList<Observer>();
+	}
+	
 	public void takeDamage(Damage d) {
 		int damage = d.getDamage();
 		if (healthTmp > 0) {
@@ -117,61 +162,11 @@ public abstract class GameObject extends Scriptable implements Subject {
 		}
 	}
 
-	public void clearEndedEffects() {
-		for (int i = 0; i < activeEffects.size(); i++) {
-			if (activeEffects.get(i).isEnded()) {
-				activeEffects.remove(i);
-				i--;
-			}
+	@Override
+	public void updateObservers() {
+		for (Observer o : observers) {
+			o.update(this);
 		}
-	}
-
-	public int getHealth() {
-		return health;
-	}
-
-	public int getHealthBase() {
-		return healthBase;
-	}
-
-	public int healthMax() {
-		return healthMax;
-	}
-
-	public int getHealthTmp() {
-		return healthTmp;
-	}
-
-	public int getHealthTotal() {
-		return health + healthTmp;
-	}
-
-	/*
-	 * -----------------------------------------------------------------------------
-	 * Functions used from Lua define function -------------------------------------
-	 * -----------------------------------------------------------------------------
-	 */
-
-	public void prepGameObject() {
-		activeEffects = new LinkedList<Effect>();
-		inventory = new LinkedList<Item>();
-		observers = new LinkedList<Observer>();
-	}
-
-	public void setHealth(int health) {
-		this.health = health;
-	}
-
-	public void setHealthBase(int healthBase) {
-		this.healthBase = healthBase;
-	}
-
-	public void setHealthMax(int healthMax) {
-		this.healthMax = healthMax;
-	}
-
-	public void setHealthTmp(int healthTmp) {
-		this.healthTmp = healthTmp;
 	}
 
 }

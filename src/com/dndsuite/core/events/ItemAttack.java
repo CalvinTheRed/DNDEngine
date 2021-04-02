@@ -1,9 +1,6 @@
 package com.dndsuite.core.events;
 
-import java.util.LinkedList;
-
 import com.dndsuite.core.Item;
-import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.events.contests.AttackRoll;
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.core.gameobjects.GameObject;
@@ -22,7 +19,7 @@ public class ItemAttack extends Event {
 		super(null, attackAbility);
 		this.medium = medium;
 		this.attackType = attackType;
-		setName(ItemAttack.getEventID() + " (" + attackType + "," + Entity.getAbility(attackAbility) + ")");
+		setName(ItemAttack.getEventID() + " (" + attackType + "," + Entity.getAbilityString(attackAbility) + ")");
 		addTag(ItemAttack.getEventID());
 	}
 	
@@ -33,14 +30,20 @@ public class ItemAttack extends Event {
 		clone.shortrange = shortrange;
 		clone.longrange = longrange;
 		clone.radius = radius;
-		clone.appliedEffects = new LinkedList<Effect>();
+		clone.appliedEffects.clear();
 		clone.appliedEffects.addAll(appliedEffects);
+		clone.targets.clear();
+		clone.targets.addAll(targets);
 		
 		return clone;
 	}
 	
 	public String getAttackType() {
 		return attackType;
+	}
+	
+	public static String getEventID() {
+		return "Item Attack";
 	}
 	
 	public Item getMedium() {
@@ -87,10 +90,6 @@ public class ItemAttack extends Event {
 		} else {
 			System.out.println("[JAVA] " + this + " misses! (" + ar.getRoll() + " < " + acc.getAC() + ") bonus " + ar.getBonus());
 		}
-	}
-	
-	public static String getEventID() {
-		return "Item Attack";
 	}
 
 }

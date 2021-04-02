@@ -3,7 +3,6 @@ package com.dndsuite.core.tasks;
 import java.util.LinkedList;
 
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import com.dndsuite.core.Scriptable;
 import com.dndsuite.core.events.groups.EventGroup;
@@ -15,11 +14,20 @@ public class Task extends Scriptable {
 
 	public Task(String script) {
 		super(script);
-		eventGroups = new LinkedList<EventGroup>();
 	}
 
 	protected void addEventGroup(EventGroup group) {
 		eventGroups.add(group);
+	}
+	
+	public String getCost() {
+		try {
+			Varargs va = invokeFromLua("cost");
+			return va.tojstring(1);
+		} catch (Exception e) {
+			return "COST UNDEFINED";
+		}
+		
 	}
 
 	public boolean invoke(Entity invoker) {
@@ -27,10 +35,10 @@ public class Task extends Scriptable {
 
 		// TODO: return false if insufficient action economy
 		// TODO: expend action economy
-		if (globals != null) {
-			globals.set("invoker", CoerceJavaToLua.coerce(invoker));
-			globals.get("invokeTask").invoke();
-		} else {
+		try {
+			passToLua("invoker", invoker);
+			invokeFromLua("invokeTask");
+		} catch (Exception e) {
 			for (EventGroup group : eventGroups) {
 				invoker.queueEventGroup(group);
 			}
@@ -39,9 +47,10 @@ public class Task extends Scriptable {
 		return true;
 	}
 	
-	public String getCost() {
-		Varargs vargs = globals.get("cost").invoke();
-		return vargs.tojstring(1);
+	@Override
+	protected void setup() {
+		super.setup();
+		eventGroups = new LinkedList<EventGroup>();
 	}
 
 }

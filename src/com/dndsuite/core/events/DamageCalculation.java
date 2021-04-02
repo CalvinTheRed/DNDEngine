@@ -2,7 +2,6 @@ package com.dndsuite.core.events;
 
 import java.util.LinkedList;
 
-import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.events.contests.AttackRoll;
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.core.gameobjects.GameObject;
@@ -20,7 +19,6 @@ public class DamageCalculation extends Event {
 	public DamageCalculation(Event parent) {
 		super(null, -1);
 		this.parent = parent;
-		damageDice = new LinkedList<DamageDiceGroup>();
 		setName(DamageCalculation.getEventID() + " (" + parent + ")");
 		addTag(DamageCalculation.getEventID());
 	}
@@ -32,8 +30,10 @@ public class DamageCalculation extends Event {
 		clone.shortrange = shortrange;
 		clone.longrange = longrange;
 		clone.radius = radius;
-		clone.appliedEffects = new LinkedList<Effect>();
+		clone.appliedEffects.clear();
 		clone.appliedEffects.addAll(appliedEffects);
+		clone.targets.clear();
+		clone.targets.addAll(targets);
 
 		clone.damageDice.clear();
 		clone.damageDice.addAll(damageDice);
@@ -93,6 +93,10 @@ public class DamageCalculation extends Event {
 	public LinkedList<DamageDiceGroup> getDamageDice() {
 		return damageDice;
 	}
+	
+	public static String getEventID() {
+		return "Damage Calculation";
+	}
 
 	public Event getParent() {
 		return parent;
@@ -113,9 +117,11 @@ public class DamageCalculation extends Event {
 		}
 		return s;
 	}
-
-	public static String getEventID() {
-		return "Damage Calculation";
+	
+	@Override
+	protected void setup() {
+		super.setup();
+		damageDice = new LinkedList<DamageDiceGroup>();
 	}
 
 }

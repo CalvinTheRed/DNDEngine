@@ -38,20 +38,20 @@ class AttackTest {
 	}
 
 	@Test
-	@DisplayName("Default to 1 attack")
+	@DisplayName("Sanity check")
 	void test1() {
 		assertEquals(1, attack.getNumAttacks());
 	}
 	
 	@Test
-	@DisplayName("Can add extra attacks")
+	@DisplayName("Add attacks")
 	void test2() {
 		attack.addAttack();
 		assertEquals(2, attack.getNumAttacks());
 	}
 	
 	@Test
-	@DisplayName("Task has correct tags")
+	@DisplayName("Task tags")
 	void test3() {
 		LinkedList<String> tags = attack.getTags();
 		LinkedList<String> desired = new LinkedList<String>();

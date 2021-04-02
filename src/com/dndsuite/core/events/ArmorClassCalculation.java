@@ -3,7 +3,6 @@ package com.dndsuite.core.events;
 import java.util.LinkedList;
 
 import com.dndsuite.core.Item;
-import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.core.gameobjects.GameObject;
 
@@ -19,7 +18,6 @@ public class ArmorClassCalculation extends Event {
 	public ArmorClassCalculation(GameObject subject) {
 		super(null, -1);
 		this.subject = subject;
-		acAbilityIndices = new LinkedList<Integer>();
 		setName(ArmorClassCalculation.getEventID());
 		addTag(ArmorClassCalculation.getEventID());
 	}
@@ -43,8 +41,10 @@ public class ArmorClassCalculation extends Event {
 		clone.shortrange = shortrange;
 		clone.longrange = longrange;
 		clone.radius = radius;
-		clone.appliedEffects = new LinkedList<Effect>();
+		clone.appliedEffects.clear();
 		clone.appliedEffects.addAll(appliedEffects);
+		clone.targets.clear();
+		clone.targets.addAll(targets);
 
 		clone.acAbilityIndices.clear();
 		clone.acAbilityIndices.addAll(acAbilityIndices);
@@ -71,6 +71,10 @@ public class ArmorClassCalculation extends Event {
 
 	public int getBonus() {
 		return bonus;
+	}
+	
+	public static String getEventID() {
+		return "Armor Class Calculation";
 	}
 
 	public GameObject getSubject() {
@@ -109,9 +113,11 @@ public class ArmorClassCalculation extends Event {
 	public void setBaseAC(int baseAC) {
 		this.baseAC = baseAC;
 	}
-
-	public static String getEventID() {
-		return "Armor Class Calculation";
+	
+	@Override
+	protected void setup() {
+		super.setup();
+		acAbilityIndices = new LinkedList<Integer>();
 	}
 
 }

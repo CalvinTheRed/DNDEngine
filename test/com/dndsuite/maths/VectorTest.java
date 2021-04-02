@@ -32,7 +32,7 @@ public class VectorTest {
 	}
 
 	@Test
-	@DisplayName("Vector constructors and getters work")
+	@DisplayName("Sanity check")
 	void test1() {
 		Vector v = new Vector();
 		assertEquals(v.x(), 0);
@@ -46,7 +46,7 @@ public class VectorTest {
 	}
 
 	@Test
-	@DisplayName("Vector addition works")
+	@DisplayName("Vector addition")
 	void test2() {
 		Vector v1 = new Vector(1, 2, 3);
 		Vector v2 = new Vector(4, 5, 6);
@@ -57,7 +57,7 @@ public class VectorTest {
 	}
 
 	@Test
-	@DisplayName("Vector subtraction works")
+	@DisplayName("Vector subtraction")
 	void test3() {
 		Vector v1 = new Vector(1, 2, 3);
 		Vector v2 = new Vector(4, 5, 6);
@@ -68,7 +68,7 @@ public class VectorTest {
 	}
 
 	@Test
-	@DisplayName("Vector dotting works")
+	@DisplayName("Vector dotting")
 	void test4() {
 		Vector v1 = new Vector(1, 2, 3);
 		Vector v2 = new Vector(4, 5, 6);
@@ -77,7 +77,7 @@ public class VectorTest {
 	}
 
 	@Test
-	@DisplayName("Vector comparison works")
+	@DisplayName("Vector comparison")
 	void test5() {
 		Vector v1 = new Vector(1, 2, 3);
 		Vector v2 = new Vector(4, 5, 6);
@@ -86,7 +86,7 @@ public class VectorTest {
 	}
 
 	@Test
-	@DisplayName("Vector crossing works")
+	@DisplayName("Vector crossing")
 	void test6() {
 		Vector v1 = new Vector(1, 2, 3);
 		Vector v2 = new Vector(4, 5, 6);
@@ -95,28 +95,28 @@ public class VectorTest {
 	}
 
 	@Test
-	@DisplayName("Vector magnitude works")
+	@DisplayName("Vector magnitude")
 	void test7() {
 		Vector v = new Vector(3, 4, 0);
 		assertEquals(v.mag(), 5);
 	}
 
 	@Test
-	@DisplayName("Vector scaling works")
+	@DisplayName("Vector scaling")
 	void test8() {
 		Vector v = new Vector(3, 4, 1);
 		assertTrue(v.scale(3).equalTo(new Vector(9, 12, 3)));
 	}
 
 	@Test
-	@DisplayName("Vector unitization works")
+	@DisplayName("Vector unitization")
 	void test9() {
 		Vector v = new Vector(2, 0, 0);
 		assertTrue(v.unit().equalTo(new Vector(1, 0, 0)));
 	}
 
 	@Test
-	@DisplayName("Vector projection works")
+	@DisplayName("Vector projection")
 	void test10() {
 		Vector v1 = new Vector(1, 1, 1);
 		Vector v2 = new Vector(4, 0, 0);
@@ -124,7 +124,7 @@ public class VectorTest {
 	}
 
 	@Test
-	@DisplayName("Vector angle comparison works")
+	@DisplayName("Vector angle comparison")
 	void test11() {
 		Vector v1 = new Vector(1, 0, 0);
 		Vector v2 = new Vector(2, 0, 2);

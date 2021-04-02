@@ -3,13 +3,13 @@ package com.dndsuite.core;
 import java.util.LinkedList;
 
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import com.dndsuite.core.events.Event;
 import com.dndsuite.core.events.ItemAttack;
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.core.tasks.Task;
 import com.dndsuite.dnd.combat.DamageDiceGroup;
+import com.dndsuite.dnd.data.DamageType;
 
 public class Item extends Scriptable {
 
@@ -88,22 +88,35 @@ public class Item extends Scriptable {
 	}
 
 	public void equip(Entity subject) {
-		globals.set("subject", CoerceJavaToLua.coerce(subject));
-		globals.get("equip").invoke();
+		try {
+			passToLua("subject", subject);
+			invokeFromLua("equip");
+		} catch (Exception ex) {
+			
+		}
 	}
 
 	public int getAC() {
-		Varargs va = globals.get("acbase").invoke();
-		return va.toint(1);
+		try {
+			Varargs va = invokeFromLua("acbase");
+			return va.toint(1);
+		} catch (Exception ex) {
+			System.out.println("[JAVA] Non-armor item being referenced for AC");
+			return 0;
+		}
 	}
 
 	public int getACAbilityBonusLimit() {
-		Varargs va = globals.get("acAbilityBonusLimit").invoke();
-		int limit = va.toint(1);
-		if (limit == -1) {
+		try {
+			Varargs va = invokeFromLua("acAbilityBonusLimit");
+			int limit = va.toint(1);
+			if (limit == -1) {
+				return Integer.MAX_VALUE;
+			}
+			return limit;
+		} catch (Exception ex) {
 			return Integer.MAX_VALUE;
 		}
-		return limit;
 	}
 
 	public LinkedList<Event> getItemAttackOptions() {
@@ -123,47 +136,75 @@ public class Item extends Scriptable {
 		if (hasTag(Item.RANGED)) {
 			events.add(new ItemAttack(Entity.DEX, this, ItemAttack.RANGED));
 		}
-
+		
 		return events;
 	}
 
 	public LinkedList<Task> getCustomTasks() {
-		Varargs va = globals.get("customTasks").invoke();
-		LinkedList<Task> tasks = new LinkedList<Task>();
-		int index = 1;
-		Task task = (Task) (va.touserdata(index));
-		while (task != null) {
-			tasks.add(task);
-			index++;
-			task = (Task) (va.touserdata(index));
+		try {
+			Varargs va = invokeFromLua("customTasks");
+			LinkedList<Task> tasks = new LinkedList<Task>();
+			int index = 1;
+			Task task = (Task) (va.touserdata(index));
+			while (task != null) {
+				tasks.add(task);
+				index++;
+				task = (Task) (va.touserdata(index));
+			}
+			return tasks;
+		} catch (Exception ex) {
+			return new LinkedList<Task>();
 		}
-		return tasks;
 	}
 
 	public DamageDiceGroup getDamageDice(String attackType) {
-		globals.set("attackType", attackType);
-		Varargs va = globals.get("damage").invoke();
-		return (DamageDiceGroup) va.touserdata(1);
+		try {
+			passToLua("attackType", attackType);
+			Varargs va = invokeFromLua("damage");
+			return (DamageDiceGroup) va.touserdata(1);
+		} catch (Exception ex) {
+			return new DamageDiceGroup(0,0,DamageType.TYPELESS);
+		}
 	}
 
 	public double[] getRange(String attackType) {
-		// TODO fix this
-		return new double[] { 0.0, 0.0 };
+		try {
+			passToLua("attackType", attackType);
+			Varargs va = invokeFromLua("range");
+			double[] range = new double[2];
+			range[0] = va.todouble(1);
+			range[1] = va.todouble(2);
+			return range;
+		} catch (Exception ex) {
+			return new double[] { 0.0, 0.0 };
+		}
 	}
 
 	public double getReach() {
-		Varargs va = globals.get("reach").invoke();
-		return va.todouble(1);
+		try {
+			Varargs va = invokeFromLua("reach");
+			return va.todouble(1);
+		} catch (Exception ex) {
+			return 0.0;
+		}
 	}
 
 	public double getWeight() {
-		Varargs va = globals.get("weight").invoke();
-		return va.todouble(1);
+		try {
+			Varargs va = invokeFromLua("weight");
+			return va.todouble(1);
+		} catch (Exception ex) {
+			return 0.0;
+		}
 	}
 
 	public void unequip(Entity subject) {
-		globals.set("subject", CoerceJavaToLua.coerce(subject));
-		globals.get("unequip").invoke();
+		try {
+			passToLua("subject", subject);
+			invokeFromLua("unequip");
+		} catch (Exception ex) {
+			
+		}
 	}
 
 }

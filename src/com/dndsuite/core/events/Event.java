@@ -3,7 +3,6 @@ package com.dndsuite.core.events;
 import java.util.LinkedList;
 
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import com.dndsuite.core.Scriptable;
 import com.dndsuite.core.effects.Effect;
@@ -15,18 +14,16 @@ import com.dndsuite.maths.Vector;
 public class Event extends Scriptable {
 	public static final String SPELL = "Spell";
 
+	protected LinkedList<Effect> appliedEffects;
+	protected LinkedList<GameObject> targets;
 	protected int eventAbility;
 	protected double shortrange;
 	protected double longrange;
 	protected double radius;
-	protected LinkedList<Effect> appliedEffects;
-	protected LinkedList<GameObject> targets;
 
 	public Event(String script, int eventAbility) {
 		super(script);
 		this.eventAbility = eventAbility;
-		appliedEffects = new LinkedList<Effect>();
-		targets = new LinkedList<GameObject>();
 	}
 
 	public void addTarget(GameObject target) {
@@ -38,6 +35,7 @@ public class Event extends Scriptable {
 	}
 
 	public void applyEffect(Effect e) throws Exception {
+		// TODO: verify two like objects cannot both be applied
 		if (appliedEffects.contains(e)) {
 			throw new Exception("Effect already applied");
 		}
@@ -56,8 +54,10 @@ public class Event extends Scriptable {
 		clone.shortrange = shortrange;
 		clone.longrange = longrange;
 		clone.radius = radius;
-		clone.appliedEffects = new LinkedList<Effect>();
+		clone.appliedEffects.clear();
 		clone.appliedEffects.addAll(appliedEffects);
+		clone.targets.clear();
+		clone.targets.addAll(targets);
 		return clone;
 	}
 
@@ -85,39 +85,42 @@ public class Event extends Scriptable {
 	public void invoke(Entity source, Vector targetPos) {
 		System.out.println("[JAVA] " + source + " invokes event " + this);
 
-		if (globals != null) {
-			globals.set("targetPos", CoerceJavaToLua.coerce(targetPos));
-			Varargs va = globals.get("targets").invoke();
+		try {
+			passToLua("targetPos", targetPos);
+			Varargs va = invokeFromLua("targets");
 			Object userdata = va.touserdata(1);
+			
 			if (userdata instanceof GameObject) {
 				targets.add((GameObject) userdata);
 			} else if (userdata instanceof LinkedList<?>) {
 				targets.addAll((LinkedList<GameObject>) userdata);
 			}
+			
 			for (GameObject target : targets) {
 				Event clone = clone();
-				clone.globals.set("globals", CoerceJavaToLua.coerce(globals));
 				clone.invokeAsClone(source, target);
 			}
-		} else {
+		} catch (Exception ex) {
 			targets.addAll(targets(targetPos));
 			for (GameObject target : targets) {
 				clone().invokeAsClone(source, target);
 			}
 		}
+		
 	}
 
 	public void invokeAsClone(Entity source, GameObject target) {
 		while (source.processEvent(this, source, target) || target.processEvent(this, source, target))
 			;
 
-		if (globals != null) {
-			globals.set("source", CoerceJavaToLua.coerce(source));
-			globals.set("target", CoerceJavaToLua.coerce(target));
-			globals.get("invokeEvent").invoke();
-		} else {
+		try {
+			passToLua("source", source);
+			passToLua("target", target);
+			invokeFromLua("invokeEvent");
+		} catch (Exception ex) {
 			invokeEvent(source, target);
 		}
+		
 	}
 
 	public void invokeEvent(Entity source, GameObject target) {
@@ -131,6 +134,13 @@ public class Event extends Scriptable {
 		return targets.remove(target);
 	}
 
+	@Override
+	protected void setup() {
+		super.setup();
+		appliedEffects = new LinkedList<Effect>();
+		targets = new LinkedList<GameObject>();
+	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}

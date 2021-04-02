@@ -1,8 +1,5 @@
 package com.dndsuite.core.events;
 
-import java.util.LinkedList;
-
-import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.gameobjects.Entity;
 
 public class AbilityScoreCalculation extends Event {
@@ -34,14 +31,20 @@ public class AbilityScoreCalculation extends Event {
 		clone.shortrange = shortrange;
 		clone.longrange = longrange;
 		clone.radius = radius;
-		clone.appliedEffects = new LinkedList<Effect>();
+		clone.appliedEffects.clear();
 		clone.appliedEffects.addAll(appliedEffects);
+		clone.targets.clear();
+		clone.targets.addAll(targets);
 
 		clone.base = base;
 		clone.bonus = bonus;
 		clone.setHigh = setHigh;
 		clone.setLow = setLow;
 		return clone;
+	}
+	
+	public static String getEventID() {
+		return "Ability Score Calculation";
 	}
 	
 	public int getScore() {
@@ -59,20 +62,18 @@ public class AbilityScoreCalculation extends Event {
 		return score;
 	}
 	
-	public void raiseTo(int target) {
-		if (target > setHigh) {
-			setHigh = target;
-		}
-	}
-	
 	public void lowerTo(int target) {
 		if (setLow == -1 || target < setLow) {
 			setLow = target;
 		}
 	}
 	
-	public static String getEventID() {
-		return "Ability Score Calculation";
+	public void raiseTo(int target) {
+		if (target > setHigh) {
+			setHigh = target;
+		}
 	}
+	
+	
 
 }

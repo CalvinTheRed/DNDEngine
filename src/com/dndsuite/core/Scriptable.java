@@ -3,26 +3,27 @@ package com.dndsuite.core;
 import java.util.LinkedList;
 
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
 public abstract class Scriptable {
-	protected Globals globals;
+	private Globals globals;
+	
 	protected String script;
 	protected String name;
 	protected LinkedList<String> tags;
 
-	// TODO: create luaSet and luaGet functions
-	
 	public Scriptable(String script) {
-		this.script = script;
-		tags = new LinkedList<String>();
+		setup();
 		setName("Scriptable");
-		if (script != null) {
+		try {
+			this.script = script;
 			globals = JsePlatform.standardGlobals();
 			globals.loadfile(script).call();
-			globals.set("self", CoerceJavaToLua.coerce(this));
-			globals.get("define").invoke();
+			passToLua("self", this);
+			invokeFromLua("define");
+		} catch (Exception ex) {
 		}
 	}
 
@@ -35,6 +36,10 @@ public abstract class Scriptable {
 		s.tags.addAll(tags);
 		s.globals = globals; // TODO: does cloning globals cause problems?
 	}
+	
+	public Globals getGlobals() {
+		return globals;
+	}
 
 	public LinkedList<String> getTags() {
 		return tags;
@@ -43,9 +48,26 @@ public abstract class Scriptable {
 	public boolean hasTag(String tag) {
 		return tags.contains(tag);
 	}
+	
+	public Varargs invokeFromLua(String function) throws Exception {
+		if (globals != null) {
+			return globals.get(function).invoke();
+		}
+		throw new Exception("Scriptable has no globals");
+	}
+	
+	public void passToLua(String varname, Object value) {
+		if (globals != null) {
+			globals.set(varname, CoerceJavaToLua.coerce(value));
+		}
+	}
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	protected void setup() {
+		tags = new LinkedList<String>();
 	}
 
 	@Override

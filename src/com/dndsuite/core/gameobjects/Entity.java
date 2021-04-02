@@ -34,23 +34,80 @@ public class Entity extends GameObject {
 	public static final int CHA = 5;
 
 	protected LinkedList<EventGroup> eventQueue;
+	protected LinkedList<String> itemProficiencies;
 	protected LinkedList<Task> availableTasks;
 	protected LinkedList<Task> baseTasks;
-	protected LinkedList<String> itemProficiencies;
-
+	protected int[] baseAbilityScores;
+	protected int experience;
+	protected int level;
 	protected Item mainhand;
 	protected Item offhand;
 	protected Item armor;
-
-	protected int experience;
-	protected int level;
-	protected int[] baseAbilityScores;
 
 	public Entity(String script, Vector pos, Vector rot) {
 		super(script, pos, rot);
 		addTag(Entity.getGameObjectID());
 		// TODO: remove the need for this to pre-populate availableTasks
-		getTasks();
+	}
+	
+	public void addBaseTask(Task task) {
+		baseTasks.add(task);
+	}
+	
+	public boolean addEffect(Effect e) {
+		if (activeEffects.contains(e)) {
+			return false;
+		}
+		activeEffects.add(e);
+		System.out.println("[JAVA] " + this + " given effect " + e);
+		return true;
+	}
+	
+	public void addItemProficiency(String proficiencyGroup) {
+		itemProficiencies.add(proficiencyGroup);
+	}
+	
+	public void clearEventQueue() {
+		eventQueue.clear();
+	}
+	
+	public void equipArmor(Item item) {
+		if (!inventory.contains(item)) {
+			addToInventory(item);
+		}
+		if (item.hasTag(Item.ARMOR)) {
+			armor = item;
+			updateObservers();
+		} else {
+			System.out.println("[JAVA] ERR: " + item + " not armor");
+		}
+		updateObservers();
+	}
+	
+	public void equipMainhand(Item item) {
+		stowMainhand();
+		if (!inventory.contains(item)) {
+			addToInventory(item);
+		}
+		mainhand = item;
+		if (item.hasTag(Item.TWO_HANDED)) {
+			offhand = item;
+		}
+		item.equip(this);
+		updateObservers();
+	}
+	
+	public void equipOffhand(Item item) {
+		stowOffhand();
+		if (!inventory.contains(item)) {
+			addToInventory(item);
+		}
+		offhand = item;
+		if (item.hasTag(Item.TWO_HANDED)) {
+			mainhand = item;
+		}
+		item.equip(this);
+		updateObservers();
 	}
 
 	public int getAbilityModifier(int ability) {
@@ -61,6 +118,23 @@ public class Entity extends GameObject {
 			abilityScoreBuffer--;
 		}
 		return abilityScoreBuffer / 2;
+	}
+	
+	public static String getAbilityString(int abilityIndex) {
+		if (abilityIndex == STR) {
+			return "STR";
+		} else if (abilityIndex == DEX) {
+			return "DEX";
+		} else if (abilityIndex == CON) {
+			return "CON";
+		} else if (abilityIndex == INT) {
+			return "INT";
+		} else if (abilityIndex == WIS) {
+			return "WIS";
+		} else if (abilityIndex == CHA) {
+			return "CHA";
+		}
+		return "";
 	}
 
 	public Item getArmor() {
@@ -77,6 +151,14 @@ public class Entity extends GameObject {
 
 	public LinkedList<EventGroup> getEventQueue() {
 		return eventQueue;
+	}
+	
+	public int getExperience() {
+		return experience;
+	}
+	
+	public static String getGameObjectID() {
+		return "Entity";
 	}
 
 	public int getLevel() {
@@ -98,18 +180,24 @@ public class Entity extends GameObject {
 	public LinkedList<Task> getTasks() {
 		TaskCollection tc = new TaskCollection();
 		tc.addTasks(baseTasks);
+		// Add custom tasks from mainhand item
 		try {
 			tc.addTasks(getMainhand().getCustomTasks());
 		} catch (NullPointerException ex) {
 		}
-		try {
-			tc.addTasks(getOffhand().getCustomTasks());
-		} catch (NullPointerException ex) {
+		// Add custom tasks from offhand item if distinct from mainhand
+		if (getMainhand() != getOffhand()) {
+			try {
+				tc.addTasks(getOffhand().getCustomTasks());
+			} catch (NullPointerException ex) {
+			}
 		}
+		// Add custom tasks from armor
 		try {
 			tc.addTasks(getArmor().getCustomTasks());
 		} catch (NullPointerException ex) {
 		}
+		
 		processEvent(tc, this, this);
 		availableTasks.clear();
 		availableTasks.addAll(tc.getTasks());
@@ -143,6 +231,29 @@ public class Entity extends GameObject {
 		}
 		return false;
 	}
+	
+	@Override
+	protected void setup() {
+		super.setup();
+		eventQueue = new LinkedList<EventGroup>();
+		itemProficiencies = new LinkedList<String>();
+		availableTasks = new LinkedList<Task>();
+		baseTasks = new LinkedList<Task>();
+		baseAbilityScores = new int[6];
+	}
+	
+	public void setBaseAbilityScore(int abilityIndex, int score) {
+		baseAbilityScores[abilityIndex] = score;
+		updateObservers();
+	}
+	
+	public void setExperience(int experience) {
+		this.experience = experience;
+	}
+	
+	public void setLevel(int level) {
+		this.level = level;
+	}
 
 	public void stowMainhand() {
 		if (mainhand != null) {
@@ -150,6 +261,7 @@ public class Entity extends GameObject {
 				offhand = null;
 			}
 			mainhand = null;
+			updateObservers();
 		}
 	}
 
@@ -159,141 +271,22 @@ public class Entity extends GameObject {
 				mainhand = null;
 			}
 			offhand = null;
+			updateObservers();
 		}
 	}
 
 	public void versatileSet() {
 		if (mainhand.hasTag(Item.VERSATILE) && offhand == null) {
 			offhand = mainhand;
+			updateObservers();
 		}
 	}
 
 	public void versatileUnset() {
 		if (mainhand.hasTag(Item.VERSATILE) && offhand == mainhand) {
 			offhand = null;
-		}
-	}
-
-	public boolean addTask(Task task) {
-		if (!availableTasks.contains(task)) {
-			availableTasks.add(task);
-			return true;
-		}
-		return false;
-	}
-
-	public void clearEventQueue() {
-		eventQueue.clear();
-	}
-
-	public static String getAbility(int abilityIndex) {
-		if (abilityIndex == STR) {
-			return "STR";
-		} else if (abilityIndex == DEX) {
-			return "DEX";
-		} else if (abilityIndex == CON) {
-			return "CON";
-		} else if (abilityIndex == INT) {
-			return "INT";
-		} else if (abilityIndex == WIS) {
-			return "WIS";
-		} else if (abilityIndex == CHA) {
-			return "CHA";
-		}
-		return "";
-	}
-
-	public static String getGameObjectID() {
-		return "Entity";
-	}
-
-	/*
-	 * -----------------------------------------------------------------------------
-	 * Functions used from Lua define function -------------------------------------
-	 * -----------------------------------------------------------------------------
-	 */
-
-	public void prepEntity() {
-		eventQueue = new LinkedList<EventGroup>();
-		availableTasks = new LinkedList<Task>();
-		baseTasks = new LinkedList<Task>();
-		itemProficiencies = new LinkedList<String>();
-		baseAbilityScores = new int[6];
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
-	}
-
-	public void setExperience(int experience) {
-		this.experience = experience;
-	}
-
-	public boolean addBaseTask(Task task) {
-		if (!baseTasks.contains(task)) {
-			baseTasks.add(task);
-			return true;
-		}
-		return false;
-	}
-
-	public boolean addEffect(Effect e) {
-		if (activeEffects.contains(e)) {
-			return false;
-		}
-		activeEffects.add(e);
-		System.out.println("[JAVA] " + this + " given effect " + e);
-		return true;
-	}
-
-	public void addItemProficiency(String proficiencyGroup) {
-		itemProficiencies.add(proficiencyGroup);
-	}
-
-	public void equipArmor(Item item) {
-		if (!inventory.contains(item)) {
-			addToInventory(item);
-		}
-		if (item.hasTag(Item.ARMOR)) {
-			armor = item;
 			updateObservers();
-		} else {
-			System.out.println("[JAVA] ERR: " + item + " not armor");
 		}
-	}
-
-	public void equipMainhand(Item item) {
-		stowMainhand();
-		if (!inventory.contains(item)) {
-			addToInventory(item);
-		}
-		mainhand = item;
-		if (item.hasTag(Item.TWO_HANDED)) {
-			offhand = item;
-		}
-		item.equip(this);
-		updateObservers();
-	}
-
-	public void equipOffhand(Item item) {
-		stowOffhand();
-		if (!inventory.contains(item)) {
-			addToInventory(item);
-		}
-		offhand = item;
-		if (item.hasTag(Item.TWO_HANDED)) {
-			mainhand = item;
-		}
-		item.equip(this);
-		updateObservers();
-	}
-
-	public void setBaseAbilityScore(int abilityIndex, int score) {
-		baseAbilityScores[abilityIndex] = score;
-	}
-
-	public int getExperience() {
-		return experience;
 	}
 
 }

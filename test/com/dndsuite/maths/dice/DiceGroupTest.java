@@ -34,7 +34,7 @@ public class DiceGroupTest {
 	}
 
 	@Test
-	@DisplayName("DiceGroup constructor and Dice getter work")
+	@DisplayName("Sanity check")
 	void test1() {
 		int numDice = 4;
 		int dieSize = 1;
@@ -48,7 +48,7 @@ public class DiceGroupTest {
 	}
 
 	@Test
-	@DisplayName("Dice can be added to a DiceGroup object")
+	@DisplayName("Adding dice")
 	void test2() {
 		DiceGroup group = new DiceGroup(0, 1);
 		Die d = new Die(1);
@@ -57,7 +57,7 @@ public class DiceGroupTest {
 	}
 
 	@Test
-	@DisplayName("DiceGroup bonus functions work")
+	@DisplayName("Adding bonus")
 	void test3() {
 		int bonus = 4;
 		DiceGroup group = new DiceGroup(0, 1);
@@ -66,7 +66,7 @@ public class DiceGroupTest {
 	}
 
 	@Test
-	@DisplayName("DiceGroup rolling works")
+	@DisplayName("Rolling dice")
 	void test4() {
 		int numDice = 4;
 		int dieSize = 1;

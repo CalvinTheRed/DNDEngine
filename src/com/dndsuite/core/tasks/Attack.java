@@ -23,6 +23,7 @@ public class Attack extends Task {
 		numAttacks++;
 	}
 	
+	@Override
 	public String getCost() {
 		return "Action";
 	}

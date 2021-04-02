@@ -2,7 +2,6 @@ package com.dndsuite.core.events;
 
 import java.util.LinkedList;
 
-import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.core.tasks.Task;
 import com.dndsuite.maths.Vector;
@@ -12,7 +11,6 @@ public class TaskCollection extends Event {
 
 	public TaskCollection() {
 		super(null, -1);
-		tasks = new LinkedList<Task>();
 		setName(TaskCollection.getEventID());
 		addTag(TaskCollection.getEventID());
 	}
@@ -32,10 +30,12 @@ public class TaskCollection extends Event {
 		clone.shortrange = shortrange;
 		clone.longrange = longrange;
 		clone.radius = radius;
-		clone.appliedEffects = new LinkedList<Effect>();
+		clone.appliedEffects.clear();
 		clone.appliedEffects.addAll(appliedEffects);
+		clone.targets.clear();
+		clone.targets.addAll(targets);
 		
-		clone.tasks = new LinkedList<Task>();
+		clone.tasks.clear();
 		clone.tasks.addAll(tasks);
 		return clone;
 	}
@@ -54,6 +54,12 @@ public class TaskCollection extends Event {
 
 	public void removeTask(Task task) {
 		tasks.remove(task);
+	}
+	
+	@Override
+	protected void setup() {
+		super.setup();
+		tasks = new LinkedList<Task>();
 	}
 
 }

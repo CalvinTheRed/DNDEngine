@@ -1,8 +1,5 @@
 package com.dndsuite.core.events;
 
-import java.util.LinkedList;
-
-import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.dnd.combat.DamageDiceGroup;
@@ -17,7 +14,7 @@ public class Damage extends Event {
 	public Damage(DamageCalculation parent) {
 		super(null, -1);
 		this.parent = parent;
-		setName(Damage.getEventID() + "(" + parent + ")");
+		setName(Damage.getEventID() + "(" + parent.getParent() + ")");
 		addTag(Damage.getEventID());
 	}
 
@@ -28,8 +25,10 @@ public class Damage extends Event {
 		clone.shortrange = shortrange;
 		clone.longrange = longrange;
 		clone.radius = radius;
-		clone.appliedEffects = new LinkedList<Effect>();
+		clone.appliedEffects.clear();
 		clone.appliedEffects.addAll(appliedEffects);
+		clone.targets.clear();
+		clone.targets.addAll(targets);
 
 		clone.damage = damage;
 		return clone;
@@ -37,6 +36,10 @@ public class Damage extends Event {
 
 	public int getDamage() {
 		return damage;
+	}
+	
+	public static String getEventID() {
+		return "Damage";
 	}
 
 	public DamageCalculation getParent() {
@@ -62,10 +65,6 @@ public class Damage extends Event {
 			;
 
 		target.takeDamage(this);
-	}
-
-	public static String getEventID() {
-		return "Damage Dealt";
 	}
 
 }

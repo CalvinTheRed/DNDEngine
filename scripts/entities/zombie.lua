@@ -1,9 +1,6 @@
 function define()
 	Entity = luajava.bindClass("com.dndsuite.core.gameobjects.Entity")
 	
-	-- Initialize GameObject fields
-	self:prepGameObject()
-	
 	-- Set name
 	self:setName("Zombie")
 	
@@ -22,17 +19,18 @@ function define()
 	
 	-- Populate inventory
 	
-	-- Initialize Entity fields
-	self:prepEntity()
-	
 	-- Add base tasks
 	task = luajava.newInstance("com.dndsuite.core.tasks.Task", "scripts/tasks/zombie_slam.lua")
+	self:addBaseTask(task)
+	task = luajava.newInstance("com.dndsuite.core.tasks.Attack", self)
 	self:addBaseTask(task)
 	
 	-- Add active effects
 	effect = luajava.newInstance("com.dndsuite.core.effects.Effect", "scripts/effects/undead_fortitude.lua", self, self)
 	self:addEffect(effect)
 	effect = luajava.newInstance("com.dndsuite.core.effects.Effect", "scripts/effects/poison_damage_immunity.lua", self, self)
+	self:addEffect(effect)
+	effect = luajava.newInstance("com.dndsuite.core.effects.Effect", "scripts/effects/wisdom_save_proficiency.lua", self, self)
 	self:addEffect(effect)
 	
 	-- Add item proficiencies

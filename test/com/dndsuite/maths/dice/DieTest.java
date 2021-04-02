@@ -31,7 +31,7 @@ public class DieTest {
 	}
 
 	@Test
-	@DisplayName("Die constructor and size getter")
+	@DisplayName("Sanity check")
 	void test1() {
 		Die d = new Die(1);
 		assertEquals(1, d.getSize());
