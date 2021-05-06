@@ -46,10 +46,10 @@ public final class VirtualBoard {
 			if (o.getPos().sub(pos).mag() < distance) {
 				boolean valid = true;
 				for (String tag : filterTags) {
-					if (!o.hasTag(tag)) {
-						valid = false;
-						break;
-					}
+//					if (!o.hasTag(tag)) {
+//						valid = false;
+//						break;
+//					}
 				}
 				if (valid) {
 					nearest = o;
@@ -125,10 +125,10 @@ public final class VirtualBoard {
 	private static boolean matchesFilterTags(GameObject o, String[] filterTags) {
 		boolean valid = true;
 		for (String tag : filterTags) {
-			if (!o.hasTag(tag)) {
-				valid = false;
-				break;
-			}
+//			if (!o.hasTag(tag)) {
+//				valid = false;
+//				break;
+//			}
 		}
 		return valid;
 	}

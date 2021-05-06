@@ -1,0 +1,20 @@
+{
+	"name": "Zombie",
+	"size": "medium",
+	"alignment": "neutral evil",
+	"creature_type": "undead",
+	"health": {
+		"base": 22,
+		"current": 22,
+		"max": 22,
+		"tmp": 0
+	},
+	"ability_scores": {
+		"str": 13,
+		"dex": 6,
+		"con": 16,
+		"int": 3,
+		"wis": 6,
+		"cha": 5
+	}
+}
