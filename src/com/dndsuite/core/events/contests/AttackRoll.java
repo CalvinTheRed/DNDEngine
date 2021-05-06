@@ -1,124 +1,61 @@
 package com.dndsuite.core.events.contests;
 
-import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+import java.util.LinkedList;
 
-import com.dndsuite.core.events.ArmorClassCalculation;
-import com.dndsuite.core.events.Damage;
+import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.events.Event;
-import com.dndsuite.core.gameobjects.Entity;
-import com.dndsuite.dnd.VirtualBoard;
-import com.dndsuite.dnd.combat.DamageDiceGroup;
-import com.dndsuite.maths.Vector;
-import com.dndsuite.maths.dice.Die;
+import com.dndsuite.core.gameobjects.GameObject;
 
 public class AttackRoll extends DiceContest {
-	public static final String MELEE = "Melee Attack";
-	public static final String RANGED = "Ranged Attack";
-	public static final String THROWN = "Thrown Attack";
-
 	public static final String CRITICAL_HIT = "Critical Hit";
 	public static final String CRITICAL_MISS = "Critical Miss";
 
-	protected String attackType;
-	protected int attackAbility;
-	protected Entity target;
+	protected int critThresh;
 
-	public AttackRoll(String script, int attackAbility) {
-		super(script);
-		this.attackAbility = attackAbility;
-		setRadius(0.0);
-		addTag(Event.SINGLE_TARGET);
+	public AttackRoll(int attackAbility, Event parent, GameObject target) {
+		super(null, attackAbility, parent, target);
+		critThresh = 20;
+		setName(AttackRoll.getEventID());
 		addTag(AttackRoll.getEventID());
-		if (globals != null) {
-			globals.set("event", CoerceJavaToLua.coerce(this));
-			globals.get("define").invoke();
-		}
-
-	}
-
-	public int getAttackAbility() {
-		return attackAbility;
-	}
-
-	public String getAttackType() {
-		return attackType;
-	}
-
-	public void setAttackType(String attackType) {
-		this.attackType = attackType;
 	}
 
 	@Override
-	public void invoke(Entity source, Vector targetPos) {
-		System.out.println("[JAVA] " + source + " invokes Event " + this);
+	public AttackRoll clone() {
+		AttackRoll clone = new AttackRoll(eventAbility, parent, target);
+		cloneDataTo(clone);
+		clone.shortrange = shortrange;
+		clone.longrange = longrange;
+		clone.radius = radius;
+		clone.appliedEffects = new LinkedList<Effect>();
+		clone.appliedEffects.addAll(appliedEffects);
 
-		target = VirtualBoard.entityAt(targetPos);
+		clone.d20 = d20.clone();
+		clone.bonus = bonus;
 
-		while (source.processEvent(this, source, target) || target.processEvent(this, source, target))
-			;
+		clone.critThresh = critThresh;
+		return clone;
+	}
 
-		// apply relevant ability score modifier as attack roll bonus
-		addBonus(source.getAbilityModifier(attackAbility));
-		roll();
-
-		/*
-		 * TODO: create a second after-the-fact wave of event processing while
-		 * (source.processEvent(this, source, target) || target.processEvent(this,
-		 * source, target)) ;
-		 */
-		ArmorClassCalculation acc = new ArmorClassCalculation(source);
-		source.processEvent(acc, source, source);
-		if (getRoll() >= acc.getAC()) {
-			System.out.println("[JAVA] Attack roll hit! (" + getRawRoll() + "+" + bonus + ":" + acc.getAC() + ")");
-			invokeFallout(source);
-		} else {
-			System.out.println("[JAVA] Attack roll miss! (" + getRawRoll() + "+" + bonus + ":" + acc.getAC() + ")");
-			/*
-			 * Some attack roll events, such as the Ice Knife spell, have secondary
-			 * consequences which come to pass even if the attack roll misses its target.
-			 * These globals calls provide an opportunity to enact such behavior.
-			 */
-			if (globals != null) {
-				globals.set("source", CoerceJavaToLua.coerce(source));
-				globals.set("target", CoerceJavaToLua.coerce(target));
-				globals.get("additionalEffectsOnMiss").invoke();
-			} else {
-				// TODO: is this ever going to be used?
-				invokeFalloutOnMiss(source);
-			}
-
-		}
+	public int getCriticalThreshold() {
+		return critThresh;
 	}
 
 	@Override
-	protected void invokeFallout(Entity source) {
-		Damage d = new Damage(this);
-
-		if (getRawRoll() == Die.CRITICAL_HIT) {
-			d.addTag(CRITICAL_HIT);
-		} else if (getRawRoll() == Die.CRITICAL_FAIL) {
-			d.addTag(CRITICAL_MISS);
+	public void roll() {
+		super.roll();
+		if (getRawRoll() >= critThresh) {
+			System.out.println("[JAVA] CRITICAL HIT!");
+			addTag(DiceContest.SET_PASS);
+			addTag(CRITICAL_HIT);
+		} else if (getRawRoll() == 1) {
+			System.out.println("[JAVA] CRITICAL MISS!");
+			addTag(DiceContest.SET_FAIL);
+			addTag(CRITICAL_MISS);
 		}
-
-		globals.set("source", CoerceJavaToLua.coerce(source));
-		Varargs va = globals.get("damage").invoke();
-
-		int index = 1;
-		while (va.isuserdata(index)) {
-			d.addDamageDiceGroup((DamageDiceGroup) va.touserdata(index));
-			index++;
-		}
-
-		d.invoke(source, null);
-		d.clone().invokeAsClone(source, target);
-
-		globals.set("target", CoerceJavaToLua.coerce(target));
-		globals.get("additionalEffects").invoke();
 	}
 
-	protected void invokeFalloutOnMiss(Entity source) {
-
+	public void setCriticalThreshold(int critThresh) {
+		this.critThresh = critThresh;
 	}
 
 	public static String getEventID() {

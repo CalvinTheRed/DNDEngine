@@ -1,127 +1,70 @@
 package com.dndsuite.core.events;
 
-import java.util.LinkedList;
-
-import com.dndsuite.core.events.contests.AttackRoll;
 import com.dndsuite.core.gameobjects.Entity;
+import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.dnd.combat.DamageDiceGroup;
-import com.dndsuite.maths.Vector;
-import com.dndsuite.maths.dice.Die;
+import com.dndsuite.dnd.data.DamageType;
 
-/**
- * A class which represents damage dealt from a single source (though that
- * single source may deal multiple types of damage at once, such as in the case
- * of the Meteor Swarm spell).
- * 
- * @author calvi
- *
- */
 public class Damage extends Event {
-	protected LinkedList<DamageDiceGroup> damageDice;
-	protected Event parent;
+	public static final String WITHSTOOD = "Withstood";
 
-	public Damage(Event parent) {
-		super(null);
-		damageDice = new LinkedList<DamageDiceGroup>();
+	protected DamageCalculation parent;
+	int damage;
+
+	public Damage(DamageCalculation parent) {
+		super(null, -1);
 		this.parent = parent;
-		name = "Damage (" + parent + ")";
-		addTag(Event.SINGLE_TARGET);
+		setName(Damage.getEventID() + " (" + parent.getParent() + ")");
 		addTag(Damage.getEventID());
 	}
 
+	@Override
 	public Damage clone() {
 		Damage clone = new Damage(parent);
-		for (DamageDiceGroup group : damageDice) {
-			clone.addDamageDiceGroup(group.clone());
-		}
-		clone.name = name;
+		cloneDataTo(clone);
+		clone.shortrange = shortrange;
+		clone.longrange = longrange;
+		clone.radius = radius;
+		clone.appliedEffects.clear();
+		clone.appliedEffects.addAll(appliedEffects);
+		clone.targets.clear();
+		clone.targets.addAll(targets);
+
+		clone.damage = damage;
 		return clone;
 	}
 
-	@Override
-	public void invoke(Entity source, Vector targetPos) {
-		System.out.println("[JAVA] " + parent + " invokes event " + this);
-
-		// TODO: preprocessEvent(Event e) ?
-		while (source.processEvent(this, source, null))
-			;
-		roll();
+	public int getDamage() {
+		return damage;
+	}
+	
+	public static String getEventID() {
+		return "Damage";
 	}
 
-	public void invokeAsClone(Entity source, Entity target) {
-		while (source.processEvent(this, source, target))
-			;
-		// Separation here to ensure sequentially prior Effects on the source
-		// (such as the Dragon Sorcerer's Elemental Affinity) do not come
-		// before sequentially latter Effects on the target (such as Rogue's
-		// Evasion). The target shall never have a relevant sequentially
-		// prior Effect in relation to the source's Effects, as the target
-		// always behaves in a reactionary manner to Damage Events.
-		while (target.processEvent(this, source, target))
-			;
-		target.receiveDamage(this);
-	}
-
-	public void invokeHalvedAsClone(Entity source, Entity target) {
-		while (source.processEvent(this, source, target))
-			;
-		// Separation here to ensure sequentially prior Effects on the source
-		// (such as the Dragon Sorcerer's Elemental Affinity) do not come
-		// before sequentially latter Effects on the target (such as Rogue's
-		// Evasion). The target shall never have a relevant sequentially
-		// prior Effect in relation to the source's Effects, as the target
-		// always behaves in a reactionary manner to Damage Events.
-		while (target.processEvent(this, source, target))
-			;
-
-		for (DamageDiceGroup group : damageDice) {
-			group.halve();
-		}
-		target.receiveDamage(this);
-	}
-
-	public void addDamageDiceGroup(DamageDiceGroup newGroup) {
-		for (DamageDiceGroup group : damageDice) {
-			if (group.getDamageType() == newGroup.getDamageType()) {
-				for (Die d : newGroup.getDice()) {
-					group.addDie(d);
-					group.addBonus(newGroup.getBonus());
-					return;
-				}
-			}
-		}
-		damageDice.add(newGroup);
-	}
-
-	public void roll() {
-		if (hasTag(AttackRoll.CRITICAL_HIT)) {
-			System.out.println("[JAVA] CRITICAL HIT!!!");
-			LinkedList<DamageDiceGroup> criticalDice = new LinkedList<DamageDiceGroup>();
-			for (DamageDiceGroup group : damageDice) {
-				DamageDiceGroup criticalClone = group.clone();
-				criticalClone.addBonus(-criticalClone.getBonus());
-				criticalDice.add(criticalClone);
-			}
-			for (DamageDiceGroup group : criticalDice) {
-				addDamageDiceGroup(group);
-			}
-		}
-
-		for (DamageDiceGroup group : damageDice) {
-			group.roll();
-		}
-	}
-
-	public LinkedList<DamageDiceGroup> getDamageDice() {
-		return damageDice;
-	}
-
-	public Event getParent() {
+	public DamageCalculation getParent() {
 		return parent;
 	}
 
-	public static String getEventID() {
-		return "Damage";
+	public boolean hasDamageType(DamageType dt) {
+		for (DamageDiceGroup group : parent.getDamageDice()) {
+			if (group.getDamageType() == dt) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void invokeEvent(Entity source, GameObject target) {
+		damage = 0;
+		for (DamageDiceGroup damageDice : parent.getDamageDice()) {
+			damage += damageDice.getSum();
+		}
+		while (target.processEvent(this, source, target))
+			;
+
+		target.takeDamage(this);
 	}
 
 }

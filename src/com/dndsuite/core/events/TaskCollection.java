@@ -9,10 +9,9 @@ import com.dndsuite.maths.Vector;
 public class TaskCollection extends Event {
 	protected LinkedList<Task> tasks;
 
-	public TaskCollection(Entity parent) {
-		super(null);
-		tasks = new LinkedList<Task>();
-		addTag(Event.SINGLE_TARGET);
+	public TaskCollection() {
+		super(null, -1);
+		setName(TaskCollection.getEventID());
 		addTag(TaskCollection.getEventID());
 	}
 
@@ -24,8 +23,21 @@ public class TaskCollection extends Event {
 		tasks.addAll(tasklist);
 	}
 
-	public void removeTask(Task task) {
-		tasks.remove(task);
+	@Override
+	public TaskCollection clone() {
+		TaskCollection clone = new TaskCollection();
+		cloneDataTo(clone);
+		clone.shortrange = shortrange;
+		clone.longrange = longrange;
+		clone.radius = radius;
+		clone.appliedEffects.clear();
+		clone.appliedEffects.addAll(appliedEffects);
+		clone.targets.clear();
+		clone.targets.addAll(targets);
+		
+		clone.tasks.clear();
+		clone.tasks.addAll(tasks);
+		return clone;
 	}
 
 	public LinkedList<Task> getTasks() {
@@ -38,6 +50,16 @@ public class TaskCollection extends Event {
 
 	@Override
 	public void invoke(Entity source, Vector targetPos) {
+	}
+
+	public void removeTask(Task task) {
+		tasks.remove(task);
+	}
+	
+	@Override
+	protected void setup() {
+		super.setup();
+		tasks = new LinkedList<Task>();
 	}
 
 }

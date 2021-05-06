@@ -1,21 +1,18 @@
 package com.dndsuite.core.events;
 
 import com.dndsuite.core.gameobjects.Entity;
-import com.dndsuite.maths.Vector;
+import com.dndsuite.core.gameobjects.GameObject;
 
 public class DiceCheckCalculation extends Event {
-	private static final int BASE_DC = 8;
+	private static final int DEFAULT_BASE_DC = 8;
 
-	protected Entity parent;
-	protected int dcAbility;
+	protected Entity subject;
 	protected int bonus;
 
-	public DiceCheckCalculation(Entity parent, int dcAbility) {
-		super(null);
-		this.parent = parent;
-		this.dcAbility = dcAbility;
-		name = "Dice Check Calculation";
-		bonus = 0;
+	public DiceCheckCalculation(int dcAbility, Entity subject) {
+		super(null, dcAbility);
+		this.subject = subject;
+		setName(DiceCheckCalculation.getEventID());
 		addTag(DiceCheckCalculation.getEventID());
 	}
 
@@ -23,24 +20,43 @@ public class DiceCheckCalculation extends Event {
 		this.bonus += bonus;
 	}
 
+	@Override
+	public DiceCheckCalculation clone() {
+		DiceCheckCalculation clone = new DiceCheckCalculation(eventAbility, subject);
+		cloneDataTo(clone);
+		clone.shortrange = shortrange;
+		clone.longrange = longrange;
+		clone.radius = radius;
+		clone.appliedEffects.clear();
+		clone.appliedEffects.addAll(appliedEffects);
+		clone.targets.clear();
+		clone.targets.addAll(targets);
+
+		clone.bonus = bonus;
+		return clone;
+	}
+
 	public int getBonus() {
 		return bonus;
 	}
 
 	public int getDC() {
-		return BASE_DC + parent.getAbilityModifier(dcAbility) + bonus;
+		return DEFAULT_BASE_DC + subject.getAbilityModifier(eventAbility) + bonus;
 	}
-
-	public Entity getParent() {
-		return parent;
-	}
-
+	
 	public static String getEventID() {
 		return "Dice Check Calculation";
 	}
 
+	public Entity getSubject() {
+		return subject;
+	}
+
 	@Override
-	public void invoke(Entity source, Vector targetPos) {
+	public void invokeEvent(Entity source, GameObject target) {
+		bonus = 0;
+		while (target.processEvent(this, source, target))
+			;
 	}
 
 }

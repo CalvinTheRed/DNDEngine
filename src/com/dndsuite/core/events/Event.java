@@ -2,132 +2,40 @@ package com.dndsuite.core.events;
 
 import java.util.LinkedList;
 
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+import org.luaj.vm2.Varargs;
 
 import com.dndsuite.core.Scriptable;
 import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.gameobjects.Entity;
+import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.maths.Vector;
 
 public class Event extends Scriptable {
-
-	public static final int SHORTRANGE = 0;
-	public static final int LONGRANGE = 1;
-	public static final int DEFAULTRANGE = LONGRANGE;
-
-	// Event area of influence
-	public static final String CONE = "Cone";
-	public static final String CUBE = "Cube";
-	public static final String LINE = "Line";
-	public static final String SINGLE_TARGET = "Single Target";
-	public static final String SPHERE = "Sphere";
-
 	public static final String SPELL = "Spell";
 
-	protected Vector targetPos;
-	protected String name;
+	protected LinkedList<Effect> appliedEffects;
+	protected LinkedList<GameObject> targets;
+	protected int eventAbility;
 	protected double shortrange;
 	protected double longrange;
 	protected double radius;
-	protected LinkedList<Effect> appliedEffects;
-	protected LinkedList<String> tags;
 
-	public Event(String script) {
+	public Event(String script, int eventAbility) {
 		super(script);
-		appliedEffects = new LinkedList<Effect>();
-		tags = new LinkedList<String>();
+		this.eventAbility = eventAbility;
 	}
 
-	@Override
-	public Event clone() {
-		Event clone = new Event(script);
-		clone.targetPos = targetPos;
-		clone.shortrange = shortrange;
-		clone.longrange = longrange;
-		clone.radius = radius;
-		clone.appliedEffects.addAll(appliedEffects);
-		clone.tags.clear();
-		clone.tags.addAll(tags);
-		return clone;
+	public void addTarget(GameObject target) {
+		targets.add(target);
 	}
 
-	public void invoke(Entity source, Vector targetPos) {
-		System.out.println("[JAVA] " + source + " invokes event " + this);
-
-		LinkedList<Entity> targets = new LinkedList<Entity>();
-		if (hasTag(CONE)) {
-			targets.addAll(VirtualBoard.entitiesInCone2(targetPos, source.getRot(), getRange()[DEFAULTRANGE]));
-		} else if (hasTag(CUBE)) {
-			targets.addAll(VirtualBoard.entitiesInCube(targetPos, source.getRot(), radius));
-		} else if (hasTag(LINE)) {
-			targets.addAll(VirtualBoard.entitiesInLine(targetPos, source.getRot(), getRange()[DEFAULTRANGE], radius));
-		} else if (hasTag(SINGLE_TARGET)) {
-			targets.add(VirtualBoard.entityAt(targetPos));
-		} else if (hasTag(SPHERE)) {
-			targets.addAll(VirtualBoard.entitiesInSphere(targetPos, radius));
-		} else {
-			System.out
-					.println("[JAVA] ERR: event " + this + " has no targeting tags! (Choose from among the following)");
-			System.out.println("       Event.CONE, Event.CUBE, Event.LINE, Event.SINGLE_TARGET, Event.SPHERE");
-			return;
-		}
-
-		// Give the source a chance to modify the Event before it gets cloned to each of
-		// its targets
-		// TODO: consider adding preProcess(Event e) method?
-
-		// Clone this event to each of its targets
-		for (Entity target : targets) {
-			clone().invokeAsClone(source, target);
-		}
-
-	}
-
-	public void invokeAsClone(Entity source, Entity target) {
-		globals.set("source", CoerceJavaToLua.coerce(source));
-		globals.set("target", CoerceJavaToLua.coerce(target));
-		globals.set("event", CoerceJavaToLua.coerce(this));
-		globals.get("define").invoke();
-		while (source.processEvent(this, source, target) || target.processEvent(this, source, target))
-			;
-		globals.get("invokeEvent").invoke();
-	}
-
-	public void addTag(String tag) {
-		tags.add(tag);
-	}
-
-	public boolean hasTag(String tag) {
-		return tags.contains(tag);
-	}
-
-	public LinkedList<String> getTags() {
-		return tags;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setRange(double shortrange, double longrange) {
-		this.shortrange = shortrange;
-		this.longrange = longrange;
-	}
-
-	public double[] getRange() {
-		return new double[] { shortrange, longrange };
-	}
-
-	public void setRadius(double radius) {
-		this.radius = radius;
-	}
-
-	public double getRadius() {
-		return radius;
+	public void addTargets(LinkedList<GameObject> targets) {
+		this.targets.addAll(targets);
 	}
 
 	public void applyEffect(Effect e) throws Exception {
+		// TODO: verify two like objects cannot both be applied
 		if (appliedEffects.contains(e)) {
 			throw new Exception("Effect already applied");
 		}
@@ -140,7 +48,120 @@ public class Event extends Scriptable {
 	}
 
 	@Override
-	public String toString() {
-		return name;
+	public Event clone() {
+		Event clone = new Event(script, eventAbility);
+		cloneDataTo(clone);
+		clone.shortrange = shortrange;
+		clone.longrange = longrange;
+		clone.radius = radius;
+		clone.appliedEffects.clear();
+		clone.appliedEffects.addAll(appliedEffects);
+		clone.targets.clear();
+		clone.targets.addAll(targets);
+		return clone;
 	}
+
+	public LinkedList<Effect> getEffects() {
+		return appliedEffects;
+	}
+
+	public int getEventAbility() {
+		return eventAbility;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+
+	public double[] getRange() {
+		return new double[] { shortrange, longrange };
+	}
+
+	public LinkedList<GameObject> getTargets() {
+		return targets;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void invoke(Entity source, Vector targetPos) {
+		System.out.println("[JAVA] " + source + " invokes event " + this);
+
+		try {
+			passToLua("targetPos", targetPos);
+			Varargs va = invokeFromLua("targets");
+			Object userdata = va.touserdata(1);
+			
+			if (userdata instanceof GameObject) {
+				targets.add((GameObject) userdata);
+			} else if (userdata instanceof LinkedList<?>) {
+				targets.addAll((LinkedList<GameObject>) userdata);
+			}
+			
+			for (GameObject target : targets) {
+				Event clone = clone();
+				clone.invokeAsClone(source, target);
+			}
+		} catch (Exception ex) {
+			targets.addAll(targets(targetPos));
+			for (GameObject target : targets) {
+				clone().invokeAsClone(source, target);
+			}
+		}
+		
+	}
+
+	public void invokeAsClone(Entity source, GameObject target) {
+		while (source.processEvent(this, source, target) || target.processEvent(this, source, target))
+			;
+
+		try {
+			passToLua("source", source);
+			passToLua("target", target);
+			invokeFromLua("invokeEvent");
+		} catch (Exception ex) {
+			invokeEvent(source, target);
+		}
+		
+	}
+
+	public void invokeEvent(Entity source, GameObject target) {
+		/*
+		 * This function represents the "invokeEvent()" function in Lua scripts, defined
+		 * within Java. This function shall be overridden by child classes of Event.
+		 */
+	}
+
+	public boolean removeTarget(GameObject target) {
+		return targets.remove(target);
+	}
+
+	@Override
+	protected void setup() {
+		super.setup();
+		appliedEffects = new LinkedList<Effect>();
+		targets = new LinkedList<GameObject>();
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+	public void setRange(double shortrange, double longrange) {
+		this.shortrange = shortrange;
+		this.longrange = longrange;
+	}
+
+	protected LinkedList<GameObject> targets(Vector targetPos) {
+		/*
+		 * This function represents the "targets()" function in Lua scripts, defined
+		 * within Java. This function can be overridden by child classes of Event.
+		 */
+		LinkedList<GameObject> targets = new LinkedList<GameObject>();
+		targets.add(VirtualBoard.nearestObject(targetPos, new String[] {}));
+		return targets;
+	}
+
 }

@@ -3,14 +3,13 @@ package com.dndsuite.core;
 import java.util.LinkedList;
 
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import com.dndsuite.core.events.Event;
-import com.dndsuite.core.events.contests.AttackRoll;
-import com.dndsuite.core.events.contests.WeaponAttack;
+import com.dndsuite.core.events.ItemAttack;
 import com.dndsuite.core.gameobjects.Entity;
 import com.dndsuite.core.tasks.Task;
 import com.dndsuite.dnd.combat.DamageDiceGroup;
+import com.dndsuite.dnd.data.DamageType;
 
 public class Item extends Scriptable {
 
@@ -23,7 +22,7 @@ public class Item extends Scriptable {
 	public static final String ARMOR_LIGHT = "Light Armor";
 	public static final String ARMOR_MEDIUM = "Medium Armor";
 	public static final String MEDIUM = "Medium";
-	public static final String METALLIC = "Metallic"; // Druids will typically not wear metal armor
+	public static final String METALLIC = "Metallic";
 	public static final String SHIELD = "Shield";
 	public static final String STEALTH_DADV = "Stealth Disadvantage";
 	// TODO: add item lua function to determine stat prereqs for using item
@@ -40,6 +39,7 @@ public class Item extends Scriptable {
 	public static final String THROWN = "Thrown";
 	public static final String TWO_HANDED = "Two Handed";
 	public static final String VERSATILE = "Versatile";
+	public static final String WEAPON = "Weapon";
 	// Weapon proficiency groups (categorical)
 	public static final String MARTIAL_MELEE = "Martial Melee";
 	public static final String MARTIAL_RANGED = "Martial Ranged";
@@ -84,117 +84,128 @@ public class Item extends Scriptable {
 	public static final String WARHAMMER = "Warhammer";
 	public static final String WHIP = "Whip";
 
-	protected String name;
-	protected LinkedList<String> tags;
-
 	public Item(String script) {
 		super(script);
-		tags = new LinkedList<String>();
-		globals.set("item", CoerceJavaToLua.coerce(this));
-		globals.get("define").invoke();
 	}
 
 	public void equip(Entity subject) {
-		globals.set("subject", CoerceJavaToLua.coerce(subject));
-		globals.get("equip").invoke();
+		try {
+			passToLua("subject", subject);
+			invokeFromLua("equip");
+		} catch (Exception ex) {
+			
+		}
 	}
 
 	public int getAC() {
-		Varargs va = globals.get("acbase").invoke();
-		return va.toint(1);
+		try {
+			Varargs va = invokeFromLua("acbase");
+			return va.toint(1);
+		} catch (Exception ex) {
+			System.out.println("[JAVA] Non-armor item being referenced for AC");
+			return 0;
+		}
 	}
 
 	public int getACAbilityBonusLimit() {
-		Varargs va = globals.get("acAbilityBonusLimit").invoke();
-		return va.toint(1);
+		try {
+			Varargs va = invokeFromLua("acAbilityBonusLimit");
+			int limit = va.toint(1);
+			if (limit == -1) {
+				return Integer.MAX_VALUE;
+			}
+			return limit;
+		} catch (Exception ex) {
+			return Integer.MAX_VALUE;
+		}
 	}
 
-	public LinkedList<Event> getMainhandAttackOptions() {
+	public LinkedList<Event> getItemAttackOptions() {
 		LinkedList<Event> events = new LinkedList<Event>();
-
-		events.add(new WeaponAttack(this, Entity.STR, WeaponAttack.MELEE, true));
-		events.add(new WeaponAttack(this, Entity.STR, WeaponAttack.THROWN, true));
-
-		if (hasTag(FINESSE)) {
-			events.add(new WeaponAttack(this, Entity.DEX, WeaponAttack.MELEE, true));
-			if (hasTag(THROWN)) {
-				events.add(new WeaponAttack(this, Entity.DEX, WeaponAttack.THROWN, true));
+		
+		events.add(new ItemAttack(Entity.STR, this, ItemAttack.MELEE));
+		events.add(new ItemAttack(Entity.STR, this, ItemAttack.THROWN));
+		
+		if (hasTag(Item.FINESSE)) {
+			events.add(new ItemAttack(Entity.DEX, this, ItemAttack.MELEE));
+			
+			if (hasTag(Item.THROWN)) {
+				events.add(new ItemAttack(Entity.DEX, this, ItemAttack.THROWN));
 			}
 		}
-
-		if (hasTag(RANGED)) {
-			events.add(new WeaponAttack(this, Entity.DEX, WeaponAttack.RANGED, true));
+		
+		if (hasTag(Item.RANGED)) {
+			events.add(new ItemAttack(Entity.DEX, this, ItemAttack.RANGED));
 		}
-
+		
 		return events;
 	}
 
-	public LinkedList<String> getTags() {
-		return tags;
-	}
-
 	public LinkedList<Task> getCustomTasks() {
-		Varargs va = globals.get("customTasks").invoke();
-		LinkedList<Task> tasks = new LinkedList<Task>();
-		int index = 1;
-		Task task = (Task) (va.touserdata(index));
-		while (task != null) {
-			tasks.add(task);
-			index++;
-			task = (Task) (va.touserdata(index));
+		try {
+			Varargs va = invokeFromLua("customTasks");
+			LinkedList<Task> tasks = new LinkedList<Task>();
+			int index = 1;
+			Task task = (Task) (va.touserdata(index));
+			while (task != null) {
+				tasks.add(task);
+				index++;
+				task = (Task) (va.touserdata(index));
+			}
+			return tasks;
+		} catch (Exception ex) {
+			return new LinkedList<Task>();
 		}
-		return tasks;
 	}
 
 	public DamageDiceGroup getDamageDice(String attackType) {
-		globals.set("attackType", attackType);
-		Varargs va = globals.get("damage").invoke();
-		return (DamageDiceGroup) (va.touserdata(1, DamageDiceGroup.class));
+		try {
+			passToLua("attackType", attackType);
+			Varargs va = invokeFromLua("damage");
+			return (DamageDiceGroup) va.touserdata(1);
+		} catch (Exception ex) {
+			return new DamageDiceGroup(0,0,DamageType.TYPELESS);
+		}
 	}
 
 	public double[] getRange(String attackType) {
-		double[] range = new double[2];
-		Varargs va = globals.get("range").invoke();
-		if (attackType == AttackRoll.RANGED && hasTag(RANGED)) {
-			range[Event.SHORTRANGE] = va.todouble(3);
-			range[Event.LONGRANGE] = va.todouble(4);
-		} else {
-			range[Event.SHORTRANGE] = va.todouble(1);
-			range[Event.LONGRANGE] = va.todouble(2);
+		try {
+			passToLua("attackType", attackType);
+			Varargs va = invokeFromLua("range");
+			double[] range = new double[2];
+			range[0] = va.todouble(1);
+			range[1] = va.todouble(2);
+			return range;
+		} catch (Exception ex) {
+			return new double[] { 0.0, 0.0 };
 		}
-		return range;
 	}
 
 	public double getReach() {
-		Varargs va = globals.get("reach").invoke();
-		return va.todouble(1);
+		try {
+			Varargs va = invokeFromLua("reach");
+			return va.todouble(1);
+		} catch (Exception ex) {
+			return 0.0;
+		}
 	}
 
 	public double getWeight() {
-		Varargs va = globals.get("weight").invoke();
-		return va.todouble(1);
+		try {
+			Varargs va = invokeFromLua("weight");
+			return va.todouble(1);
+		} catch (Exception ex) {
+			return 0.0;
+		}
 	}
 
 	public void unequip(Entity subject) {
-		globals.set("subject", CoerceJavaToLua.coerce(subject));
-		globals.get("unequip").invoke();
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void addTag(String tag) {
-		tags.add(tag);
-	}
-
-	public boolean hasTag(String tag) {
-		return tags.contains(tag);
-	}
-
-	@Override
-	public String toString() {
-		return name;
+		try {
+			passToLua("subject", subject);
+			invokeFromLua("unequip");
+		} catch (Exception ex) {
+			
+		}
 	}
 
 }

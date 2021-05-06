@@ -3,29 +3,28 @@ package com.dndsuite.core.gameobjects;
 import java.util.LinkedList;
 
 import com.dndsuite.core.Item;
-import com.dndsuite.core.Observer;
-import com.dndsuite.core.Subject;
 import com.dndsuite.core.effects.Effect;
-import com.dndsuite.core.effects.ItemProficiencyWatcher;
-import com.dndsuite.core.effects.SaveProficiencyWatcher;
-import com.dndsuite.core.effects.SpellProficiencyWatcher;
-import com.dndsuite.core.events.Damage;
-import com.dndsuite.core.events.Event;
+import com.dndsuite.core.events.AbilityScoreCalculation;
 import com.dndsuite.core.events.TaskCollection;
 import com.dndsuite.core.events.groups.EventGroup;
 import com.dndsuite.core.tasks.Task;
-import com.dndsuite.dnd.combat.DamageDiceGroup;
 import com.dndsuite.maths.Vector;
-import com.dndsuite.maths.dice.DiceGroup;
 
-/**
- * An abstract class which represents a game piece which has the ability to
- * perform actions
- * 
- * @author calvi
- *
- */
-public abstract class Entity extends GameObject implements Subject {
+public class Entity extends GameObject {
+	public static final String ABERRATION = "Aberration";
+	public static final String BEAST = "Beast";
+	public static final String CELESTIAL = "Celestial";
+	public static final String CONSTRUCT = "Construct";
+	public static final String DRAGON = "Dragon";
+	public static final String ELEMENTAL = "Elemental";
+	public static final String FEY = "Fey";
+	public static final String FIEND = "Fiend";
+	public static final String GIANT = "Giant";
+	public static final String HUMANOID = "Humanoid";
+	public static final String MONSTROSITY = "Monstrosity";
+	public static final String OOZE = "Ooze";
+	public static final String PLANT = "Plant";
+	public static final String UNDEAD = "Undead";
 
 	public static final int STR = 0;
 	public static final int DEX = 1;
@@ -34,95 +33,47 @@ public abstract class Entity extends GameObject implements Subject {
 	public static final int WIS = 4;
 	public static final int CHA = 5;
 
-	protected LinkedList<Observer> observers;
-	protected LinkedList<Effect> activeEffects;
 	protected LinkedList<EventGroup> eventQueue;
+	protected LinkedList<String> itemProficiencies;
 	protected LinkedList<Task> availableTasks;
 	protected LinkedList<Task> baseTasks;
-	protected LinkedList<Item> inventory;
-	protected LinkedList<String> itemProficiencies;
-
+	protected int[] baseAbilityScores;
+	protected int experience;
+	protected int level;
 	protected Item mainhand;
 	protected Item offhand;
 	protected Item armor;
 
-	protected int experience;
-	protected int health;
-	protected int healthBase;
-	protected int healthMax;
-	protected int healthTmp;
-	protected int level;
-	protected int[] abilityScores;
-	protected int[] baseAbilityScores;
-
-	public Entity(String name, Vector pos, Vector rot) {
-		super(name, pos, rot);
-		this.name = name;
-
-		abilityScores = new int[6];
-		baseAbilityScores = new int[6];
-		observers = new LinkedList<Observer>();
-		activeEffects = new LinkedList<Effect>();
-		eventQueue = new LinkedList<EventGroup>();
-		availableTasks = new LinkedList<Task>();
-		baseTasks = new LinkedList<Task>();
-		inventory = new LinkedList<Item>();
-		itemProficiencies = new LinkedList<String>();
-
-		addEffect(new ItemProficiencyWatcher(this));
-		addEffect(new SpellProficiencyWatcher(this));
-		addEffect(new SaveProficiencyWatcher(this));
+	public Entity(String script, Vector pos, Vector rot) {
+		super(script, pos, rot);
+		addTag(Entity.getGameObjectID());
+		// TODO: remove the need for this to pre-populate availableTasks
 	}
-
-	public boolean addBaseTask(Task task) {
-		if (!baseTasks.contains(task)) {
-			baseTasks.add(task);
-			return true;
-		}
-		return false;
+	
+	public void addBaseTask(Task task) {
+		baseTasks.add(task);
 	}
-
+	
 	public boolean addEffect(Effect e) {
-		if (activeEffects.contains(e)) {
+		if (effects.contains(e)) {
 			return false;
 		}
-		activeEffects.add(e);
+		effects.add(e);
 		System.out.println("[JAVA] " + this + " given effect " + e);
 		return true;
 	}
-
+	
 	public void addItemProficiency(String proficiencyGroup) {
 		itemProficiencies.add(proficiencyGroup);
 	}
-
-	public void addObserver(Observer o) {
-		observers.add(o);
-	}
-
-	public boolean addTask(Task task) {
-		if (!availableTasks.contains(task)) {
-			availableTasks.add(task);
-			return true;
-		}
-		return false;
-	}
-
-	public void clearEndedEffects() {
-		for (int i = 0; i < activeEffects.size(); i++) {
-			if (activeEffects.get(i).isEnded()) {
-				activeEffects.remove(i);
-				i--;
-			}
-		}
-	}
-
+	
 	public void clearEventQueue() {
 		eventQueue.clear();
 	}
-
+	
 	public void equipArmor(Item item) {
 		if (!inventory.contains(item)) {
-			inventory.add(item);
+			addToInventory(item);
 		}
 		if (item.hasTag(Item.ARMOR)) {
 			armor = item;
@@ -130,44 +81,46 @@ public abstract class Entity extends GameObject implements Subject {
 		} else {
 			System.out.println("[JAVA] ERR: " + item + " not armor");
 		}
+		updateObservers();
 	}
-
+	
 	public void equipMainhand(Item item) {
 		stowMainhand();
 		if (!inventory.contains(item)) {
-			inventory.add(item);
+			addToInventory(item);
 		}
 		mainhand = item;
-		updateObservers();
 		if (item.hasTag(Item.TWO_HANDED)) {
 			offhand = item;
 		}
 		item.equip(this);
+		updateObservers();
 	}
-
+	
 	public void equipOffhand(Item item) {
 		stowOffhand();
 		if (!inventory.contains(item)) {
-			inventory.add(item);
+			addToInventory(item);
 		}
 		offhand = item;
-		updateObservers();
 		if (item.hasTag(Item.TWO_HANDED)) {
 			mainhand = item;
 		}
 		item.equip(this);
+		updateObservers();
 	}
 
-	public void generateHealth(int hitDieSize) {
-		DiceGroup dice = new DiceGroup(level, hitDieSize);
-		dice.roll();
-		health = dice.getSum() + (getAbilityModifier(Entity.CON) * level);
-		healthBase = health;
-		healthMax = health;
-		healthTmp = 0;
+	public int getAbilityModifier(int ability) {
+		AbilityScoreCalculation asc = new AbilityScoreCalculation(ability, this);
+		
+		int abilityScoreBuffer = asc.getScore() - 10;
+		if (abilityScoreBuffer < 0) {
+			abilityScoreBuffer--;
+		}
+		return abilityScoreBuffer / 2;
 	}
-
-	public static String getAbility(int abilityIndex) {
+	
+	public static String getAbilityString(int abilityIndex) {
 		if (abilityIndex == STR) {
 			return "STR";
 		} else if (abilityIndex == DEX) {
@@ -184,28 +137,28 @@ public abstract class Entity extends GameObject implements Subject {
 		return "";
 	}
 
-	public int getAbilityModifier(int ability) {
-		int abilityScoreBuffer = abilityScores[ability] - 10;
-		if (abilityScoreBuffer < 0) {
-			abilityScoreBuffer--;
-		}
-		return abilityScoreBuffer / 2;
-	}
-
 	public Item getArmor() {
 		return armor;
 	}
+	
+	public int getBaseAbilityScore(int abilityIndex) {
+		return baseAbilityScores[abilityIndex];
+	}
 
 	public LinkedList<Effect> getEffects() {
-		return activeEffects;
+		return effects;
 	}
 
 	public LinkedList<EventGroup> getEventQueue() {
 		return eventQueue;
 	}
-
-	public LinkedList<Item> getInventory() {
-		return inventory;
+	
+	public int getExperience() {
+		return experience;
+	}
+	
+	public static String getGameObjectID() {
+		return "Entity";
 	}
 
 	public int getLevel() {
@@ -225,20 +178,26 @@ public abstract class Entity extends GameObject implements Subject {
 	}
 
 	public LinkedList<Task> getTasks() {
-		TaskCollection tc = new TaskCollection(this);
+		TaskCollection tc = new TaskCollection();
 		tc.addTasks(baseTasks);
+		// Add custom tasks from mainhand item
 		try {
 			tc.addTasks(getMainhand().getCustomTasks());
 		} catch (NullPointerException ex) {
 		}
-		try {
-			tc.addTasks(getOffhand().getCustomTasks());
-		} catch (NullPointerException ex) {
+		// Add custom tasks from offhand item if distinct from mainhand
+		if (getMainhand() != getOffhand()) {
+			try {
+				tc.addTasks(getOffhand().getCustomTasks());
+			} catch (NullPointerException ex) {
+			}
 		}
+		// Add custom tasks from armor
 		try {
 			tc.addTasks(getArmor().getCustomTasks());
 		} catch (NullPointerException ex) {
 		}
+		
 		processEvent(tc, this, this);
 		availableTasks.clear();
 		availableTasks.addAll(tc.getTasks());
@@ -261,13 +220,6 @@ public abstract class Entity extends GameObject implements Subject {
 		return false;
 	}
 
-	public boolean processEvent(Event e, Entity source, Entity target) {
-		for (Effect effect : activeEffects) {
-			effect.processEvent(e, source, target);
-		}
-		return false;
-	}
-
 	public boolean proficientWith(String proficiencyGroup) {
 		return proficiencyGroup == null || itemProficiencies.contains(proficiencyGroup);
 	}
@@ -279,37 +231,28 @@ public abstract class Entity extends GameObject implements Subject {
 		}
 		return false;
 	}
-
-	public void receiveDamage(Damage d) {
-		System.out.println("[JAVA] " + this + " received " + d);
-		for (DamageDiceGroup group : d.getDamageDice()) {
-			int damage = 0;
-			if (group.getEffectiveness() == DamageDiceGroup.NORMAL) {
-				damage = group.getSum();
-				System.out.println("[JAVA] " + this + " takes " + damage + " " + group.getDamageType()
-						+ " damage (bonus: " + group.getBonus() + ")");
-			} else if (group.getEffectiveness() == DamageDiceGroup.RESISTED) {
-				damage = Math.max(1, group.getSum() / 2);
-				System.out.println("[JAVA] " + this + " takes " + damage + " " + group.getDamageType()
-						+ " damage (bonus: " + group.getBonus() + ") (resistant)");
-			} else if (group.getEffectiveness() == DamageDiceGroup.ENHANCED) {
-				damage = group.getSum() * 2;
-				System.out.println(this + " takes " + damage + " " + group.getDamageType() + " damage (bonus: "
-						+ group.getBonus() + ") (vulnerable)");
-			} else if (group.getEffectiveness() == DamageDiceGroup.NEUTRALIZED) {
-				damage = group.getSum();
-				System.out.println("[JAVA] " + this + " takes " + damage + " " + group.getDamageType()
-						+ " damage (bonus: " + group.getBonus() + ") (resistant and vulnerable)");
-			} else if (group.getEffectiveness() == DamageDiceGroup.NO_EFFECT) {
-				System.out.println("[JAVA] " + this + " takes 0 " + group.getDamageType() + " damage (bonus: "
-						+ group.getBonus() + ") (immune)");
-			}
-			takeDamage(damage);
-		}
+	
+	@Override
+	protected void setup() {
+		super.setup();
+		eventQueue = new LinkedList<EventGroup>();
+		itemProficiencies = new LinkedList<String>();
+		availableTasks = new LinkedList<Task>();
+		baseTasks = new LinkedList<Task>();
+		baseAbilityScores = new int[6];
 	}
-
-	public void removeObserver(Observer o) {
-		observers.remove(o);
+	
+	public void setBaseAbilityScore(int abilityIndex, int score) {
+		baseAbilityScores[abilityIndex] = score;
+		updateObservers();
+	}
+	
+	public void setExperience(int experience) {
+		this.experience = experience;
+	}
+	
+	public void setLevel(int level) {
+		this.level = level;
 	}
 
 	public void stowMainhand() {
@@ -318,6 +261,7 @@ public abstract class Entity extends GameObject implements Subject {
 				offhand = null;
 			}
 			mainhand = null;
+			updateObservers();
 		}
 	}
 
@@ -327,28 +271,21 @@ public abstract class Entity extends GameObject implements Subject {
 				mainhand = null;
 			}
 			offhand = null;
-		}
-	}
-
-	private void takeDamage(int damage) {
-		// TODO: implement health decrementation here
-	}
-
-	public void updateObservers() {
-		for (Observer o : observers) {
-			o.update(this);
+			updateObservers();
 		}
 	}
 
 	public void versatileSet() {
 		if (mainhand.hasTag(Item.VERSATILE) && offhand == null) {
 			offhand = mainhand;
+			updateObservers();
 		}
 	}
 
 	public void versatileUnset() {
 		if (mainhand.hasTag(Item.VERSATILE) && offhand == mainhand) {
 			offhand = null;
+			updateObservers();
 		}
 	}
 

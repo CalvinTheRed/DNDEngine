@@ -71,19 +71,6 @@ public class DamageDiceGroup extends DiceGroup {
 	}
 
 	/**
-	 * This function requires roll() to be called before it reports any meaningful
-	 * data. It returns the sum of all contained dice plus the contained damage
-	 * bonus.
-	 * 
-	 * @return {@code int} sum
-	 * 
-	 * @Override
-	 */
-	public int getSum() {
-		return Math.max(1, super.getSum());
-	}
-
-	/**
 	 * This function returns the damage type of the contained damage dice.
 	 * 
 	 * @return {@code DamageType} damageType
