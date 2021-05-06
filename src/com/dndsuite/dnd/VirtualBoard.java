@@ -18,7 +18,7 @@ public final class VirtualBoard {
 
 	private static LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
 	// TODO: consider adding queuedGlobalEvents list here
-	
+
 	public static boolean addGameObject(GameObject o) {
 		if (gameObjects.contains(o)) {
 			return false;
@@ -40,8 +40,8 @@ public final class VirtualBoard {
 	}
 
 	public static GameObject nearestObject(Vector pos, String[] filterTags) {
-		GameObject nearest = gameObjects.get(0);
-		double distance = nearest.getPos().sub(pos).mag();
+		GameObject nearest = null;
+		double distance = Double.MAX_VALUE;
 		for (GameObject o : gameObjects) {
 			if (o.getPos().sub(pos).mag() < distance) {
 				boolean valid = true;

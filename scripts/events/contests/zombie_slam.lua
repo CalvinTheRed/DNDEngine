@@ -28,7 +28,7 @@ function invokeEvent()
 	acc:invokeEvent(source, target)
 	
 	if attackroll:getRoll() >= acc:getAC() then
-		print("[Lua]  Attack roll hit! (" .. attackroll:getRoll() .. " >= " .. acc:getAC() .. ")")
+		print("[Lua]  Attack roll hit! (" .. attackroll:getRoll() .. " >= " .. acc:getAC() .. ") bonus " .. attackroll:getBonus())
 		local damagecalc = luajava.newInstance("com.dndsuite.core.events.DamageCalculation", self)
 		local damage = damage()
 		damage:addBonus(source:getAbilityModifier(self:getEventAbility()))
@@ -36,7 +36,7 @@ function invokeEvent()
 		damagecalc:roll(attackroll)
 		damagecalc:invokeEvent(source, target)
 	else
-		print("[Lua]  Attack roll miss! (" .. attackroll:getRoll() .. " < " .. acc:getAC() .. ")")
+		print("[Lua]  Attack roll miss! (" .. attackroll:getRoll() .. " < " .. acc:getAC() .. ") bonus " .. attackroll:getBonus())
 	end
 end
 
