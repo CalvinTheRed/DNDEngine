@@ -11,12 +11,13 @@ import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.maths.Vector;
 
 class EventTest {
-	static GameObject o;
+	static GameObject source;
+	static GameObject target;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		o = new GameObject("test_gameobject", new Vector(), new Vector());
-		System.out.println(o);
+		source = new GameObject("test_gameobject_source", new Vector(5, 5, 5), new Vector(5, 5, 5));
+		target = new GameObject("test_gameobject_target", new Vector(1, 1, 1), new Vector(1, 1, 1));
 	}
 
 	@AfterAll
@@ -32,10 +33,10 @@ class EventTest {
 	}
 
 	@Test
-	@DisplayName("Events may be invoked arbitrarily")
+	@DisplayName("Proof of functionality event invocation")
 	void test001() {
 		Event e = new Event("test_event");
-		e.invoke(new Vector(), o);
+		e.invoke(target.getPos(), source);
 	}
 
 }

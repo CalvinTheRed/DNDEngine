@@ -29,7 +29,7 @@ class GameObjectTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		UUIDTable.clear();
-		o = new GameObject("test_gameobject", new Vector(), new Vector());
+		o = new GameObject("test_gameobject_source", new Vector(), new Vector());
 	}
 
 	@AfterEach

@@ -1,5 +1,5 @@
 {
-	"name": "Test GameObject",
+	"name": "Test GameObject (Target)",
 	"description": "This is a test gameobject",
 	"size": "medium",
 	"alignment": "neutral evil",
@@ -22,6 +22,5 @@
 		"test_task"
 	],
 	"effects": [
-		"test_effect"
 	]
 }

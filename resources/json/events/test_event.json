@@ -27,9 +27,6 @@
 	"subevents": [
 		{
 			"subevent": "test_subevent"
-		},
-		{
-			"subevent": "test_subevent"
 		}
 	]
 }

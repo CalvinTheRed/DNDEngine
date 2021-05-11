@@ -18,4 +18,9 @@ public class TestSubevent extends Subevent {
 		System.out.println("Test subevent complete!");
 	}
 
+	@Override
+	public String toString() {
+		return "Test Subevent";
+	}
+
 }

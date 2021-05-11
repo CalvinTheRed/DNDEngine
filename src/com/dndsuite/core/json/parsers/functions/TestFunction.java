@@ -12,7 +12,7 @@ public class TestFunction implements Function {
 	@Override
 	public void parse(JSONObject json, Effect effect, Subevent s) throws FunctionMismatchException {
 		String function = (String) json.get("function");
-		if (function != "test_function") {
+		if (!function.equals("test_function")) {
 			throw new FunctionMismatchException("test_function", function);
 		}
 		System.out.println("Test function complete!");

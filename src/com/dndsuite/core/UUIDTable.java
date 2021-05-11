@@ -4,6 +4,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.dndsuite.core.json.JSONLoader;
+import com.dndsuite.exceptions.UUIDDoesNotExistException;
 import com.dndsuite.exceptions.UUIDKeyMissingException;
 
 public final class UUIDTable {
@@ -25,9 +26,9 @@ public final class UUIDTable {
 		table.put(key, element);
 	}
 
-	public static JSONLoader get(int uuid) throws Exception {
+	public static JSONLoader get(int uuid) throws UUIDDoesNotExistException {
 		if (!table.containsKey(uuid)) {
-			throw new Exception("UUID not found");
+			throw new UUIDDoesNotExistException(uuid);
 		}
 		return table.get(uuid);
 	}

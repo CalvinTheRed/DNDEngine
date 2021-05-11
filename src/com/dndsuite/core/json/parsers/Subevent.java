@@ -19,7 +19,7 @@ public abstract class Subevent {
 
 	public void applyEffect(Effect e) throws Exception {
 		int uuid = e.getUUID();
-		if (appliedEffects.contains(uuid)) {
+		if (appliedEffects.contains(uuid)) { // TODO: do better checks for different instances of same effects
 			throw new Exception();
 		} else {
 			appliedEffects.add(uuid);
@@ -27,8 +27,8 @@ public abstract class Subevent {
 	}
 
 	protected void presentToEffects(GameObject source, GameObject target) {
-		while (source.processSubevent(this) || target.processSubevent(this))
-			;
+		while (source.processSubevent(this) | target.processSubevent(this)) {
+		}
 	}
 
 	public abstract void parse(JSONObject json, GameObject source, GameObject target) throws SubeventMismatchException;

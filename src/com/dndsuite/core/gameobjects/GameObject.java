@@ -9,6 +9,7 @@ import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.tasks.Task;
 import com.dndsuite.dnd.VirtualBoard;
+import com.dndsuite.exceptions.UUIDDoesNotExistException;
 import com.dndsuite.exceptions.UUIDKeyMissingException;
 import com.dndsuite.maths.Vector;
 
@@ -89,7 +90,8 @@ public class GameObject extends JSONLoader {
 			try {
 				Effect effect = (Effect) UUIDTable.get(uuid);
 				changed = changed || effect.processSubevent(s);
-			} catch (Exception ex) {
+			} catch (UUIDDoesNotExistException ex) {
+				ex.printStackTrace();
 			}
 		}
 		return changed;

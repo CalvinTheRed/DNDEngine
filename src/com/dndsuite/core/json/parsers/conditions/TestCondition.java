@@ -12,10 +12,10 @@ public class TestCondition implements Condition {
 	@Override
 	public boolean parse(JSONObject json, Effect e, Subevent s) throws ConditionMismatchException {
 		String condition = (String) json.get("condition");
-		if (condition != "test_condition") {
+		if (!condition.equals("test_condition")) {
 			throw new ConditionMismatchException("test_condition", condition);
 		}
-		System.out.println("Test condition evaluated to: true!");
+		System.out.println("Test condition evaluated!");
 		return true;
 	}
 

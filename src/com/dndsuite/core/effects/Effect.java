@@ -70,19 +70,25 @@ public class Effect extends JSONLoader {
 			JSONObject filter = (JSONObject) filters.get(i);
 
 			JSONArray conditions = (JSONArray) filter.get("conditions");
-			boolean conditionsMet = false;
+			boolean conditionsMet = true;
 			try {
 				for (int j = 0; j < conditions.size(); j++) {
 					JSONObject condition = (JSONObject) conditions.get(j);
-					if (!CONDITION_MAP.get(condition.get("condition")).parse(condition, this, s)) {
-						break;
-					}
+					boolean c = CONDITION_MAP.get(condition.get("condition")).parse(condition, this, s);
+					conditionsMet = conditionsMet && c;
 				}
-				conditionsMet = true;
 			} catch (ConditionMismatchException ex) {
+				ex.printStackTrace();
 			}
 
 			if (conditionsMet) {
+				try {
+					s.applyEffect(this);
+				} catch (Exception ex) {
+					System.out.println(this + " already applied to " + s);
+					return false;
+				}
+
 				JSONArray functions = (JSONArray) filter.get("functions");
 				try {
 					for (int j = 0; j < functions.size(); j++) {
@@ -91,6 +97,7 @@ public class Effect extends JSONLoader {
 					}
 					return true;
 				} catch (FunctionMismatchException ex) {
+					ex.printStackTrace();
 				}
 			}
 		}
