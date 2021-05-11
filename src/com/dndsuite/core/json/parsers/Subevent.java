@@ -31,6 +31,18 @@ public abstract class Subevent {
 		}
 	}
 
-	public abstract void parse(JSONObject json, GameObject source, GameObject target) throws SubeventMismatchException;
+	public void addTag(String tag) {
+		tags.add(tag);
+	}
+
+	public boolean hasTag(String tag) {
+		return tags.contains(tag);
+	}
+
+	@Override
+	public abstract Subevent clone();
+
+	public abstract void parse(JSONObject json, GameObject eventSource, GameObject eventTarget)
+			throws SubeventMismatchException;
 
 }

@@ -41,4 +41,8 @@ public final class UUIDTable {
 		return table.containsKey(uuid);
 	}
 
+	public static int size() {
+		return table.size();
+	}
+
 }

@@ -9,6 +9,7 @@ import org.json.simple.JSONObject;
 import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Subevent;
+import com.dndsuite.core.json.parsers.subevents.ApplyEffect;
 import com.dndsuite.core.json.parsers.subevents.TestSubevent;
 import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.exceptions.SubeventMismatchException;
@@ -24,6 +25,7 @@ public class Event extends JSONLoader {
 
 		{
 			put("test_subevent", new TestSubevent());
+			put("apply_effect", new ApplyEffect());
 		}
 	};
 
@@ -47,7 +49,7 @@ public class Event extends JSONLoader {
 			JSONObject subevent = (JSONObject) o;
 			try {
 				for (GameObject target : VirtualBoard.objectsInAreaOfEffect(source.getPos(), targetPos, json)) {
-					SUBEVENT_MAP.get(subevent.get("subevent")).parse(subevent, source, target);
+					SUBEVENT_MAP.get(subevent.get("subevent")).clone().parse(subevent, source, target);
 				}
 			} catch (SubeventMismatchException ex) {
 				ex.printStackTrace();

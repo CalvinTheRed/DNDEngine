@@ -9,18 +9,25 @@ import com.dndsuite.exceptions.SubeventMismatchException;
 public class TestSubevent extends Subevent {
 
 	@Override
-	public void parse(JSONObject json, GameObject source, GameObject target) throws SubeventMismatchException {
+	public void parse(JSONObject json, GameObject eventSource, GameObject eventTarget)
+			throws SubeventMismatchException {
 		String subevent = (String) json.get("subevent");
 		if (!subevent.equals("test_subevent")) {
 			throw new SubeventMismatchException("test_subevent", subevent);
 		}
-		presentToEffects(source, target);
+		presentToEffects(eventSource, eventTarget);
 		System.out.println("Test subevent complete!");
 	}
 
 	@Override
 	public String toString() {
 		return "Test Subevent";
+	}
+
+	@Override
+	public TestSubevent clone() {
+		TestSubevent clone = new TestSubevent();
+		return clone;
 	}
 
 }
