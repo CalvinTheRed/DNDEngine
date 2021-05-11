@@ -11,7 +11,10 @@ import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Condition;
 import com.dndsuite.core.json.parsers.Function;
 import com.dndsuite.core.json.parsers.Subevent;
+import com.dndsuite.core.json.parsers.conditions.HasTag;
 import com.dndsuite.core.json.parsers.conditions.TestCondition;
+import com.dndsuite.core.json.parsers.functions.GrantAdvantage;
+import com.dndsuite.core.json.parsers.functions.GrantDisadvantage;
 import com.dndsuite.core.json.parsers.functions.TestFunction;
 import com.dndsuite.exceptions.ConditionMismatchException;
 import com.dndsuite.exceptions.FunctionMismatchException;
@@ -28,6 +31,7 @@ public class Effect extends JSONLoader {
 
 		{
 			put("test_condition", new TestCondition());
+			put("has_tag", new HasTag());
 		}
 	};
 
@@ -40,6 +44,8 @@ public class Effect extends JSONLoader {
 
 		{
 			put("test_function", new TestFunction());
+			put("grant_advantage", new GrantAdvantage());
+			put("grant_disadvantage", new GrantDisadvantage());
 		}
 	};
 
@@ -74,8 +80,7 @@ public class Effect extends JSONLoader {
 			try {
 				for (int j = 0; j < conditions.size(); j++) {
 					JSONObject condition = (JSONObject) conditions.get(j);
-					boolean c = CONDITION_MAP.get(condition.get("condition")).parse(condition, this, s);
-					conditionsMet = conditionsMet && c;
+					conditionsMet &= CONDITION_MAP.get(condition.get("condition")).parse(condition, this, s);
 				}
 			} catch (ConditionMismatchException ex) {
 				ex.printStackTrace();

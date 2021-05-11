@@ -49,7 +49,7 @@ public class Event extends JSONLoader {
 			JSONObject subevent = (JSONObject) o;
 			try {
 				for (GameObject target : VirtualBoard.objectsInAreaOfEffect(source.getPos(), targetPos, json)) {
-					SUBEVENT_MAP.get(subevent.get("subevent")).clone().parse(subevent, source, target);
+					SUBEVENT_MAP.get(subevent.get("subevent")).clone().parse(subevent, this, source, target);
 				}
 			} catch (SubeventMismatchException ex) {
 				ex.printStackTrace();

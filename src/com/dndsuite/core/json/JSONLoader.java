@@ -4,14 +4,16 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.dndsuite.core.Taggable;
 import com.dndsuite.core.UUIDTable;
 import com.dndsuite.exceptions.UUIDKeyMissingException;
 
-public abstract class JSONLoader {
+public abstract class JSONLoader implements Taggable {
 	protected JSONObject json;
 
 	public JSONLoader(JSONObject json) {
@@ -50,6 +52,25 @@ public abstract class JSONLoader {
 	@SuppressWarnings("unchecked")
 	public String toString() {
 		return (String) json.getOrDefault("name", "?") + " (" + (int) json.getOrDefault("uuid", -1) + ")";
+	}
+
+	@SuppressWarnings("unchecked")
+	public void addTag(String tag) {
+		JSONArray tags = (JSONArray) json.remove("tags");
+		tags.add(tag);
+		json.put("tags", tags);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void removeTag(String tag) {
+		JSONArray tags = (JSONArray) json.remove("tags");
+		tags.remove(tag);
+		json.put("tags", tags);
+	}
+
+	public boolean hasTag(String tag) {
+		JSONArray tags = (JSONArray) json.get("tags");
+		return tags.contains(tag);
 	}
 
 }

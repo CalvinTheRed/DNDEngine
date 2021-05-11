@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 import org.json.simple.JSONObject;
 
+import com.dndsuite.core.Taggable;
 import com.dndsuite.core.effects.Effect;
+import com.dndsuite.core.events.Event;
 import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
-public abstract class Subevent {
+public abstract class Subevent implements Taggable {
 	protected ArrayList<Integer> appliedEffects;
 	protected ArrayList<String> tags;
 
@@ -35,6 +37,12 @@ public abstract class Subevent {
 		tags.add(tag);
 	}
 
+	public void removeTag(String tag) {
+		if (tags.contains(tag)) {
+			tags.remove(tag);
+		}
+	}
+
 	public boolean hasTag(String tag) {
 		return tags.contains(tag);
 	}
@@ -42,7 +50,7 @@ public abstract class Subevent {
 	@Override
 	public abstract Subevent clone();
 
-	public abstract void parse(JSONObject json, GameObject eventSource, GameObject eventTarget)
+	public abstract void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
 			throws SubeventMismatchException;
 
 }

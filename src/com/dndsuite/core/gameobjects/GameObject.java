@@ -7,8 +7,10 @@ import com.dndsuite.core.UUIDTable;
 import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Subevent;
+import com.dndsuite.core.json.parsers.subevents.AbilityScoreCalculation;
 import com.dndsuite.core.tasks.Task;
 import com.dndsuite.dnd.VirtualBoard;
+import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
 import com.dndsuite.exceptions.UUIDKeyMissingException;
 import com.dndsuite.maths.Vector;
@@ -95,6 +97,25 @@ public class GameObject extends JSONLoader {
 			}
 		}
 		return changed;
+	}
+
+	@SuppressWarnings("unchecked")
+	public int getAbilityModifier(String ability) {
+		JSONObject ascJson = new JSONObject();
+		ascJson.put("subevent", "ability_score_calculation");
+		ascJson.put("ability", ability);
+		AbilityScoreCalculation asc = new AbilityScoreCalculation();
+		try {
+			asc.parse(ascJson, null, this, this);
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+		}
+
+		int abilityScoreBuffer = asc.get() - 10;
+		if (abilityScoreBuffer < 0) {
+			abilityScoreBuffer--;
+		}
+		return abilityScoreBuffer / 2;
 	}
 
 }

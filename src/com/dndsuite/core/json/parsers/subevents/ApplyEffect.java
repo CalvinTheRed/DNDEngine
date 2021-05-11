@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 
 import com.dndsuite.core.UUIDTable;
 import com.dndsuite.core.effects.Effect;
+import com.dndsuite.core.events.Event;
 import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.SubeventMismatchException;
@@ -14,9 +15,10 @@ public class ApplyEffect extends Subevent {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void parse(JSONObject json, GameObject eventSource, GameObject eventTarget)
+	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
 			throws SubeventMismatchException {
 		String subevent = (String) json.get("subevent");
+		addTag(subevent);
 		if (!subevent.equals("apply_effect")) {
 			throw new SubeventMismatchException("apply_effect", subevent);
 		}
@@ -25,20 +27,20 @@ public class ApplyEffect extends Subevent {
 		GameObject subeventTarget;
 		String subeventTargetAlias = (String) json.get("apply_to");
 		if (subeventTargetAlias.equals("source")) {
-			subeventTarget = eventSource;
+			subeventTarget = eSource;
 		} else if (subeventTargetAlias.equals("target")) {
-			subeventTarget = eventTarget;
+			subeventTarget = eTarget;
 		} else {
 			System.out.println("[ApplyEffect] invalid apply_to value detected: " + subeventTargetAlias);
 			return;
 		}
 
-		presentToEffects(eventSource, subeventTarget);
-		Effect e = new Effect(effectName, eventSource, subeventTarget);
-		UUIDTable.addToTable(e);
+		presentToEffects(eSource, subeventTarget);
+		Effect effect = new Effect(effectName, eSource, subeventTarget);
+		UUIDTable.addToTable(effect);
 		JSONArray effects = (JSONArray) subeventTarget.getJSONData().remove("effects");
 		try {
-			effects.add(e.getUUID());
+			effects.add(effect.getUUID());
 		} catch (UUIDKeyMissingException ex) {
 			ex.printStackTrace();
 		}
@@ -47,7 +49,7 @@ public class ApplyEffect extends Subevent {
 
 	@Override
 	public String toString() {
-		return "Test Subevent";
+		return "ApplyEffect Subevent";
 	}
 
 	@Override
