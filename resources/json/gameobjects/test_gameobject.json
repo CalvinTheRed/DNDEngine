@@ -1,5 +1,6 @@
 {
-	"name": "Zombie",
+	"name": "Test GameObject",
+	"description": "This is a test gameobject",
 	"size": "medium",
 	"alignment": "neutral evil",
 	"creature_type": "undead",
@@ -16,5 +17,11 @@
 		"int": 3,
 		"wis": 6,
 		"cha": 5
-	}
+	},
+	"tasks": [
+		"test_task"
+	],
+	"effects": [
+		"test_effect"
+	]
 }

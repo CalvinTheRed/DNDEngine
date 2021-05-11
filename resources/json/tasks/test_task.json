@@ -1,0 +1,16 @@
+{
+	"name": "Test Task",
+	"description": "This is a test task",
+	"event_groups": [
+		{
+			"events": [
+				"test_event"
+			]
+		},
+		{
+			"events": [
+				"test_event"
+			]
+		}
+	]
+}

@@ -2,6 +2,8 @@ package com.dndsuite.dnd;
 
 import java.util.LinkedList;
 
+import org.json.simple.JSONObject;
+
 import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.maths.Vector;
 
@@ -58,6 +60,34 @@ public final class VirtualBoard {
 			}
 		}
 		return nearest;
+	}
+
+	public static LinkedList<GameObject> objectsInAreaOfEffect(Vector origin, Vector target, JSONObject json) {
+		// TODO: implement tag checks
+		LinkedList<GameObject> objects = new LinkedList<GameObject>();
+
+		JSONObject areaOfEffect = (JSONObject) json.get("area_of_effect");
+		String shape = (String) areaOfEffect.get("shape");
+
+		if (shape.equals("single_target")) {
+			if (areaOfEffect.get("range").equals("self")) {
+				objects.add(nearestObject(origin, new String[] {}));
+			} else {
+
+			}
+		} else if (shape.equals("cone")) {
+
+		} else if (shape.equals("cube")) {
+
+		} else if (shape.equals("line")) {
+
+		} else if (shape.equals("sphere")) {
+
+		} else {
+
+		}
+
+		return objects;
 	}
 
 	public static LinkedList<GameObject> objectsInCone(Vector origin, Vector rot, double length, String[] filterTags) {

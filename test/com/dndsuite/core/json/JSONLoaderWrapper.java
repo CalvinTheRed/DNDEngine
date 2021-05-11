@@ -12,4 +12,8 @@ public class JSONLoaderWrapper extends JSONLoader {
 		super(file);
 	}
 
+	@Override
+	protected void parseBasePattern() {
+	}
+
 }

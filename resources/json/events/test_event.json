@@ -1,0 +1,35 @@
+{
+	"name": "Test Event",
+	"description": "This is a test event",
+	"tags": [
+		"test"
+	],
+	"area_of_effect": {
+		"shape": "single_target",
+		"range": "self",
+		"required_tags": [
+		],
+		"banned_tags": [
+		]
+	},
+	"damage": [
+		{
+			"dice": 1,
+			"size": 10,
+			"damage_type": "piercing"
+		},
+		{
+			"dice": 2,
+			"size": 6,
+			"damage_type": "cold"
+		}
+	],
+	"subevents": [
+		{
+			"subevent": "test_subevent"
+		},
+		{
+			"subevent": "test_subevent"
+		}
+	]
+}

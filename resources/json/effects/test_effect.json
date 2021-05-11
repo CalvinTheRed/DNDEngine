@@ -1,0 +1,21 @@
+{
+	"name": "Test Effect",
+	"description": "This is a test effect",
+	"tags": [
+		"testing"
+	],
+	"filters": [
+		{
+			"conditions": [
+				{
+					"condition": "test_condition"
+				}
+			],
+			"functions": [
+				{
+					"function": "test_function"
+				}
+			]
+		}
+	]
+}
