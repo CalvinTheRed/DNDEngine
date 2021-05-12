@@ -1,5 +1,9 @@
 package com.dndsuite.core.events;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,10 +37,45 @@ class EventTest {
 	}
 
 	@Test
-	@DisplayName("Proof of functionality event invocation")
+	@DisplayName("Damage-dealing Events")
+	@SuppressWarnings("unchecked")
 	void test001() {
-		Event e = new Event("test_event");
-		e.clone().invoke(target.getPos(), source);
+		JSONObject eJson;
+		Event e;
+
+		eJson = new JSONObject();
+		JSONArray damageList = new JSONArray();
+		JSONObject damageElement;
+		damageElement = new JSONObject();
+		damageElement.put("dice", 1L);
+		damageElement.put("size", 1L);
+		damageElement.put("damage_type", "slashing");
+		damageList.add(damageElement);
+		damageElement = new JSONObject();
+		damageElement.put("dice", 1L);
+		damageElement.put("size", 1L);
+		damageElement.put("bonus", 1L);
+		damageElement.put("damage_type", "force");
+		damageList.add(damageElement);
+		eJson.put("damage", damageList);
+		JSONObject areaOfEffect = new JSONObject();
+		areaOfEffect.put("shape", "single_target");
+		areaOfEffect.put("range", "self");
+		eJson.put("area_of_effect", areaOfEffect);
+		JSONArray subevents = new JSONArray();
+		JSONObject subevent;
+		subevent = new JSONObject();
+		subevent.put("subevent", "damage");
+		subevents.add(subevent);
+		eJson.put("subevents", subevents);
+
+		e = new Event(eJson);
+
+		source = new GameObject("test_gameobject_source", new Vector(), new Vector());
+
+		e.invoke(source.getPos(), source);
+
+		assertEquals((long) (22 - 3), (long) source.getHealth().get("current"));
 	}
 
 }

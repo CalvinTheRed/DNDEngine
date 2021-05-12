@@ -12,17 +12,17 @@ import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
 public abstract class Subevent implements Taggable {
-	protected ArrayList<Integer> appliedEffects;
+	protected ArrayList<Long> appliedEffects;
 	protected ArrayList<String> tags;
 
 	public Subevent() {
-		appliedEffects = new ArrayList<Integer>();
+		appliedEffects = new ArrayList<Long>();
 		tags = new ArrayList<String>();
 	}
 
 	public void applyEffect(Effect e) throws Exception {
 		String effectName = (String) e.getJSONData().get("name");
-		for (int uuid : appliedEffects) {
+		for (long uuid : appliedEffects) {
 			Effect tmp = (Effect) UUIDTable.get(uuid);
 			// Throw exception if effect with the same name is already applied
 			if (effectName.equals(tmp.getJSONData().get("name"))) {

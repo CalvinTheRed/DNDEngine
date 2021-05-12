@@ -8,12 +8,14 @@ import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.AbilityScoreCalculation;
+import com.dndsuite.core.json.parsers.subevents.DamageCalculation;
 import com.dndsuite.core.tasks.Task;
 import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
 import com.dndsuite.exceptions.UUIDKeyMissingException;
 import com.dndsuite.maths.Vector;
+import com.dndsuite.maths.dice.DamageDiceGroup;
 
 public class GameObject extends JSONLoader {
 
@@ -88,7 +90,7 @@ public class GameObject extends JSONLoader {
 		JSONArray effects = (JSONArray) json.get("effects");
 		boolean changed = false;
 		for (int i = 0; i < effects.size(); i++) {
-			int uuid = (int) effects.get(i);
+			long uuid = (long) effects.get(i);
 			try {
 				Effect effect = (Effect) UUIDTable.get(uuid);
 				changed = changed || effect.processSubevent(s);
@@ -100,7 +102,7 @@ public class GameObject extends JSONLoader {
 	}
 
 	@SuppressWarnings("unchecked")
-	public int getAbilityModifier(String ability) {
+	public long getAbilityModifier(String ability) {
 		JSONObject ascJson = new JSONObject();
 		ascJson.put("subevent", "ability_score_calculation");
 		ascJson.put("ability", ability);
@@ -111,11 +113,49 @@ public class GameObject extends JSONLoader {
 			ex.printStackTrace();
 		}
 
-		int abilityScoreBuffer = asc.get() - 10;
+		long abilityScoreBuffer = asc.get() - 10;
 		if (abilityScoreBuffer < 0) {
 			abilityScoreBuffer--;
 		}
 		return abilityScoreBuffer / 2;
+	}
+
+	public void takeDamage(DamageCalculation damage) {
+		for (DamageDiceGroup group : damage.getDamageDice()) {
+			takeDamage(group.getDamageValue());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void takeDamage(long damage) {
+		JSONObject health = (JSONObject) json.remove("health");
+		long base = (long) health.get("base");
+		long max = (long) health.get("max");
+		long tmp = (long) health.get("tmp");
+		long current = (long) health.get("current");
+
+		if (tmp > 0) {
+			tmp -= damage;
+			if (tmp < 0) {
+				damage = -tmp;
+				tmp = 0;
+			}
+			health.put(tmp, tmp);
+		}
+
+		current -= damage;
+		if (current < 0) {
+			current = 0;
+			// TODO: death or death saves here
+			// instant-kill check would happen here based on magnitude of current
+		}
+		health.put("current", current);
+
+		json.put("health", health);
+	}
+
+	public JSONObject getHealth() {
+		return (JSONObject) json.get("health");
 	}
 
 }

@@ -8,13 +8,13 @@ public class Die {
 	private static boolean controlEnabled = false;
 	private static int queuePos;
 	private static int[] valueQueue;
-	
-	protected int size;
-	protected int roll;
+
+	protected long size;
+	protected long roll;
 
 	private static final Random r = new Random();
 
-	public Die(int size) {
+	public Die(long size) {
 		this.size = size;
 		roll = 0;
 	}
@@ -27,15 +27,15 @@ public class Die {
 			roll = valueQueue[queuePos];
 			queuePos++;
 		} else {
-			roll = Die.r.nextInt(size) + 1;
+			roll = Die.r.nextInt((int) size) + 1;
 		}
 	}
 
-	public int getSize() {
+	public long getSize() {
 		return size;
 	}
 
-	public int getRoll() {
+	public long getRoll() {
 		return roll;
 	}
 
@@ -48,15 +48,15 @@ public class Die {
 	public void upsize() {
 		size += 2;
 	}
-	
+
 	public static void enableDiceControl(int[] queue) {
 		controlEnabled = true;
 		queuePos = 0;
 		valueQueue = queue;
 	}
-	
+
 	private static void disableDiceControl() {
 		controlEnabled = false;
 	}
-	
+
 }

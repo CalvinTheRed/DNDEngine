@@ -10,10 +10,14 @@ import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.ApplyEffect;
+import com.dndsuite.core.json.parsers.subevents.AttackRoll;
+import com.dndsuite.core.json.parsers.subevents.Damage;
+import com.dndsuite.core.json.parsers.subevents.DamageCalculation;
 import com.dndsuite.core.json.parsers.subevents.TestSubevent;
 import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.Vector;
+import com.dndsuite.maths.dice.DamageDiceGroup;
 
 public class Event extends JSONLoader {
 
@@ -26,9 +30,12 @@ public class Event extends JSONLoader {
 		{
 			put("test_subevent", new TestSubevent());
 			put("apply_effect", new ApplyEffect());
-			// put("attack_roll", new AttackRoll());
+			put("attack_roll", new AttackRoll());
+			put("damage", new Damage());
 		}
 	};
+
+	protected DamageCalculation baseDamage;
 
 	public Event(JSONObject json) {
 		super(json);
@@ -44,7 +51,26 @@ public class Event extends JSONLoader {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public void invoke(Vector targetPos, GameObject source) {
+		// generate base damage subevent and roll damage
+		baseDamage = new DamageCalculation();
+		JSONArray damageList = (JSONArray) json.getOrDefault("damage", new JSONArray());
+		for (Object o : damageList) {
+			JSONObject damageElement = (JSONObject) o;
+			long dice = (long) damageElement.getOrDefault("dice", 0L);
+			long size = (long) damageElement.getOrDefault("size", 1L);
+			long bonus = (long) damageElement.getOrDefault("bonus", 0L);
+			String damageType = (String) damageElement.get("damage_type");
+			DamageDiceGroup group = new DamageDiceGroup(dice, size, damageType);
+			group.addBonus(bonus);
+			baseDamage.addDamageDiceGroup(group);
+		}
+		while (source.processSubevent(baseDamage))
+			;
+		baseDamage.roll();
+
+		// iterate through subevents
 		JSONArray subevents = (JSONArray) json.get("subevents");
 		for (Object o : subevents) {
 			JSONObject subevent = (JSONObject) o;
@@ -61,6 +87,10 @@ public class Event extends JSONLoader {
 	@Override
 	public Event clone() {
 		return new Event(json);
+	}
+
+	public DamageCalculation getBaseDamage() {
+		return baseDamage;
 	}
 
 }

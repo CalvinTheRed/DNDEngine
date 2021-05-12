@@ -10,10 +10,10 @@ import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.dice.Die;
 
 public class AttackRoll extends Subevent implements Calculation {
-	private int base;
-	private int set = -1;
-	private int bonus = 0;
-	private int criticalThreshold;
+	private long base;
+	private long set = -1;
+	private long bonus = 0;
+	private long criticalThreshold;
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -44,7 +44,7 @@ public class AttackRoll extends Subevent implements Calculation {
 		if (hasTag("advantage") & hasTag("disadvantage")) {
 			base = d20.getRoll();
 		} else if (hasTag("advantage")) {
-			int tmp = d20.getRoll();
+			long tmp = d20.getRoll();
 			d20.roll();
 			if (d20.getRoll() > tmp) {
 				base = d20.getRoll();
@@ -52,7 +52,7 @@ public class AttackRoll extends Subevent implements Calculation {
 				base = tmp;
 			}
 		} else if (hasTag("disadvantage")) {
-			int tmp = d20.getRoll();
+			long tmp = d20.getRoll();
 			d20.roll();
 			if (d20.getRoll() < tmp) {
 				base = d20.getRoll();
@@ -78,7 +78,7 @@ public class AttackRoll extends Subevent implements Calculation {
 		JSONObject accJson = new JSONObject();
 		accJson.put("subevent", "armor_class_calculation");
 		acc.parse(accJson, e, eSource, eTarget);
-		int ac = acc.get();
+		long ac = acc.get();
 
 		JSONArray fallout;
 		if ((get() >= ac && !e.hasTag("critical_miss")) || base >= criticalThreshold) {
@@ -115,22 +115,22 @@ public class AttackRoll extends Subevent implements Calculation {
 		}
 	}
 
-	public int getCriticalThreshold() {
+	public long getCriticalThreshold() {
 		return criticalThreshold;
 	}
 
 	@Override
-	public void addBonus(int bonus) {
+	public void addBonus(long bonus) {
 		this.bonus += bonus;
 	}
 
 	@Override
-	public void setTo(int set) {
+	public void setTo(long set) {
 		this.set = set;
 	}
 
 	@Override
-	public int get() {
+	public long get() {
 		if (set != -1) {
 			return set + bonus;
 		}

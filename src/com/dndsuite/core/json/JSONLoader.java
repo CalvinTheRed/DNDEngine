@@ -41,9 +41,9 @@ public abstract class JSONLoader implements Taggable {
 		return json;
 	}
 
-	public int getUUID() throws UUIDKeyMissingException {
+	public long getUUID() throws UUIDKeyMissingException {
 		if (json.containsKey("uuid")) {
-			return (int) json.get("uuid");
+			return (long) json.get("uuid");
 		}
 		throw new UUIDKeyMissingException();
 	}
@@ -51,7 +51,7 @@ public abstract class JSONLoader implements Taggable {
 	@Override
 	@SuppressWarnings("unchecked")
 	public String toString() {
-		return (String) json.getOrDefault("name", "?") + " (" + (int) json.getOrDefault("uuid", -1) + ")";
+		return (String) json.getOrDefault("name", "?") + " (" + (long) json.getOrDefault("uuid", -1) + ")";
 	}
 
 	@SuppressWarnings("unchecked")

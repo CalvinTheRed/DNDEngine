@@ -9,11 +9,11 @@ import com.dndsuite.exceptions.UUIDKeyMissingException;
 
 public final class UUIDTable {
 
-	private static ConcurrentHashMap<Integer, JSONLoader> table = new ConcurrentHashMap<Integer, JSONLoader>();
+	private static ConcurrentHashMap<Long, JSONLoader> table = new ConcurrentHashMap<Long, JSONLoader>();
 
 	@SuppressWarnings("unchecked")
 	public static void addToTable(JSONLoader element) {
-		int key;
+		long key;
 		try {
 			key = element.getUUID();
 		} catch (UUIDKeyMissingException e) {
@@ -26,7 +26,7 @@ public final class UUIDTable {
 		table.put(key, element);
 	}
 
-	public static JSONLoader get(int uuid) throws UUIDDoesNotExistException {
+	public static JSONLoader get(long uuid) throws UUIDDoesNotExistException {
 		if (!table.containsKey(uuid)) {
 			throw new UUIDDoesNotExistException(uuid);
 		}
@@ -37,7 +37,7 @@ public final class UUIDTable {
 		table.clear();
 	}
 
-	public static boolean containsKey(int uuid) {
+	public static boolean containsKey(long uuid) {
 		return table.containsKey(uuid);
 	}
 

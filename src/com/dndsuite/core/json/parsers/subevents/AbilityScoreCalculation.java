@@ -8,9 +8,9 @@ import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
 public class AbilityScoreCalculation extends Subevent implements Calculation {
-	private int base;
-	private int set = -1;
-	private int bonus = 0;
+	private long base;
+	private long set = -1;
+	private long bonus = 0;
 
 	@Override
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
@@ -23,7 +23,7 @@ public class AbilityScoreCalculation extends Subevent implements Calculation {
 
 		String ability = (String) json.get("ability");
 		JSONObject abilityScores = (JSONObject) eTarget.getJSONData().get("ability_scores");
-		base = (int) abilityScores.get(ability);
+		base = (long) abilityScores.get(ability);
 
 		presentToEffects(eSource, eTarget);
 	}
@@ -40,19 +40,19 @@ public class AbilityScoreCalculation extends Subevent implements Calculation {
 	}
 
 	@Override
-	public void setTo(int set) {
+	public void setTo(long set) {
 		if (set > this.set) {
 			this.set = set;
 		}
 	}
 
 	@Override
-	public void addBonus(int bonus) {
+	public void addBonus(long bonus) {
 		this.bonus += bonus;
 	}
 
 	@Override
-	public int get() {
+	public long get() {
 		if (set != -1) {
 			return set;
 		}
