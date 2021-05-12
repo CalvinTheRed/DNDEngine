@@ -27,7 +27,7 @@ public class AttackRoll extends Subevent implements Calculation {
 
 		// Load critical hit threshold (default is 20)
 		if (json.containsKey("critical_threshold")) {
-			criticalThreshold = (int) json.get("critical_threshold");
+			criticalThreshold = (long) json.get("critical_threshold");
 		} else {
 			criticalThreshold = 20;
 		}

@@ -50,14 +50,14 @@ class GameObjectTest {
 			// UUIDTable contains UUID of o's effects
 			JSONArray effectUUIDs = (JSONArray) o.getJSONData().get("effects");
 			for (int i = 0; i < effectUUIDs.size(); i++) {
-				int uuid = (int) effectUUIDs.get(i);
+				long uuid = (long) effectUUIDs.get(i);
 				assertTrue(UUIDTable.containsKey(uuid));
 			}
 
 			// UUIDTable contains UUID of o's tasks
 			JSONArray taskUUIDs = (JSONArray) o.getJSONData().get("tasks");
 			for (int i = 0; i < taskUUIDs.size(); i++) {
-				int uuid = (int) taskUUIDs.get(i);
+				long uuid = (long) taskUUIDs.get(i);
 				assertTrue(UUIDTable.containsKey(uuid));
 			}
 		} catch (UUIDKeyMissingException ex) {
@@ -72,23 +72,23 @@ class GameObjectTest {
 	void test002() {
 		JSONObject json = new JSONObject();
 		JSONObject abilityScores = new JSONObject();
-		abilityScores.put("str", 7);
-		abilityScores.put("dex", 8);
-		abilityScores.put("con", 9);
-		abilityScores.put("int", 10);
-		abilityScores.put("wis", 11);
-		abilityScores.put("cha", 12);
+		abilityScores.put("str", 7L);
+		abilityScores.put("dex", 8L);
+		abilityScores.put("con", 9L);
+		abilityScores.put("int", 10L);
+		abilityScores.put("wis", 11L);
+		abilityScores.put("cha", 12L);
 		json.put("ability_scores", abilityScores);
 		json.put("effects", new JSONArray());
 
 		o = new GameObject(json);
 
-		assertEquals(-2, o.getAbilityModifier("str"));
-		assertEquals(-1, o.getAbilityModifier("dex"));
-		assertEquals(-1, o.getAbilityModifier("con"));
-		assertEquals(0, o.getAbilityModifier("int"));
-		assertEquals(0, o.getAbilityModifier("wis"));
-		assertEquals(1, o.getAbilityModifier("cha"));
+		assertEquals(-2L, o.getAbilityModifier("str"));
+		assertEquals(-1L, o.getAbilityModifier("dex"));
+		assertEquals(-1L, o.getAbilityModifier("con"));
+		assertEquals(0L, o.getAbilityModifier("int"));
+		assertEquals(0L, o.getAbilityModifier("wis"));
+		assertEquals(1L, o.getAbilityModifier("cha"));
 	}
 
 }

@@ -37,9 +37,20 @@ class EventTest {
 	}
 
 	@Test
-	@DisplayName("Damage-dealing Events")
+	@DisplayName("area_of_effect")
 	@SuppressWarnings("unchecked")
 	void test001() {
+		// cone
+		// cube
+		// line
+		// single target
+		// sphere
+	}
+
+	@Test
+	@DisplayName("Damage-dealing Events")
+	@SuppressWarnings("unchecked")
+	void test002() {
 		JSONObject eJson;
 		Event e;
 
@@ -70,12 +81,13 @@ class EventTest {
 		eJson.put("subevents", subevents);
 
 		e = new Event(eJson);
-
 		source = new GameObject("test_gameobject_source", new Vector(), new Vector());
 
 		e.invoke(source.getPos(), source);
-
 		assertEquals((long) (22 - 3), (long) source.getHealth().get("current"));
+
+		e.invoke(source.getPos(), source);
+		assertEquals((long) (22 - 3 - 3), (long) source.getHealth().get("current"));
 	}
 
 }

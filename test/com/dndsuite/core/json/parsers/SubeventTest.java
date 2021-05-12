@@ -61,7 +61,7 @@ class SubeventTest {
 
 		oJson = new JSONObject();
 		JSONObject abilityScores = new JSONObject();
-		abilityScores.put("str", 10);
+		abilityScores.put("str", 10L);
 		oJson.put("ability_scores", abilityScores);
 		oJson.put("effects", new JSONArray());
 		source = new GameObject(oJson);
@@ -74,30 +74,30 @@ class SubeventTest {
 			AbilityScoreCalculation asc = (AbilityScoreCalculation) s;
 			// normal ability score reading
 			asc.parse(sJson, null, source, source);
-			assertEquals(10, asc.get());
+			assertEquals(10L, asc.get());
 
 			// ability score w/ bonus
 			asc.parse(sJson, null, source, source);
-			asc.addBonus(2);
-			asc.addBonus(7);
-			assertEquals(19, asc.get());
+			asc.addBonus(2L);
+			asc.addBonus(7L);
+			assertEquals(19L, asc.get());
 
 			// ability score w/ set
 			asc.parse(sJson, null, source, source);
-			asc.setTo(5);
-			assertEquals(5, asc.get());
+			asc.setTo(5L);
+			assertEquals(5L, asc.get());
 
 			// ability score w/ set & bonus
 			asc.parse(sJson, null, source, source);
-			asc.addBonus(2);
-			asc.setTo(20);
-			assertEquals(20, asc.get());
+			asc.addBonus(2L);
+			asc.setTo(20L);
+			assertEquals(20L, asc.get());
 
 			// ability score w/ multiple sets
 			asc.parse(sJson, null, source, source);
-			asc.setTo(2);
-			asc.setTo(20);
-			assertEquals(20, asc.get());
+			asc.setTo(2L);
+			asc.setTo(20L);
+			assertEquals(20L, asc.get());
 
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
@@ -185,7 +185,7 @@ class SubeventTest {
 
 		oJson = new JSONObject();
 		JSONObject abilityScores = new JSONObject();
-		abilityScores.put("dex", 14);
+		abilityScores.put("dex", 14L);
 		oJson.put("ability_scores", abilityScores);
 		oJson.put("effects", new JSONArray());
 		source = new GameObject(oJson);
@@ -197,30 +197,30 @@ class SubeventTest {
 			ArmorClassCalculation acc = (ArmorClassCalculation) s;
 			// Default armor class
 			acc.parse(sJson, null, source, source);
-			assertEquals(12, acc.get());
+			assertEquals(12L, acc.get());
 
 			// armor class w/ bonus
 			acc.parse(sJson, null, source, source);
-			acc.addBonus(2);
-			acc.addBonus(5);
-			assertEquals(19, acc.get());
+			acc.addBonus(2L);
+			acc.addBonus(5L);
+			assertEquals(19L, acc.get());
 
 			// armor class w/ set
 			acc.parse(sJson, null, source, source);
-			acc.setTo(13);
-			assertEquals(13, acc.get());
+			acc.setTo(13L);
+			assertEquals(13L, acc.get());
 
 			// armor class w/ set & bonus
 			acc.parse(sJson, null, source, source);
-			acc.setTo(13);
-			acc.addBonus(7);
-			assertEquals(13, acc.get());
+			acc.setTo(13L);
+			acc.addBonus(7L);
+			assertEquals(13L, acc.get());
 
 			// armor class w/ multiple sets
 			acc.parse(sJson, null, source, source);
-			acc.setTo(13);
-			acc.setTo(7);
-			assertEquals(13, acc.get());
+			acc.setTo(13L);
+			acc.setTo(7L);
+			assertEquals(13L, acc.get());
 
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
@@ -241,12 +241,12 @@ class SubeventTest {
 		Event e;
 
 		JSONObject abilityScores = new JSONObject();
-		abilityScores.put("str", 10);
-		abilityScores.put("dex", 10);
-		abilityScores.put("con", 10);
-		abilityScores.put("int", 10);
-		abilityScores.put("wis", 10);
-		abilityScores.put("cha", 10);
+		abilityScores.put("str", 10L);
+		abilityScores.put("dex", 10L);
+		abilityScores.put("con", 10L);
+		abilityScores.put("int", 10L);
+		abilityScores.put("wis", 10L);
+		abilityScores.put("cha", 10L);
 
 		sourceJson = new JSONObject();
 		sourceJson.put("ability_scores", abilityScores);
@@ -271,71 +271,71 @@ class SubeventTest {
 
 		try {
 			// Normal attack roll
-			Die.enableDiceControl(new int[] { 10 });
+			Die.enableDiceControl(new long[] { 10L });
 			s = new AttackRoll();
 			ar = (AttackRoll) s;
 			eJson = new JSONObject();
 			eJson.put("tags", new JSONArray());
 			e = new Event(eJson);
 			ar.parse(sJson, e, source, target);
-			assertEquals(10, ar.get());
+			assertEquals(10L, ar.get());
 
 			// attack roll w/ bonus
-			Die.enableDiceControl(new int[] { 10 });
+			Die.enableDiceControl(new long[] { 10L });
 			s = new AttackRoll();
 			ar = (AttackRoll) s;
-			ar.addBonus(2);
-			assertEquals(2, ar.get());
-			ar.addBonus(7);
-			assertEquals(9, ar.get());
+			ar.addBonus(2L);
+			assertEquals(2L, ar.get());
+			ar.addBonus(7L);
+			assertEquals(9L, ar.get());
 			eJson = new JSONObject();
 			eJson.put("tags", new JSONArray());
 			e = new Event(eJson);
 			ar.parse(sJson, e, source, target);
-			assertEquals(19, ar.get());
+			assertEquals(19L, ar.get());
 
 			// attack roll w/ set
-			Die.enableDiceControl(new int[] { 10 });
+			Die.enableDiceControl(new long[] { 10L });
 			s = new AttackRoll();
 			ar = (AttackRoll) s;
-			ar.setTo(15);
-			assertEquals(15, ar.get());
+			ar.setTo(15L);
+			assertEquals(15L, ar.get());
 			eJson = new JSONObject();
 			eJson.put("tags", new JSONArray());
 			e = new Event(eJson);
 			ar.parse(sJson, e, source, target);
-			assertEquals(15, ar.get());
+			assertEquals(15L, ar.get());
 
 			// attack roll w/ set & bonus
-			Die.enableDiceControl(new int[] { 10 });
+			Die.enableDiceControl(new long[] { 10L });
 			s = new AttackRoll();
 			ar = (AttackRoll) s;
-			ar.setTo(12);
-			assertEquals(12, ar.get());
-			ar.addBonus(7);
-			assertEquals(19, ar.get());
+			ar.setTo(12L);
+			assertEquals(12L, ar.get());
+			ar.addBonus(7L);
+			assertEquals(19L, ar.get());
 			eJson = new JSONObject();
 			eJson.put("tags", new JSONArray());
 			e = new Event(eJson);
 			ar.parse(sJson, e, source, target);
-			assertEquals(19, ar.get());
+			assertEquals(19L, ar.get());
 
 			// attack roll w/ multiple sets
-			Die.enableDiceControl(new int[] { 10 });
+			Die.enableDiceControl(new long[] { 10L });
 			s = new AttackRoll();
 			ar = (AttackRoll) s;
-			ar.setTo(15);
-			assertEquals(15, ar.get());
-			ar.setTo(7);
-			assertEquals(7, ar.get());
+			ar.setTo(15L);
+			assertEquals(15L, ar.get());
+			ar.setTo(7L);
+			assertEquals(7L, ar.get());
 			eJson = new JSONObject();
 			eJson.put("tags", new JSONArray());
 			e = new Event(eJson);
 			ar.parse(sJson, e, source, target);
-			assertEquals(7, ar.get());
+			assertEquals(7L, ar.get());
 
 			// critical fail attack roll
-			Die.enableDiceControl(new int[] { 1 });
+			Die.enableDiceControl(new long[] { 1L });
 			s = new AttackRoll();
 			ar = (AttackRoll) s;
 			eJson = new JSONObject();
@@ -343,11 +343,11 @@ class SubeventTest {
 			e = new Event(eJson);
 			assertFalse(ar.hasTag("critical_miss"));
 			ar.parse(sJson, e, source, target);
-			assertEquals(1, ar.get());
+			assertEquals(1L, ar.get());
 			assertTrue(e.hasTag("critical_miss"));
 
 			// critical hit attack roll via rolling 20
-			Die.enableDiceControl(new int[] { 20 });
+			Die.enableDiceControl(new long[] { 20L });
 			s = new AttackRoll();
 			ar = (AttackRoll) s;
 			eJson = new JSONObject();
@@ -355,26 +355,26 @@ class SubeventTest {
 			e = new Event(eJson);
 			assertFalse(ar.hasTag("critical_hit"));
 			ar.parse(sJson, e, source, target);
-			assertEquals(20, ar.get());
+			assertEquals(20L, ar.get());
 			assertTrue(e.hasTag("critical_hit"));
 
 			// critical hit attack roll via decreasing loaded critical_threshold
-			Die.enableDiceControl(new int[] { 19 });
+			Die.enableDiceControl(new long[] { 19L });
 			s = new AttackRoll();
 			ar = (AttackRoll) s;
 			eJson = new JSONObject();
 			eJson.put("tags", new JSONArray());
 			e = new Event(eJson);
-			sJson.put("critical_threshold", 19);
+			sJson.put("critical_threshold", 19L);
 			assertFalse(ar.hasTag("critical_hit"));
 			ar.parse(sJson, e, source, target);
 			sJson.remove("critical_threshold");
-			assertEquals(19, ar.getCriticalThreshold());
-			assertEquals(19, ar.get());
+			assertEquals(19L, ar.getCriticalThreshold());
+			assertEquals(19L, ar.get());
 			assertTrue(e.hasTag("critical_hit"));
 
 			// rolling with advantage (1 of 2)
-			Die.enableDiceControl(new int[] { 5, 15 });
+			Die.enableDiceControl(new long[] { 5L, 15L });
 			s = new AttackRoll();
 			ar = (AttackRoll) s;
 			ar.addTag("advantage");
@@ -382,10 +382,10 @@ class SubeventTest {
 			eJson.put("tags", new JSONArray());
 			e = new Event(eJson);
 			ar.parse(sJson, e, source, target);
-			assertEquals(15, ar.get());
+			assertEquals(15L, ar.get());
 
 			// rolling with advantage (2 of 2)
-			Die.enableDiceControl(new int[] { 15, 5 });
+			Die.enableDiceControl(new long[] { 15L, 5L });
 			s = new AttackRoll();
 			ar = (AttackRoll) s;
 			ar.addTag("advantage");
@@ -393,10 +393,10 @@ class SubeventTest {
 			eJson.put("tags", new JSONArray());
 			e = new Event(eJson);
 			ar.parse(sJson, e, source, target);
-			assertEquals(15, ar.get());
+			assertEquals(15L, ar.get());
 
 			// rolling with disadvantage (1 of 2)
-			Die.enableDiceControl(new int[] { 5, 15 });
+			Die.enableDiceControl(new long[] { 5L, 15L });
 			s = new AttackRoll();
 			ar = (AttackRoll) s;
 			ar.addTag("disadvantage");
@@ -404,10 +404,10 @@ class SubeventTest {
 			eJson.put("tags", new JSONArray());
 			e = new Event(eJson);
 			ar.parse(sJson, e, source, target);
-			assertEquals(5, ar.get());
+			assertEquals(5L, ar.get());
 
-			// rolling with disadvantage (1 of 2)
-			Die.enableDiceControl(new int[] { 15, 5 });
+			// rolling with disadvantage (2 of 2)
+			Die.enableDiceControl(new long[] { 15L, 5L });
 			s = new AttackRoll();
 			ar = (AttackRoll) s;
 			ar.addTag("disadvantage");
@@ -415,7 +415,7 @@ class SubeventTest {
 			eJson.put("tags", new JSONArray());
 			e = new Event(eJson);
 			ar.parse(sJson, e, source, target);
-			assertEquals(5, ar.get());
+			assertEquals(5L, ar.get());
 
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();

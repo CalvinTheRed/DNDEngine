@@ -3,11 +3,9 @@ package com.dndsuite.maths.dice;
 import java.util.Random;
 
 public class Die {
-	public static final int CRITICAL_FAIL = 1;
-	public static final int CRITICAL_HIT = 20;
 	private static boolean controlEnabled = false;
 	private static int queuePos;
-	private static int[] valueQueue;
+	private static long[] valueQueue;
 
 	protected long size;
 	protected long roll;
@@ -49,7 +47,7 @@ public class Die {
 		size += 2;
 	}
 
-	public static void enableDiceControl(int[] queue) {
+	public static void enableDiceControl(long[] queue) {
 		controlEnabled = true;
 		queuePos = 0;
 		valueQueue = queue;
