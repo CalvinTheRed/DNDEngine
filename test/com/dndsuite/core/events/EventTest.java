@@ -37,17 +37,6 @@ class EventTest {
 	}
 
 	@Test
-	@DisplayName("area_of_effect")
-	@SuppressWarnings("unchecked")
-	void test001() {
-		// cone
-		// cube
-		// line
-		// single target
-		// sphere
-	}
-
-	@Test
 	@DisplayName("Damage-dealing Events")
 	@SuppressWarnings("unchecked")
 	void test002() {
