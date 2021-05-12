@@ -36,7 +36,7 @@ class EventTest {
 	@DisplayName("Proof of functionality event invocation")
 	void test001() {
 		Event e = new Event("test_event");
-		e.invoke(target.getPos(), source);
+		e.clone().invoke(target.getPos(), source);
 	}
 
 }

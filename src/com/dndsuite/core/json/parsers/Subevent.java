@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.json.simple.JSONObject;
 
 import com.dndsuite.core.Taggable;
+import com.dndsuite.core.UUIDTable;
 import com.dndsuite.core.effects.Effect;
 import com.dndsuite.core.events.Event;
 import com.dndsuite.core.gameobjects.GameObject;
@@ -20,17 +21,20 @@ public abstract class Subevent implements Taggable {
 	}
 
 	public void applyEffect(Effect e) throws Exception {
-		int uuid = e.getUUID();
-		if (appliedEffects.contains(uuid)) { // TODO: do better checks for different instances of same effects
-			throw new Exception();
-		} else {
-			appliedEffects.add(uuid);
+		String effectName = (String) e.getJSONData().get("name");
+		for (int uuid : appliedEffects) {
+			Effect tmp = (Effect) UUIDTable.get(uuid);
+			// Throw exception if effect with the same name is already applied
+			if (effectName.equals(tmp.getJSONData().get("name"))) {
+				throw new Exception();
+			}
 		}
+		appliedEffects.add(e.getUUID());
 	}
 
 	protected void presentToEffects(GameObject source, GameObject target) {
-		while (source.processSubevent(this) | target.processSubevent(this)) {
-		}
+		while (source.processSubevent(this) | target.processSubevent(this))
+			;
 	}
 
 	public void addTag(String tag) {

@@ -26,6 +26,7 @@ public class Event extends JSONLoader {
 		{
 			put("test_subevent", new TestSubevent());
 			put("apply_effect", new ApplyEffect());
+			// put("attack_roll", new AttackRoll());
 		}
 	};
 
@@ -55,6 +56,11 @@ public class Event extends JSONLoader {
 				ex.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public Event clone() {
+		return new Event(json);
 	}
 
 }

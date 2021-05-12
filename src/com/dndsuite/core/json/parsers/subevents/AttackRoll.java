@@ -65,9 +65,8 @@ public class AttackRoll extends Subevent implements Calculation {
 
 		// Check for critical hit/miss and inform parent Event
 		if (base >= criticalThreshold) {
-			// TODO: will these tags remain permanently? Consider cloning events
 			e.addTag("critical_hit");
-		} else {
+		} else if (base == 1) {
 			e.addTag("critical_miss");
 		}
 
@@ -82,7 +81,7 @@ public class AttackRoll extends Subevent implements Calculation {
 		int ac = acc.get();
 
 		JSONArray fallout;
-		if (get() >= ac || base >= criticalThreshold) {
+		if ((get() >= ac && !e.hasTag("critical_miss")) || base >= criticalThreshold) {
 			fallout = (JSONArray) json.get("hit");
 		} else {
 			fallout = (JSONArray) json.get("miss");
@@ -116,6 +115,10 @@ public class AttackRoll extends Subevent implements Calculation {
 		}
 	}
 
+	public int getCriticalThreshold() {
+		return criticalThreshold;
+	}
+
 	@Override
 	public void addBonus(int bonus) {
 		this.bonus += bonus;
@@ -129,7 +132,7 @@ public class AttackRoll extends Subevent implements Calculation {
 	@Override
 	public int get() {
 		if (set != -1) {
-			return set;
+			return set + bonus;
 		}
 		return base + bonus;
 	}
