@@ -20,7 +20,7 @@ public class Damage extends Subevent {
 			throw new SubeventMismatchException("damage", subevent);
 		}
 
-		DamageCalculation damage = e.getBaseDamage().clone();
+		DamageCalculation damage = e.getBaseDamage();
 		JSONObject dJson = new JSONObject();
 		dJson.put("subevent", "damage_calculation");
 		damage.parse(dJson, e, eSource, eTarget);
@@ -29,6 +29,7 @@ public class Damage extends Subevent {
 	@Override
 	public Damage clone() {
 		Damage clone = new Damage();
+		clone.parent = getParentEvent();
 		return clone;
 	}
 

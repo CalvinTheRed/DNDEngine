@@ -45,6 +45,7 @@ public class InvokeEvent extends Subevent {
 	@Override
 	public InvokeEvent clone() {
 		InvokeEvent clone = new InvokeEvent();
+		clone.parent = getParentEvent();
 		return clone;
 	}
 

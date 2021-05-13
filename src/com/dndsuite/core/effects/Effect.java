@@ -11,6 +11,7 @@ import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Condition;
 import com.dndsuite.core.json.parsers.Function;
 import com.dndsuite.core.json.parsers.Subevent;
+import com.dndsuite.core.json.parsers.conditions.DealsDamageType;
 import com.dndsuite.core.json.parsers.conditions.HasTag;
 import com.dndsuite.core.json.parsers.conditions.IsCriticalHit;
 import com.dndsuite.core.json.parsers.conditions.IsCriticalMiss;
@@ -32,6 +33,7 @@ public class Effect extends JSONLoader {
 		private static final long serialVersionUID = -4761488814133689338L;
 
 		{
+			put("deals_damage_type", new DealsDamageType());
 			put("has_tag", new HasTag());
 			put("is_critical_hit", new IsCriticalHit());
 			put("is_critical_miss", new IsCriticalMiss());

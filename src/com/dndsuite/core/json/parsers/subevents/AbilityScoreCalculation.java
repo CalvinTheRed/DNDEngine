@@ -18,6 +18,7 @@ public class AbilityScoreCalculation extends Subevent implements Calculation {
 		parent = e;
 		String subevent = (String) json.get("subevent");
 		addTag(subevent);
+		addTag("calculation");
 		if (!subevent.equals("ability_score_calculation")) {
 			throw new SubeventMismatchException("ability_score_calculation", subevent);
 		}
@@ -37,6 +38,7 @@ public class AbilityScoreCalculation extends Subevent implements Calculation {
 	@Override
 	public AbilityScoreCalculation clone() {
 		AbilityScoreCalculation clone = new AbilityScoreCalculation();
+		clone.parent = getParentEvent();
 		return clone;
 	}
 

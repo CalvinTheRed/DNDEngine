@@ -56,6 +56,7 @@ public class ApplyEffect extends Subevent {
 	@Override
 	public ApplyEffect clone() {
 		ApplyEffect clone = new ApplyEffect();
+		clone.parent = getParentEvent();
 		return clone;
 	}
 

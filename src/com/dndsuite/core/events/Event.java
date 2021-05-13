@@ -95,7 +95,7 @@ public class Event extends JSONLoader {
 	}
 
 	public DamageCalculation getBaseDamage() {
-		return baseDamage;
+		return baseDamage.clone();
 	}
 
 }

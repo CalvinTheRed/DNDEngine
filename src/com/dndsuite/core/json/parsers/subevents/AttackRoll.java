@@ -22,6 +22,7 @@ public class AttackRoll extends Subevent implements Calculation {
 		parent = e;
 		String subevent = (String) json.get("subevent");
 		addTag(subevent);
+		addTag("calculation");
 		if (!subevent.equals("attack_roll")) {
 			throw new SubeventMismatchException("attack_roll", subevent);
 		}
@@ -107,6 +108,7 @@ public class AttackRoll extends Subevent implements Calculation {
 	@Override
 	public AttackRoll clone() {
 		AttackRoll clone = new AttackRoll();
+		clone.parent = getParentEvent();
 		return clone;
 	}
 

@@ -31,6 +31,7 @@ public class DamageCalculation extends Subevent {
 	@Override
 	public DamageCalculation clone() {
 		DamageCalculation clone = new DamageCalculation();
+		clone.parent = getParentEvent();
 		clone.appliedEffects.addAll(appliedEffects);
 		clone.tags.addAll(tags);
 		clone.damageDice.addAll(damageDice);

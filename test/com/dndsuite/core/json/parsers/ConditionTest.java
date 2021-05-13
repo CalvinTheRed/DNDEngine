@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import com.dndsuite.core.UUIDTable;
 import com.dndsuite.core.events.Event;
 import com.dndsuite.core.gameobjects.GameObject;
+import com.dndsuite.core.json.parsers.conditions.DealsDamageType;
 import com.dndsuite.core.json.parsers.conditions.HasTag;
 import com.dndsuite.core.json.parsers.conditions.IsCriticalHit;
 import com.dndsuite.core.json.parsers.conditions.IsCriticalMiss;
@@ -23,9 +24,11 @@ import com.dndsuite.core.json.parsers.conditions.IsRollAbove;
 import com.dndsuite.core.json.parsers.conditions.IsRollBelow;
 import com.dndsuite.core.json.parsers.subevents.ArmorClassCalculation;
 import com.dndsuite.core.json.parsers.subevents.AttackRoll;
+import com.dndsuite.core.json.parsers.subevents.DamageCalculation;
 import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.exceptions.ConditionMismatchException;
 import com.dndsuite.exceptions.SubeventMismatchException;
+import com.dndsuite.maths.Vector;
 import com.dndsuite.maths.dice.Die;
 
 class ConditionTest {
@@ -253,6 +256,53 @@ class ConditionTest {
 
 			Die.enableDiceControl(new long[] { 15L });
 			s.parse(sJson, e, o, o);
+			assertTrue(c.parse(cJson, null, s));
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+			fail("Subevent mismatch");
+		} catch (ConditionMismatchException ex) {
+			ex.printStackTrace();
+			fail("Condition mismatch");
+		}
+	}
+
+	@Test
+	@DisplayName("DealsDamageType")
+	@SuppressWarnings("unchecked")
+	void test006() {
+		Condition c;
+		GameObject o;
+		Subevent s;
+		Event e;
+
+		JSONObject cJson = new JSONObject();
+		cJson.put("condition", "deals_damage_type");
+		cJson.put("damage_type", "cold");
+
+		JSONObject oJson = new JSONObject();
+		oJson.put("effects", new JSONArray());
+
+		JSONObject sJson = new JSONObject();
+		sJson.put("subevent", "damage_calculation");
+
+		JSONObject eJson = new JSONObject();
+		JSONArray damageList = new JSONArray();
+		JSONObject damageElement = new JSONObject();
+		damageElement.put("dice", 1L);
+		damageElement.put("size", 1L);
+		damageElement.put("damage_type", "cold");
+		damageList.add(damageElement);
+		eJson.put("damage", damageList);
+		eJson.put("subevents", new JSONArray());
+
+		o = new GameObject(oJson);
+		e = new Event(eJson);
+
+		try {
+			e.invoke(new Vector(), new Vector(), o);
+			s = new DamageCalculation();
+			s.parse(sJson, e, o, o);
+			c = new DealsDamageType();
 			assertTrue(c.parse(cJson, null, s));
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();

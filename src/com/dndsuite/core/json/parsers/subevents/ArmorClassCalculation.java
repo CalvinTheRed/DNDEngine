@@ -18,6 +18,7 @@ public class ArmorClassCalculation extends Subevent implements Calculation {
 		parent = e;
 		String subevent = (String) json.get("subevent");
 		addTag(subevent);
+		addTag("calculation");
 		if (!subevent.equals("armor_class_calculation")) {
 			throw new SubeventMismatchException("armor_class_calculation", subevent);
 		}
@@ -36,6 +37,7 @@ public class ArmorClassCalculation extends Subevent implements Calculation {
 	@Override
 	public ArmorClassCalculation clone() {
 		ArmorClassCalculation clone = new ArmorClassCalculation();
+		clone.parent = getParentEvent();
 		return clone;
 	}
 
