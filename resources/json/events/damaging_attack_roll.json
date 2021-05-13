@@ -1,0 +1,32 @@
+{
+	"name": "Damaging Attack Roll",
+	"description": "This is a test attack roll event which deals damage",
+	"tags": [
+		"test"
+	],
+	"area_of_effect": {
+		"shape": "single_target",
+		"range": "self"
+	},
+	"damage": [
+		{
+			"dice": 1,
+			"size": 1,
+			"damage_type": "piercing"
+		}
+	],
+	"subevents": [
+		{
+			"subevent": "attack_roll",
+			"attack_ability": "str",
+			"hit": [
+				{
+					"subevent": "damage"
+				}
+			],
+			"miss": [
+			
+			]
+		}
+	]
+}

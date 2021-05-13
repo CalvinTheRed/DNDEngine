@@ -32,7 +32,8 @@ public class InvokeEvent extends Subevent {
 			// TODO: implement this
 			// Some kind of interrupt requiring outside input?
 		}
-		event.invoke(targetPos, eSource);
+		// TODO: need to find a way to interrupt to get new targeting data from user
+		// event.invoke(sourcePos, start, end, eSource);
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 
@@ -17,6 +18,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.dndsuite.core.gameobjects.GameObject;
+import com.dndsuite.exceptions.InvalidAreaOfEffectException;
+import com.dndsuite.exceptions.OutOfRangeException;
 import com.dndsuite.maths.Vector;
 
 public class VirtualBoardTest {
@@ -309,67 +312,820 @@ public class VirtualBoardTest {
 	}
 
 	@Test
-	@DisplayName("objectsInAreaOfEffect")
+	@DisplayName("objectsInAreaOfEffect cone range=self")
 	@SuppressWarnings("unchecked")
 	void test008() {
+		JSONObject oJson;
+		JSONArray pos;
+		JSONArray rot;
+
+		double length = 10.0;
+
+		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
+			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
+				oJson = new JSONObject();
+				pos = new JSONArray();
+				pos.add((double) i);
+				pos.add(0.0);
+				pos.add((double) k);
+				oJson.put("pos", pos);
+				rot = new JSONArray();
+				rot.add(1.0);
+				rot.add(1.0);
+				rot.add(1.0);
+				oJson.put("rot", rot);
+				VirtualBoard.addGameObject(new GameObject(oJson));
+			}
+		}
+
 		JSONObject eJson;
 		JSONObject areaOfEffect;
 
-		// TODO: complete this test case
-
-		// cone
 		eJson = new JSONObject();
 		areaOfEffect = new JSONObject();
 		areaOfEffect.put("shape", "cone");
-		areaOfEffect.put("length", 10.0);
+		areaOfEffect.put("range", "self");
+		areaOfEffect.put("length", length);
 		eJson.put("area_of_effect", areaOfEffect);
 
-		// cube
+		GameObject source = VirtualBoard.nearestObject(new Vector(), new String[] {});
+		Vector start = new Vector(1, 0, 1);
+		Vector end = new Vector(5, 0, 5);
+		ArrayList<GameObject> desired = VirtualBoard.objectsInCone(source.getPos(), end, length, new String[] {});
+		try {
+			ArrayList<GameObject> found = VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			assertTrue(found.size() > 0);
+			assertTrue(found.containsAll(desired));
+			assertTrue(desired.containsAll(found));
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			ex.printStackTrace();
+			fail("Unexpected out of range error");
+		}
+	}
+
+	@Test
+	@DisplayName("objectsInAreaOfEffect cone range=double")
+	@SuppressWarnings("unchecked")
+	void test009() {
+		JSONObject oJson;
+		JSONArray pos;
+		JSONArray rot;
+
+		double length = 10.0;
+
+		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
+			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
+				oJson = new JSONObject();
+				pos = new JSONArray();
+				pos.add((double) i);
+				pos.add(0.0);
+				pos.add((double) k);
+				oJson.put("pos", pos);
+				rot = new JSONArray();
+				rot.add(1.0);
+				rot.add(1.0);
+				rot.add(1.0);
+				oJson.put("rot", rot);
+				VirtualBoard.addGameObject(new GameObject(oJson));
+			}
+		}
+
+		JSONObject eJson;
+		JSONObject areaOfEffect;
+		GameObject source;
+		Vector start;
+		Vector end;
+		ArrayList<GameObject> desired;
+
+		eJson = new JSONObject();
+		areaOfEffect = new JSONObject();
+		areaOfEffect.put("shape", "cone");
+		areaOfEffect.put("range", 5.0);
+		areaOfEffect.put("length", length);
+		eJson.put("area_of_effect", areaOfEffect);
+
+		// within range
+
+		source = VirtualBoard.nearestObject(new Vector(), new String[] {});
+		start = new Vector(1, 0, 1);
+		end = new Vector(5, 0, 5);
+		desired = VirtualBoard.objectsInCone(start, end, length, new String[] {});
+		try {
+			ArrayList<GameObject> found = VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			assertTrue(found.size() > 0);
+			assertTrue(found.containsAll(desired));
+			assertTrue(desired.containsAll(found));
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			ex.printStackTrace();
+			fail("Unexpected out of range error");
+		}
+
+		// beyond range
+
+		start = new Vector(7, 0, 7);
+		desired = VirtualBoard.objectsInCone(start, end, length, new String[] {});
+		try {
+			VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			fail("This line should not be reached");
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			// this exception is expected here
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	@DisplayName("objectsInAreaOfEffect cube range=self")
+	@SuppressWarnings("unchecked")
+	void test00A() {
+		JSONObject oJson;
+		JSONArray pos;
+		JSONArray rot;
+
+		double radius = 10.0;
+
+		for (int i = -(int) radius - 1; i <= (int) radius + 1; i++) {
+			for (int k = -(int) radius - 1; k <= (int) radius + 1; k++) {
+				oJson = new JSONObject();
+				pos = new JSONArray();
+				pos.add((double) i);
+				pos.add(0.0);
+				pos.add((double) k);
+				oJson.put("pos", pos);
+				rot = new JSONArray();
+				rot.add(1.0);
+				rot.add(1.0);
+				rot.add(1.0);
+				oJson.put("rot", rot);
+				VirtualBoard.addGameObject(new GameObject(oJson));
+			}
+		}
+
+		JSONObject eJson;
+		JSONObject areaOfEffect;
+		GameObject source;
+		Vector start;
+		Vector end;
+		ArrayList<GameObject> desired;
+
 		eJson = new JSONObject();
 		areaOfEffect = new JSONObject();
 		areaOfEffect.put("shape", "cube");
-		areaOfEffect.put("radius", 10.0);
+		areaOfEffect.put("range", "self");
+		areaOfEffect.put("radius", radius);
 		eJson.put("area_of_effect", areaOfEffect);
 
-		// line
+		source = VirtualBoard.nearestObject(new Vector(), new String[] {});
+		start = new Vector(1, 0, 1);
+		end = new Vector(5, 0, 5);
+		desired = VirtualBoard.objectsInCube(source.getPos(), end, radius, new String[] {});
+		try {
+			ArrayList<GameObject> found = VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			assertTrue(found.size() > 0);
+			assertTrue(found.containsAll(desired));
+			assertTrue(desired.containsAll(found));
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			ex.printStackTrace();
+			fail("Unexpected out of range error");
+		}
+	}
+
+	@Test
+	@DisplayName("objectsInAreaOfEffect cube range=adjacent")
+	@SuppressWarnings("unchecked")
+	void test00B() {
+		JSONObject oJson;
+		JSONArray pos;
+		JSONArray rot;
+
+		double radius = 10.0;
+
+		for (int i = -(int) radius - 1; i <= (int) radius + 1; i++) {
+			for (int k = -(int) radius - 1; k <= (int) radius + 1; k++) {
+				oJson = new JSONObject();
+				pos = new JSONArray();
+				pos.add((double) i);
+				pos.add(0.0);
+				pos.add((double) k);
+				oJson.put("pos", pos);
+				rot = new JSONArray();
+				rot.add(1.0);
+				rot.add(1.0);
+				rot.add(1.0);
+				oJson.put("rot", rot);
+				VirtualBoard.addGameObject(new GameObject(oJson));
+			}
+		}
+
+		JSONObject eJson;
+		JSONObject areaOfEffect;
+		GameObject source;
+		Vector start;
+		Vector end;
+		ArrayList<GameObject> desired;
+
+		eJson = new JSONObject();
+		areaOfEffect = new JSONObject();
+		areaOfEffect.put("shape", "cube");
+		areaOfEffect.put("range", "adjacent");
+		areaOfEffect.put("radius", radius);
+		eJson.put("area_of_effect", areaOfEffect);
+
+		source = VirtualBoard.nearestObject(new Vector(), new String[] {});
+		start = new Vector(1, 0, 1);
+		end = new Vector(5, 0, 5);
+		Vector center = end.sub(source.getPos()).unit().scale(radius);
+		desired = VirtualBoard.objectsInCube(center, end, radius, new String[] {});
+		try {
+			ArrayList<GameObject> found = VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			assertTrue(found.size() > 0);
+			assertTrue(found.containsAll(desired));
+			assertTrue(desired.containsAll(found));
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			ex.printStackTrace();
+			fail("Unexpected out of range error");
+		}
+	}
+
+	@Test
+	@DisplayName("objectsInAreaOfEffect cube range=double")
+	@SuppressWarnings("unchecked")
+	void test00C() {
+		JSONObject oJson;
+		JSONArray pos;
+		JSONArray rot;
+
+		double radius = 10.0;
+
+		for (int i = -(int) radius - 1; i <= (int) radius + 1; i++) {
+			for (int k = -(int) radius - 1; k <= (int) radius + 1; k++) {
+				oJson = new JSONObject();
+				pos = new JSONArray();
+				pos.add((double) i);
+				pos.add(0.0);
+				pos.add((double) k);
+				oJson.put("pos", pos);
+				rot = new JSONArray();
+				rot.add(1.0);
+				rot.add(1.0);
+				rot.add(1.0);
+				oJson.put("rot", rot);
+				VirtualBoard.addGameObject(new GameObject(oJson));
+			}
+		}
+
+		JSONObject eJson;
+		JSONObject areaOfEffect;
+		GameObject source;
+		Vector start;
+		Vector end;
+		ArrayList<GameObject> desired;
+
+		eJson = new JSONObject();
+		areaOfEffect = new JSONObject();
+		areaOfEffect.put("shape", "cube");
+		areaOfEffect.put("range", 3.0);
+		areaOfEffect.put("radius", radius);
+		eJson.put("area_of_effect", areaOfEffect);
+
+		// within range
+
+		source = VirtualBoard.nearestObject(new Vector(), new String[] {});
+		start = new Vector(1, 0, 1);
+		end = new Vector(5, 0, 5);
+		desired = VirtualBoard.objectsInCube(start, end, radius, new String[] {});
+		try {
+			ArrayList<GameObject> found = VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			assertTrue(found.size() > 0);
+			assertTrue(found.containsAll(desired));
+			assertTrue(desired.containsAll(found));
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			ex.printStackTrace();
+			fail("Unexpected out of range error");
+		}
+
+		// beyond range
+
+		source = VirtualBoard.nearestObject(new Vector(), new String[] {});
+		start = new Vector(7, 0, 7);
+		end = new Vector(5, 0, 5);
+		desired = VirtualBoard.objectsInCube(start, end, radius, new String[] {});
+		try {
+			VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			fail("This line should not be reached");
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			// this exception is expected here
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	@DisplayName("objectsInAreaOfEffect line range=self")
+	@SuppressWarnings("unchecked")
+	void test00D() {
+		JSONObject oJson;
+		JSONArray pos;
+		JSONArray rot;
+
+		double length = 10.0;
+		double radius = 5.0;
+
+		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
+			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
+				oJson = new JSONObject();
+				pos = new JSONArray();
+				pos.add((double) i);
+				pos.add(0.0);
+				pos.add((double) k);
+				oJson.put("pos", pos);
+				rot = new JSONArray();
+				rot.add(1.0);
+				rot.add(1.0);
+				rot.add(1.0);
+				oJson.put("rot", rot);
+				VirtualBoard.addGameObject(new GameObject(oJson));
+			}
+		}
+
+		JSONObject eJson;
+		JSONObject areaOfEffect;
+		GameObject source;
+		Vector start;
+		Vector end;
+		ArrayList<GameObject> desired;
+
 		eJson = new JSONObject();
 		areaOfEffect = new JSONObject();
 		areaOfEffect.put("shape", "line");
-		areaOfEffect.put("length", 10.0);
-		areaOfEffect.put("radius", 5.0);
+		areaOfEffect.put("range", "self");
+		areaOfEffect.put("radius", radius);
+		areaOfEffect.put("length", length);
 		eJson.put("area_of_effect", areaOfEffect);
 
-		// single target, self
+		source = VirtualBoard.nearestObject(new Vector(), new String[] {});
+		start = new Vector(1, 0, 1);
+		end = new Vector(5, 0, 5);
+		desired = VirtualBoard.objectsInLine(source.getPos(), end, length, radius, new String[] {});
+		try {
+			ArrayList<GameObject> found = VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			assertTrue(found.size() > 0);
+			assertTrue(found.containsAll(desired));
+			assertTrue(desired.containsAll(found));
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			ex.printStackTrace();
+			fail("Unexpected out of range error");
+		}
+	}
+
+	@Test
+	@DisplayName("objectsInAreaOfEffect line range=double")
+	@SuppressWarnings("unchecked")
+	void test00E() {
+		JSONObject oJson;
+		JSONArray pos;
+		JSONArray rot;
+
+		double length = 10.0;
+		double radius = 5.0;
+
+		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
+			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
+				oJson = new JSONObject();
+				pos = new JSONArray();
+				pos.add((double) i);
+				pos.add(0.0);
+				pos.add((double) k);
+				oJson.put("pos", pos);
+				rot = new JSONArray();
+				rot.add(1.0);
+				rot.add(1.0);
+				rot.add(1.0);
+				oJson.put("rot", rot);
+				VirtualBoard.addGameObject(new GameObject(oJson));
+			}
+		}
+
+		JSONObject eJson;
+		JSONObject areaOfEffect;
+		GameObject source;
+		Vector start;
+		Vector end;
+		ArrayList<GameObject> desired;
+
+		eJson = new JSONObject();
+		areaOfEffect = new JSONObject();
+		areaOfEffect.put("shape", "line");
+		areaOfEffect.put("range", 5.0);
+		areaOfEffect.put("radius", radius);
+		areaOfEffect.put("length", length);
+		eJson.put("area_of_effect", areaOfEffect);
+
+		// within range
+
+		source = VirtualBoard.nearestObject(new Vector(), new String[] {});
+		start = new Vector(1, 0, 1);
+		end = new Vector(5, 0, 5);
+		desired = VirtualBoard.objectsInLine(start, end, length, radius, new String[] {});
+		try {
+			ArrayList<GameObject> found = VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			assertTrue(found.size() > 0);
+			assertTrue(found.containsAll(desired));
+			assertTrue(desired.containsAll(found));
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			ex.printStackTrace();
+			fail("Unexpected out of range error");
+		}
+
+		// beyond range
+
+		start = new Vector(7, 0, 7);
+		desired = VirtualBoard.objectsInLine(start, end, length, radius, new String[] {});
+		try {
+			VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			fail("This line should not be reached");
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			// this exception is expected here
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	@DisplayName("objectsInAreaOfEffect single_target range=self")
+	@SuppressWarnings("unchecked")
+	void test00F() {
+		JSONObject oJson;
+		JSONArray pos;
+		JSONArray rot;
+
+		double length = 10.0;
+
+		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
+			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
+				oJson = new JSONObject();
+				pos = new JSONArray();
+				pos.add((double) i);
+				pos.add(0.0);
+				pos.add((double) k);
+				oJson.put("pos", pos);
+				rot = new JSONArray();
+				rot.add(1.0);
+				rot.add(1.0);
+				rot.add(1.0);
+				oJson.put("rot", rot);
+				VirtualBoard.addGameObject(new GameObject(oJson));
+			}
+		}
+
+		JSONObject eJson;
+		JSONObject areaOfEffect;
+		GameObject source;
+		Vector start;
+		Vector end;
+		ArrayList<GameObject> desired = new ArrayList<GameObject>();
+
 		eJson = new JSONObject();
 		areaOfEffect = new JSONObject();
 		areaOfEffect.put("shape", "single_target");
 		areaOfEffect.put("range", "self");
 		eJson.put("area_of_effect", areaOfEffect);
 
-		// single target, ranged
+		source = VirtualBoard.nearestObject(new Vector(), new String[] {});
+		start = new Vector(1, 0, 1);
+		end = new Vector(5, 0, 5);
+		desired.add(VirtualBoard.nearestObject(source.getPos(), new String[] {}));
+		try {
+			ArrayList<GameObject> found = VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			assertTrue(found.size() == 1);
+			assertTrue(found.containsAll(desired));
+			assertTrue(desired.containsAll(found));
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			ex.printStackTrace();
+			fail("Unexpected out of range error");
+		}
+	}
+
+	@Test
+	@DisplayName("objectsInAreaOfEffect single_target range=short/long")
+	@SuppressWarnings("unchecked")
+	void test010() {
+		JSONObject oJson;
+		JSONArray pos;
+		JSONArray rot;
+
+		double length = 10.0;
+
+		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
+			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
+				oJson = new JSONObject();
+				pos = new JSONArray();
+				pos.add((double) i);
+				pos.add(0.0);
+				pos.add((double) k);
+				oJson.put("pos", pos);
+				rot = new JSONArray();
+				rot.add(1.0);
+				rot.add(1.0);
+				rot.add(1.0);
+				oJson.put("rot", rot);
+				VirtualBoard.addGameObject(new GameObject(oJson));
+			}
+		}
+
+		JSONObject eJson;
+		JSONObject areaOfEffect;
+		GameObject source;
+		Vector start;
+		Vector end;
+		ArrayList<GameObject> desired = new ArrayList<GameObject>();
+
+		eJson = new JSONObject();
+		areaOfEffect = new JSONObject();
+		areaOfEffect.put("shape", "single_target");
+		JSONObject range = new JSONObject();
+		range.put("short", 5.0);
+		range.put("long", 10.0);
+		areaOfEffect.put("range", range);
+		eJson.put("area_of_effect", areaOfEffect);
+
+		// within range
+
+		source = VirtualBoard.nearestObject(new Vector(), new String[] {});
+		start = new Vector(1, 0, 1);
+		end = new Vector(5, 0, 5);
+		desired.add(VirtualBoard.nearestObject(end, new String[] {}));
+		try {
+			ArrayList<GameObject> found = VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			assertTrue(found.size() == 1);
+			assertTrue(found.containsAll(desired));
+			assertTrue(desired.containsAll(found));
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			ex.printStackTrace();
+			fail("Unexpected out of range error");
+		}
+
+		// beyond range
+
+		end = new Vector(10, 0, 10);
+		desired.clear();
+		desired.add(VirtualBoard.nearestObject(end, new String[] {}));
+		try {
+			VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			fail("This line should not be reached");
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			// this exception is expected here
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	@DisplayName("objectsInAreaOfEffect single_target range=double")
+	@SuppressWarnings("unchecked")
+	void test011() {
+		JSONObject oJson;
+		JSONArray pos;
+		JSONArray rot;
+
+		double length = 10.0;
+
+		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
+			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
+				oJson = new JSONObject();
+				pos = new JSONArray();
+				pos.add((double) i);
+				pos.add(0.0);
+				pos.add((double) k);
+				oJson.put("pos", pos);
+				rot = new JSONArray();
+				rot.add(1.0);
+				rot.add(1.0);
+				rot.add(1.0);
+				oJson.put("rot", rot);
+				VirtualBoard.addGameObject(new GameObject(oJson));
+			}
+		}
+
+		JSONObject eJson;
+		JSONObject areaOfEffect;
+		GameObject source;
+		Vector start;
+		Vector end;
+		ArrayList<GameObject> desired = new ArrayList<GameObject>();
+
 		eJson = new JSONObject();
 		areaOfEffect = new JSONObject();
 		areaOfEffect.put("shape", "single_target");
 		areaOfEffect.put("range", 10.0);
 		eJson.put("area_of_effect", areaOfEffect);
 
-		// single target, long-ranged
+		// within range
+
+		source = VirtualBoard.nearestObject(new Vector(), new String[] {});
+		start = new Vector(1, 0, 1);
+		end = new Vector(5, 0, 5);
+		desired.add(VirtualBoard.nearestObject(end, new String[] {}));
+		try {
+			ArrayList<GameObject> found = VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			assertTrue(found.size() == 1);
+			assertTrue(found.containsAll(desired));
+			assertTrue(desired.containsAll(found));
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			ex.printStackTrace();
+			fail("Unexpected out of range error");
+		}
+
+		// beyond range
+
+		end = new Vector(10, 0, 10);
+		desired.clear();
+		desired.add(VirtualBoard.nearestObject(end, new String[] {}));
+		try {
+			VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			fail("This line should not be reached");
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			// this exception is expected here
+			assertTrue(true);
+		}
+	}
+
+	@Test
+	@DisplayName("objectsInAreaOfEffect sphere range=self")
+	@SuppressWarnings("unchecked")
+	void test012() {
+		JSONObject oJson;
+		JSONArray pos;
+		JSONArray rot;
+
+		double length = 10.0;
+		double radius = 5.0;
+
+		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
+			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
+				oJson = new JSONObject();
+				pos = new JSONArray();
+				pos.add((double) i);
+				pos.add(0.0);
+				pos.add((double) k);
+				oJson.put("pos", pos);
+				rot = new JSONArray();
+				rot.add(1.0);
+				rot.add(1.0);
+				rot.add(1.0);
+				oJson.put("rot", rot);
+				VirtualBoard.addGameObject(new GameObject(oJson));
+			}
+		}
+
+		JSONObject eJson;
+		JSONObject areaOfEffect;
+		GameObject source;
+		Vector start;
+		Vector end;
+		ArrayList<GameObject> desired;
+
 		eJson = new JSONObject();
 		areaOfEffect = new JSONObject();
-		areaOfEffect.put("shape", "single_target");
-		JSONObject range = new JSONObject();
-		range.put("short", 10.0);
-		range.put("long", 20.0);
-		areaOfEffect.put("range", range);
+		areaOfEffect.put("shape", "sphere");
+		areaOfEffect.put("range", "self");
+		areaOfEffect.put("radius", radius);
 		eJson.put("area_of_effect", areaOfEffect);
 
-		// sphere
+		source = VirtualBoard.nearestObject(new Vector(), new String[] {});
+		start = new Vector(1, 0, 1);
+		end = new Vector(5, 0, 5);
+		desired = VirtualBoard.objectsInSphere(source.getPos(), radius, new String[] {});
+		try {
+			ArrayList<GameObject> found = VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			assertTrue(found.size() > 0);
+			assertTrue(found.containsAll(desired));
+			assertTrue(desired.containsAll(found));
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			ex.printStackTrace();
+			fail("Unexpected out of range error");
+		}
+	}
+
+	@Test
+	@DisplayName("objectsInAreaOfEffect sphere range=double")
+	@SuppressWarnings("unchecked")
+	void test013() {
+		JSONObject oJson;
+		JSONArray pos;
+		JSONArray rot;
+
+		double length = 10.0;
+		double radius = 5.0;
+
+		for (int i = -(int) length - 1; i <= (int) length + 1; i++) {
+			for (int k = -(int) length - 1; k <= (int) length + 1; k++) {
+				oJson = new JSONObject();
+				pos = new JSONArray();
+				pos.add((double) i);
+				pos.add(0.0);
+				pos.add((double) k);
+				oJson.put("pos", pos);
+				rot = new JSONArray();
+				rot.add(1.0);
+				rot.add(1.0);
+				rot.add(1.0);
+				oJson.put("rot", rot);
+				VirtualBoard.addGameObject(new GameObject(oJson));
+			}
+		}
+
+		JSONObject eJson;
+		JSONObject areaOfEffect;
+		GameObject source;
+		Vector start;
+		Vector end;
+		ArrayList<GameObject> desired;
+
 		eJson = new JSONObject();
 		areaOfEffect = new JSONObject();
-		areaOfEffect.put("shape", "cone");
-		areaOfEffect.put("length", 10.0);
+		areaOfEffect.put("shape", "sphere");
+		areaOfEffect.put("range", 4.0);
+		areaOfEffect.put("radius", radius);
 		eJson.put("area_of_effect", areaOfEffect);
 
+		// within range
+
+		source = VirtualBoard.nearestObject(new Vector(), new String[] {});
+		start = new Vector(1, 0, 1);
+		end = new Vector(5, 0, 5);
+		desired = VirtualBoard.objectsInSphere(start, radius, new String[] {});
+		try {
+			ArrayList<GameObject> found = VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			assertTrue(found.size() > 0);
+			assertTrue(found.containsAll(desired));
+			assertTrue(desired.containsAll(found));
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			ex.printStackTrace();
+			fail("Unexpected out of range error");
+		}
+
+		// beyond range
+
+		start = new Vector(7, 0, 7);
+		desired = VirtualBoard.objectsInSphere(start, radius, new String[] {});
+		try {
+			VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, eJson);
+			fail("This line should not be reached");
+		} catch (InvalidAreaOfEffectException ex) {
+			ex.printStackTrace();
+			fail("Invalid area_of_effect structure");
+		} catch (OutOfRangeException ex) {
+			// this exception is expected here
+			assertTrue(true);
+		}
 	}
 
 }

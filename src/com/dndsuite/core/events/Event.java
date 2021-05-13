@@ -15,6 +15,8 @@ import com.dndsuite.core.json.parsers.subevents.Damage;
 import com.dndsuite.core.json.parsers.subevents.DamageCalculation;
 import com.dndsuite.core.json.parsers.subevents.TestSubevent;
 import com.dndsuite.dnd.VirtualBoard;
+import com.dndsuite.exceptions.InvalidAreaOfEffectException;
+import com.dndsuite.exceptions.OutOfRangeException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.Vector;
 import com.dndsuite.maths.dice.DamageDiceGroup;
@@ -52,7 +54,7 @@ public class Event extends JSONLoader {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void invoke(Vector targetPos, GameObject source) {
+	public void invoke(Vector start, Vector end, GameObject source) {
 		// generate base damage subevent and roll damage
 		baseDamage = new DamageCalculation();
 		JSONArray damageList = (JSONArray) json.getOrDefault("damage", new JSONArray());
@@ -75,11 +77,16 @@ public class Event extends JSONLoader {
 		for (Object o : subevents) {
 			JSONObject subevent = (JSONObject) o;
 			try {
-				for (GameObject target : VirtualBoard.objectsInAreaOfEffect(source.getPos(), targetPos, json)) {
+				for (GameObject target : VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, json)) {
 					SUBEVENT_MAP.get(subevent.get("subevent")).clone().parse(subevent, this, source, target);
 				}
 			} catch (SubeventMismatchException ex) {
 				ex.printStackTrace();
+			} catch (InvalidAreaOfEffectException ex) {
+				ex.printStackTrace();
+			} catch (OutOfRangeException ex) {
+				ex.printStackTrace();
+				// TODO: verify that the Event does not become expended in this case
 			}
 		}
 	}

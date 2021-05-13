@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.dndsuite.core.UUIDTable;
+import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.exceptions.UUIDKeyMissingException;
 import com.dndsuite.maths.Vector;
 
@@ -36,6 +37,7 @@ class GameObjectTest {
 	void tearDown() throws Exception {
 		o = null;
 		UUIDTable.clear();
+		VirtualBoard.clearGameObjects();
 	}
 
 	@Test
@@ -89,6 +91,13 @@ class GameObjectTest {
 		assertEquals(0L, o.getAbilityModifier("int"));
 		assertEquals(0L, o.getAbilityModifier("wis"));
 		assertEquals(1L, o.getAbilityModifier("cha"));
+	}
+
+	@Test
+	@DisplayName("Taking Damage")
+	@SuppressWarnings("unchecked")
+	void test003() {
+
 	}
 
 }

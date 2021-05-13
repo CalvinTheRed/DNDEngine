@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.json.simple.JSONObject;
 
 import com.dndsuite.core.gameobjects.GameObject;
+import com.dndsuite.exceptions.InvalidAreaOfEffectException;
+import com.dndsuite.exceptions.OutOfRangeException;
 import com.dndsuite.maths.Vector;
 
 /**
@@ -62,10 +64,11 @@ public final class VirtualBoard {
 		return nearest;
 	}
 
-	public static ArrayList<GameObject> objectsInCone(Vector origin, Vector rot, double length, String[] filterTags) {
+	public static ArrayList<GameObject> objectsInCone(Vector vertex, Vector end, double length, String[] filterTags) {
+		Vector rot = end.sub(vertex);
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
 		for (GameObject o : gameObjects) {
-			Vector deltaPos = o.getPos().sub(origin);
+			Vector deltaPos = o.getPos().sub(vertex);
 			double radius = Math.sin(CONE_ARC_SIZE / 2) * deltaPos.proj(rot).mag();
 			if (deltaPos.cross(rot).mag() / rot.mag() <= radius
 					&& deltaPos.calculateAngleDiff(rot) <= Math.toRadians(90) && deltaPos.proj(rot).mag() <= length) {
@@ -77,7 +80,8 @@ public final class VirtualBoard {
 		return objects;
 	}
 
-	public static ArrayList<GameObject> objectsInCube(Vector center, Vector rot, double radius, String[] filterTags) {
+	public static ArrayList<GameObject> objectsInCube(Vector center, Vector end, double radius, String[] filterTags) {
+		Vector rot = end.sub(center);
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
 		Vector axis1 = rot.unit().scale(radius);
 		Vector axis2 = axis1.cross(Vector.UNIT_Y);
@@ -93,11 +97,12 @@ public final class VirtualBoard {
 		return objects;
 	}
 
-	public static ArrayList<GameObject> objectsInLine(Vector origin, Vector rot, double length, double radius,
+	public static ArrayList<GameObject> objectsInLine(Vector start, Vector end, double length, double radius,
 			String[] filterTags) {
+		Vector rot = end.sub(start);
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
 		for (GameObject o : gameObjects) {
-			Vector deltaPos = o.getPos().sub(origin);
+			Vector deltaPos = o.getPos().sub(start);
 			if (deltaPos.cross(rot).mag() / rot.mag() <= radius
 					&& deltaPos.calculateAngleDiff(rot) <= Math.toRadians(90) && deltaPos.proj(rot).mag() <= length) {
 				if (matchesFilterTags(o, filterTags)) {
@@ -120,30 +125,96 @@ public final class VirtualBoard {
 		return objects;
 	}
 
-	public static ArrayList<GameObject> objectsInAreaOfEffect(Vector origin, Vector target, JSONObject json) {
+	public static ArrayList<GameObject> objectsInAreaOfEffect(Vector sourcePos, Vector start, Vector end,
+			JSONObject json) throws InvalidAreaOfEffectException, OutOfRangeException {
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
 
 		JSONObject areaOfEffect = (JSONObject) json.get("area_of_effect");
 		String shape = (String) areaOfEffect.get("shape");
 
-		// TODO: complete this search algorithm
+		// TODO: test this you idiot
 
 		if (shape.equals("single_target")) {
 			if (areaOfEffect.get("range").equals("self")) {
-				objects.add(nearestObject(origin, new String[] {}));
+				objects.add(nearestObject(sourcePos, new String[] {}));
+			} else if (areaOfEffect.get("range") instanceof JSONObject) {
+				JSONObject range = (JSONObject) areaOfEffect.get("range");
+				if (end.sub(sourcePos).mag() <= (double) range.get("long")) {
+					objects.add(nearestObject(end, new String[] {}));
+				} else {
+					throw new OutOfRangeException();
+				}
+			} else if (areaOfEffect.get("range") instanceof Double) {
+				if (end.sub(sourcePos).mag() <= (double) areaOfEffect.get("range")) {
+					objects.add(nearestObject(end, new String[] {}));
+				} else {
+					throw new OutOfRangeException();
+				}
 			} else {
-
+				throw new InvalidAreaOfEffectException();
 			}
+
 		} else if (shape.equals("cone")) {
+			if (areaOfEffect.get("range").equals("self")) {
+				objects.addAll(objectsInCone(sourcePos, end, (double) areaOfEffect.get("length"), new String[] {}));
+			} else if (areaOfEffect.get("range") instanceof Double) {
+				if (start.sub(sourcePos).mag() <= (double) areaOfEffect.get("range")) {
+					objects.addAll(objectsInCone(start, end, (double) areaOfEffect.get("length"), new String[] {}));
+				} else {
+					throw new OutOfRangeException();
+				}
+			} else {
+				throw new InvalidAreaOfEffectException();
+			}
 
 		} else if (shape.equals("cube")) {
+			if (areaOfEffect.get("range").equals("self")) {
+				objects.addAll(objectsInCube(sourcePos, end, (double) areaOfEffect.get("radius"), new String[] {}));
+			} else if (areaOfEffect.get("range").equals("adjacent")) {
+				// Note that adjacent cubes always have the sourcePos centered along one of its
+				// faces
+				Vector delta = end.sub(sourcePos).unit().scale((double) areaOfEffect.get("radius"));
+				objects.addAll(
+						objectsInCube(sourcePos.add(delta), end, (double) areaOfEffect.get("radius"), new String[] {}));
+			} else if (areaOfEffect.get("range") instanceof Double) {
+				if (start.sub(sourcePos).mag() <= (double) areaOfEffect.get("range")) {
+					objects.addAll(objectsInCube(start, end, (double) areaOfEffect.get("radius"), new String[] {}));
+				} else {
+					throw new OutOfRangeException();
+				}
+			} else {
+				throw new InvalidAreaOfEffectException();
+			}
 
 		} else if (shape.equals("line")) {
+			if (areaOfEffect.get("range").equals("self")) {
+				objects.addAll(objectsInLine(sourcePos, end, (double) areaOfEffect.get("length"),
+						(double) areaOfEffect.get("radius"), new String[] {}));
+			} else if (areaOfEffect.get("range") instanceof Double) {
+				if (start.sub(sourcePos).mag() <= (double) areaOfEffect.get("range")) {
+					objects.addAll(objectsInLine(start, end, (double) areaOfEffect.get("length"),
+							(double) areaOfEffect.get("radius"), new String[] {}));
+				} else {
+					throw new OutOfRangeException();
+				}
+			} else {
+				throw new InvalidAreaOfEffectException();
+			}
 
 		} else if (shape.equals("sphere")) {
-
+			if (areaOfEffect.get("range").equals("self")) {
+				objects.addAll(objectsInSphere(sourcePos, (double) areaOfEffect.get("radius"), new String[] {}));
+			} else if (areaOfEffect.get("range") instanceof Double) {
+				if (start.sub(sourcePos).mag() <= (double) areaOfEffect.get("range")) {
+					objects.addAll(objectsInSphere(start, (double) areaOfEffect.get("radius"), new String[] {}));
+				} else {
+					throw new OutOfRangeException();
+				}
+			} else {
+				throw new InvalidAreaOfEffectException();
+			}
 		} else {
-
+			throw new InvalidAreaOfEffectException();
 		}
 
 		return objects;
