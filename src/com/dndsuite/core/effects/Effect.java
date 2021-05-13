@@ -12,10 +12,12 @@ import com.dndsuite.core.json.parsers.Condition;
 import com.dndsuite.core.json.parsers.Function;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.conditions.HasTag;
-import com.dndsuite.core.json.parsers.conditions.TestCondition;
+import com.dndsuite.core.json.parsers.conditions.IsCriticalHit;
+import com.dndsuite.core.json.parsers.conditions.IsCriticalMiss;
+import com.dndsuite.core.json.parsers.conditions.IsRollAbove;
+import com.dndsuite.core.json.parsers.conditions.IsRollBelow;
 import com.dndsuite.core.json.parsers.functions.GrantAdvantage;
 import com.dndsuite.core.json.parsers.functions.GrantDisadvantage;
-import com.dndsuite.core.json.parsers.functions.TestFunction;
 import com.dndsuite.exceptions.ConditionMismatchException;
 import com.dndsuite.exceptions.FunctionMismatchException;
 import com.dndsuite.exceptions.UUIDKeyMissingException;
@@ -30,8 +32,11 @@ public class Effect extends JSONLoader {
 		private static final long serialVersionUID = -4761488814133689338L;
 
 		{
-			put("test_condition", new TestCondition());
 			put("has_tag", new HasTag());
+			put("is_critical_hit", new IsCriticalHit());
+			put("is_critical_miss", new IsCriticalMiss());
+			put("is_roll_above", new IsRollAbove());
+			put("is_roll_below", new IsRollBelow());
 		}
 	};
 
@@ -43,7 +48,6 @@ public class Effect extends JSONLoader {
 		private static final long serialVersionUID = -6652098870662435261L;
 
 		{
-			put("test_function", new TestFunction());
 			put("grant_advantage", new GrantAdvantage());
 			put("grant_disadvantage", new GrantDisadvantage());
 		}

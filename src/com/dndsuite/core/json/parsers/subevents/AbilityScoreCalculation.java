@@ -15,6 +15,7 @@ public class AbilityScoreCalculation extends Subevent implements Calculation {
 	@Override
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
 			throws SubeventMismatchException {
+		parent = e;
 		String subevent = (String) json.get("subevent");
 		addTag(subevent);
 		if (!subevent.equals("ability_score_calculation")) {
@@ -57,6 +58,14 @@ public class AbilityScoreCalculation extends Subevent implements Calculation {
 			return set;
 		}
 		return base + bonus;
+	}
+
+	@Override
+	public long getRaw() {
+		if (set != -1) {
+			return set;
+		}
+		return base;
 	}
 
 }

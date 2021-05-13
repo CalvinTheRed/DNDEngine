@@ -17,6 +17,7 @@ public class ApplyEffect extends Subevent {
 	@SuppressWarnings("unchecked")
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
 			throws SubeventMismatchException {
+		parent = e;
 		String subevent = (String) json.get("subevent");
 		addTag(subevent);
 		if (!subevent.equals("apply_effect")) {

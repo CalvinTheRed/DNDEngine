@@ -16,10 +16,8 @@ import org.junit.jupiter.api.Test;
 import com.dndsuite.core.UUIDTable;
 import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.exceptions.UUIDKeyMissingException;
-import com.dndsuite.maths.Vector;
 
 class GameObjectTest {
-	static GameObject o;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -35,7 +33,6 @@ class GameObjectTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
-		o = null;
 		UUIDTable.clear();
 		VirtualBoard.clearGameObjects();
 	}
@@ -43,25 +40,11 @@ class GameObjectTest {
 	@Test
 	@DisplayName("UUIDTable tests")
 	void test001() {
-		o = new GameObject("test_gameobject_source", new Vector(), new Vector());
+		GameObject o = new GameObject(new JSONObject());
+		UUIDTable.addToTable(o);
 
 		try {
-			// UUIDTable contains UUID of o
 			assertTrue(UUIDTable.containsKey(o.getUUID()));
-
-			// UUIDTable contains UUID of o's effects
-			JSONArray effectUUIDs = (JSONArray) o.getJSONData().get("effects");
-			for (int i = 0; i < effectUUIDs.size(); i++) {
-				long uuid = (long) effectUUIDs.get(i);
-				assertTrue(UUIDTable.containsKey(uuid));
-			}
-
-			// UUIDTable contains UUID of o's tasks
-			JSONArray taskUUIDs = (JSONArray) o.getJSONData().get("tasks");
-			for (int i = 0; i < taskUUIDs.size(); i++) {
-				long uuid = (long) taskUUIDs.get(i);
-				assertTrue(UUIDTable.containsKey(uuid));
-			}
 		} catch (UUIDKeyMissingException ex) {
 			ex.printStackTrace();
 			fail("UUID key(s) missing");
@@ -72,7 +55,16 @@ class GameObjectTest {
 	@DisplayName("Ability Score Modifiers")
 	@SuppressWarnings("unchecked")
 	void test002() {
-		JSONObject json = new JSONObject();
+		GameObject o;
+		JSONObject oJson;
+
+		oJson = new JSONObject();
+		JSONArray pos = new JSONArray();
+		pos.add(0L);
+		pos.add(0L);
+		pos.add(0L);
+		oJson.put("pos", pos);
+		oJson.put("tags", new JSONArray());
 		JSONObject abilityScores = new JSONObject();
 		abilityScores.put("str", 7L);
 		abilityScores.put("dex", 8L);
@@ -80,10 +72,10 @@ class GameObjectTest {
 		abilityScores.put("int", 10L);
 		abilityScores.put("wis", 11L);
 		abilityScores.put("cha", 12L);
-		json.put("ability_scores", abilityScores);
-		json.put("effects", new JSONArray());
+		oJson.put("ability_scores", abilityScores);
+		oJson.put("effects", new JSONArray());
 
-		o = new GameObject(json);
+		o = new GameObject(oJson);
 
 		assertEquals(-2L, o.getAbilityModifier("str"));
 		assertEquals(-1L, o.getAbilityModifier("dex"));
@@ -91,13 +83,6 @@ class GameObjectTest {
 		assertEquals(0L, o.getAbilityModifier("int"));
 		assertEquals(0L, o.getAbilityModifier("wis"));
 		assertEquals(1L, o.getAbilityModifier("cha"));
-	}
-
-	@Test
-	@DisplayName("Taking Damage")
-	@SuppressWarnings("unchecked")
-	void test003() {
-
 	}
 
 }

@@ -19,6 +19,7 @@ public class AttackRoll extends Subevent implements Calculation {
 	@SuppressWarnings("unchecked")
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
 			throws SubeventMismatchException {
+		parent = e;
 		String subevent = (String) json.get("subevent");
 		addTag(subevent);
 		if (!subevent.equals("attack_roll")) {
@@ -135,6 +136,14 @@ public class AttackRoll extends Subevent implements Calculation {
 			return set + bonus;
 		}
 		return base + bonus;
+	}
+
+	@Override
+	public long getRaw() {
+		if (set != -1) {
+			return set;
+		}
+		return base;
 	}
 
 }

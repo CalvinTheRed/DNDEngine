@@ -13,7 +13,6 @@ import com.dndsuite.core.json.parsers.subevents.ApplyEffect;
 import com.dndsuite.core.json.parsers.subevents.AttackRoll;
 import com.dndsuite.core.json.parsers.subevents.Damage;
 import com.dndsuite.core.json.parsers.subevents.DamageCalculation;
-import com.dndsuite.core.json.parsers.subevents.TestSubevent;
 import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.exceptions.InvalidAreaOfEffectException;
 import com.dndsuite.exceptions.OutOfRangeException;
@@ -30,7 +29,6 @@ public class Event extends JSONLoader {
 		private static final long serialVersionUID = -5295424280559257214L;
 
 		{
-			put("test_subevent", new TestSubevent());
 			put("apply_effect", new ApplyEffect());
 			put("attack_roll", new AttackRoll());
 			put("damage", new Damage());

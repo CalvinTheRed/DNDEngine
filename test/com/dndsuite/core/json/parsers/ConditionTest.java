@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -13,16 +14,21 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.dndsuite.core.UUIDTable;
+import com.dndsuite.core.events.Event;
 import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.core.json.parsers.conditions.HasTag;
-import com.dndsuite.core.json.parsers.subevents.TestSubevent;
+import com.dndsuite.core.json.parsers.conditions.IsCriticalHit;
+import com.dndsuite.core.json.parsers.conditions.IsCriticalMiss;
+import com.dndsuite.core.json.parsers.conditions.IsRollAbove;
+import com.dndsuite.core.json.parsers.conditions.IsRollBelow;
+import com.dndsuite.core.json.parsers.subevents.ArmorClassCalculation;
+import com.dndsuite.core.json.parsers.subevents.AttackRoll;
+import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.exceptions.ConditionMismatchException;
+import com.dndsuite.exceptions.SubeventMismatchException;
+import com.dndsuite.maths.dice.Die;
 
 class ConditionTest {
-	private static Condition c;
-	private static Subevent s;
-	private static GameObject source;
-	private static GameObject target;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -38,22 +44,18 @@ class ConditionTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
-		c = null;
-		s = null;
-		source = null;
-		target = null;
 		UUIDTable.clear();
+		VirtualBoard.clearGameObjects();
 	}
 
 	@Test
 	@DisplayName("HasTag")
 	@SuppressWarnings("unchecked")
 	void test001() {
-		c = new HasTag();
-		s = new TestSubevent();
-		JSONObject cJson;
+		Condition c = new HasTag();
+		Subevent s = new ArmorClassCalculation();
 
-		cJson = new JSONObject();
+		JSONObject cJson = new JSONObject();
 		cJson.put("condition", "has_tag");
 		cJson.put("tag", "test");
 
@@ -61,6 +63,200 @@ class ConditionTest {
 			assertFalse(c.parse(cJson, null, s));
 			s.addTag("test");
 			assertTrue(c.parse(cJson, null, s));
+		} catch (ConditionMismatchException ex) {
+			ex.printStackTrace();
+			fail("Condition mismatch");
+		}
+	}
+
+	@Test
+	@DisplayName("IsCriticalHit")
+	@SuppressWarnings("unchecked")
+	void test002() {
+		Condition c;
+		AttackRoll s;
+		GameObject o;
+		Event e;
+
+		JSONObject cJson = new JSONObject();
+		cJson.put("condition", "is_critical_hit");
+
+		JSONObject sJson = new JSONObject();
+		sJson.put("subevent", "attack_roll");
+		sJson.put("attack_ability", "str");
+		sJson.put("hit", new JSONArray());
+		sJson.put("miss", new JSONArray());
+
+		JSONObject oJson = new JSONObject();
+		JSONObject abilityScores = new JSONObject();
+		abilityScores.put("str", 10L);
+		abilityScores.put("dex", 10L);
+		oJson.put("ability_scores", abilityScores);
+		oJson.put("effects", new JSONArray());
+
+		JSONObject eJson = new JSONObject();
+		eJson.put("tags", new JSONArray());
+
+		c = new IsCriticalHit();
+		s = new AttackRoll();
+		o = new GameObject(oJson);
+		e = new Event(eJson);
+
+		try {
+			Die.enableDiceControl(new long[] { 20L });
+			s.parse(sJson, e, o, o);
+			assertTrue(c.parse(cJson, null, s));
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+			fail("Subevent mismatch");
+		} catch (ConditionMismatchException ex) {
+			ex.printStackTrace();
+			fail("Condition mismatch");
+		}
+	}
+
+	@Test
+	@DisplayName("IsCriticalMiss")
+	@SuppressWarnings("unchecked")
+	void test003() {
+		Condition c;
+		AttackRoll s;
+		GameObject o;
+		Event e;
+
+		JSONObject cJson = new JSONObject();
+		cJson.put("condition", "is_critical_miss");
+
+		JSONObject sJson = new JSONObject();
+		sJson.put("subevent", "attack_roll");
+		sJson.put("attack_ability", "str");
+		sJson.put("hit", new JSONArray());
+		sJson.put("miss", new JSONArray());
+
+		JSONObject oJson = new JSONObject();
+		JSONObject abilityScores = new JSONObject();
+		abilityScores.put("str", 10L);
+		abilityScores.put("dex", 10L);
+		oJson.put("ability_scores", abilityScores);
+		oJson.put("effects", new JSONArray());
+
+		JSONObject eJson = new JSONObject();
+		eJson.put("tags", new JSONArray());
+
+		c = new IsCriticalMiss();
+		s = new AttackRoll();
+		o = new GameObject(oJson);
+		e = new Event(eJson);
+
+		try {
+			Die.enableDiceControl(new long[] { 1L });
+			s.parse(sJson, e, o, o);
+			assertTrue(c.parse(cJson, null, s));
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+			fail("Subevent mismatch");
+		} catch (ConditionMismatchException ex) {
+			ex.printStackTrace();
+			fail("Condition mismatch");
+		}
+	}
+
+	@Test
+	@DisplayName("IsRollBelow")
+	@SuppressWarnings("unchecked")
+	void test004() {
+		Condition c;
+		AttackRoll s;
+		GameObject o;
+		Event e;
+
+		JSONObject cJson = new JSONObject();
+		cJson.put("condition", "is_roll_below");
+		cJson.put("value", 10L);
+
+		JSONObject sJson = new JSONObject();
+		sJson.put("subevent", "attack_roll");
+		sJson.put("attack_ability", "str");
+		sJson.put("hit", new JSONArray());
+		sJson.put("miss", new JSONArray());
+
+		JSONObject oJson = new JSONObject();
+		JSONObject abilityScores = new JSONObject();
+		abilityScores.put("str", 10L);
+		abilityScores.put("dex", 10L);
+		oJson.put("ability_scores", abilityScores);
+		oJson.put("effects", new JSONArray());
+
+		JSONObject eJson = new JSONObject();
+		eJson.put("tags", new JSONArray());
+
+		c = new IsRollBelow();
+		s = new AttackRoll();
+		o = new GameObject(oJson);
+		e = new Event(eJson);
+
+		try {
+			Die.enableDiceControl(new long[] { 5L });
+			s.parse(sJson, e, o, o);
+			assertTrue(c.parse(cJson, null, s));
+
+			Die.enableDiceControl(new long[] { 15L });
+			s.parse(sJson, e, o, o);
+			assertFalse(c.parse(cJson, null, s));
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+			fail("Subevent mismatch");
+		} catch (ConditionMismatchException ex) {
+			ex.printStackTrace();
+			fail("Condition mismatch");
+		}
+	}
+
+	@Test
+	@DisplayName("IsRollAbove")
+	@SuppressWarnings("unchecked")
+	void test005() {
+		Condition c;
+		AttackRoll s;
+		GameObject o;
+		Event e;
+
+		JSONObject cJson = new JSONObject();
+		cJson.put("condition", "is_roll_above");
+		cJson.put("value", 10L);
+
+		JSONObject sJson = new JSONObject();
+		sJson.put("subevent", "attack_roll");
+		sJson.put("attack_ability", "str");
+		sJson.put("hit", new JSONArray());
+		sJson.put("miss", new JSONArray());
+
+		JSONObject oJson = new JSONObject();
+		JSONObject abilityScores = new JSONObject();
+		abilityScores.put("str", 10L);
+		abilityScores.put("dex", 10L);
+		oJson.put("ability_scores", abilityScores);
+		oJson.put("effects", new JSONArray());
+
+		JSONObject eJson = new JSONObject();
+		eJson.put("tags", new JSONArray());
+
+		c = new IsRollAbove();
+		s = new AttackRoll();
+		o = new GameObject(oJson);
+		e = new Event(eJson);
+
+		try {
+			Die.enableDiceControl(new long[] { 5L });
+			s.parse(sJson, e, o, o);
+			assertFalse(c.parse(cJson, null, s));
+
+			Die.enableDiceControl(new long[] { 15L });
+			s.parse(sJson, e, o, o);
+			assertTrue(c.parse(cJson, null, s));
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+			fail("Subevent mismatch");
 		} catch (ConditionMismatchException ex) {
 			ex.printStackTrace();
 			fail("Condition mismatch");

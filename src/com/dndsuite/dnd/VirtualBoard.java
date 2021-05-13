@@ -132,8 +132,6 @@ public final class VirtualBoard {
 		JSONObject areaOfEffect = (JSONObject) json.get("area_of_effect");
 		String shape = (String) areaOfEffect.get("shape");
 
-		// TODO: test this you idiot
-
 		if (shape.equals("single_target")) {
 			if (areaOfEffect.get("range").equals("self")) {
 				objects.add(nearestObject(sourcePos, new String[] {}));
@@ -216,6 +214,8 @@ public final class VirtualBoard {
 		} else {
 			throw new InvalidAreaOfEffectException();
 		}
+
+		// TODO: add a filter for disregarding the source from the area of effect
 
 		return objects;
 	}

@@ -11,18 +11,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.dndsuite.core.effects.Effect;
-import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.core.json.parsers.functions.GrantAdvantage;
 import com.dndsuite.core.json.parsers.functions.GrantDisadvantage;
-import com.dndsuite.core.json.parsers.subevents.TestSubevent;
+import com.dndsuite.core.json.parsers.subevents.AttackRoll;
 import com.dndsuite.exceptions.FunctionMismatchException;
-import com.dndsuite.maths.Vector;
 
 class FunctionTest {
-	private static Subevent s;
-	private static GameObject source;
-	private static GameObject target;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -34,9 +28,6 @@ class FunctionTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		s = new TestSubevent();
-		source = new GameObject("test_gameobject_source", new Vector(), new Vector());
-		target = new GameObject("test_gameobject_target", new Vector(), new Vector());
 	}
 
 	@AfterEach
@@ -47,11 +38,19 @@ class FunctionTest {
 	@DisplayName("GrantAdvantage")
 	@SuppressWarnings("unchecked")
 	void test001() {
-		GrantAdvantage func = new GrantAdvantage();
+		Function f;
+		Subevent s;
+
+		JSONObject fJson = new JSONObject();
+		fJson.put("function", "grant_advantage");
+
+		JSONObject oJson = new JSONObject();
+
+		f = new GrantAdvantage();
+		s = new AttackRoll();
+
 		try {
-			JSONObject json = new JSONObject();
-			json.put("function", "grant_advantage");
-			func.parse(json, new Effect("test_effect", source, target), s);
+			f.parse(fJson, null, s);
 			assertTrue(s.hasTag("advantage"));
 		} catch (FunctionMismatchException ex) {
 			ex.printStackTrace();
@@ -63,11 +62,19 @@ class FunctionTest {
 	@DisplayName("GrantDisadvantage")
 	@SuppressWarnings("unchecked")
 	void test002() {
-		GrantDisadvantage func = new GrantDisadvantage();
+		Function f;
+		Subevent s;
+
+		JSONObject fJson = new JSONObject();
+		fJson.put("function", "grant_disadvantage");
+
+		JSONObject oJson = new JSONObject();
+
+		f = new GrantDisadvantage();
+		s = new AttackRoll();
+
 		try {
-			JSONObject json = new JSONObject();
-			json.put("function", "grant_disadvantage");
-			func.parse(json, new Effect("test_effect", source, target), s);
+			f.parse(fJson, null, s);
 			assertTrue(s.hasTag("disadvantage"));
 		} catch (FunctionMismatchException ex) {
 			ex.printStackTrace();

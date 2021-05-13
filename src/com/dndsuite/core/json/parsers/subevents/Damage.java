@@ -13,6 +13,7 @@ public class Damage extends Subevent {
 	@Override
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
 			throws SubeventMismatchException {
+		parent = e;
 		String subevent = (String) json.get("subevent");
 		addTag(subevent);
 		if (!subevent.equals("damage")) {

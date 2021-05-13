@@ -24,8 +24,6 @@ import com.dndsuite.maths.Vector;
 
 public class VirtualBoardTest {
 
-	// Entity e;
-
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
 	}

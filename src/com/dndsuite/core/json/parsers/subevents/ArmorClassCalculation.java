@@ -15,6 +15,7 @@ public class ArmorClassCalculation extends Subevent implements Calculation {
 	@Override
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
 			throws SubeventMismatchException {
+		parent = e;
 		String subevent = (String) json.get("subevent");
 		addTag(subevent);
 		if (!subevent.equals("armor_class_calculation")) {
@@ -22,7 +23,7 @@ public class ArmorClassCalculation extends Subevent implements Calculation {
 		}
 
 		// TODO: create a better AC base algorithm
-		base = 10 + eTarget.getAbilityModifier("dex");
+		base = 10L + eTarget.getAbilityModifier("dex");
 
 		presentToEffects(eSource, eTarget);
 	}
@@ -56,6 +57,14 @@ public class ArmorClassCalculation extends Subevent implements Calculation {
 			return set;
 		}
 		return base + bonus;
+	}
+
+	@Override
+	public long getRaw() {
+		if (set != -1) {
+			return set;
+		}
+		return base;
 	}
 
 }

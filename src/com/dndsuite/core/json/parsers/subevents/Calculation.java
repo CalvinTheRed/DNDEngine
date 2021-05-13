@@ -8,4 +8,6 @@ public interface Calculation {
 
 	public abstract long get();
 
+	public abstract long getRaw();
+
 }

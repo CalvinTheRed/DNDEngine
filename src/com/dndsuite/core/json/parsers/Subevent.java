@@ -14,6 +14,7 @@ import com.dndsuite.exceptions.SubeventMismatchException;
 public abstract class Subevent implements Taggable {
 	protected ArrayList<Long> appliedEffects;
 	protected ArrayList<String> tags;
+	protected Event parent;
 
 	public Subevent() {
 		appliedEffects = new ArrayList<Long>();
@@ -49,6 +50,10 @@ public abstract class Subevent implements Taggable {
 
 	public boolean hasTag(String tag) {
 		return tags.contains(tag);
+	}
+
+	public Event getParentEvent() {
+		return parent;
 	}
 
 	@Override
