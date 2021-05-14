@@ -1,10 +1,15 @@
 package com.dndsuite.core.gameobjects;
 
+import java.util.ArrayList;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.dndsuite.core.UUIDTable;
+import com.dndsuite.core.UUIDTableElement;
 import com.dndsuite.core.effects.Effect;
+import com.dndsuite.core.events.Event;
+import com.dndsuite.core.events.EventGroup;
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.AbilityScoreCalculation;
@@ -13,19 +18,26 @@ import com.dndsuite.core.tasks.Task;
 import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
-import com.dndsuite.exceptions.UUIDKeyMissingException;
+import com.dndsuite.exceptions.UUIDNotAssignedException;
 import com.dndsuite.maths.Vector;
 import com.dndsuite.maths.dice.DamageDiceGroup;
 
-public class GameObject extends JSONLoader {
+public class GameObject extends JSONLoader implements UUIDTableElement {
+
+	ArrayList<EventGroup> queuedEvents;
 
 	public GameObject(JSONObject json) {
 		super(json);
+		queuedEvents = new ArrayList<EventGroup>();
+
+		UUIDTable.addToTable(this);
+		VirtualBoard.addGameObject(this);
 	}
 
 	@SuppressWarnings("unchecked")
 	public GameObject(String file, Vector pos, Vector rot) {
 		super("gameobjects/" + file);
+		queuedEvents = new ArrayList<EventGroup>();
 
 		JSONArray position = new JSONArray();
 		position.add(pos.x());
@@ -39,7 +51,22 @@ public class GameObject extends JSONLoader {
 		rotation.add(rot.z());
 		json.put("rot", rotation);
 
+		UUIDTable.addToTable(this);
 		VirtualBoard.addGameObject(this);
+	}
+
+	@Override
+	public long getUUID() throws UUIDNotAssignedException {
+		if (json.containsKey("uuid")) {
+			return (long) json.get("uuid");
+		}
+		throw new UUIDNotAssignedException(this);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public void assignUUID(long uuid) {
+		json.put("uuid", uuid);
 	}
 
 	public Vector getPos() {
@@ -54,7 +81,7 @@ public class GameObject extends JSONLoader {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected void parseBasePattern() {
+	protected void parseResourceData() {
 		JSONArray effectNames = (JSONArray) json.remove("effects");
 		JSONArray effectUUIDs = new JSONArray();
 		while (effectNames.size() > 0) {
@@ -64,7 +91,7 @@ public class GameObject extends JSONLoader {
 			UUIDTable.addToTable(e);
 			try {
 				effectUUIDs.add(e.getUUID());
-			} catch (UUIDKeyMissingException ex) {
+			} catch (UUIDNotAssignedException ex) {
 				ex.printStackTrace();
 			}
 
@@ -79,7 +106,7 @@ public class GameObject extends JSONLoader {
 			UUIDTable.addToTable(t);
 			try {
 				taskUUIDs.add(t.getUUID());
-			} catch (UUIDKeyMissingException ex) {
+			} catch (UUIDNotAssignedException ex) {
 				ex.printStackTrace();
 			}
 		}
@@ -93,12 +120,48 @@ public class GameObject extends JSONLoader {
 			long uuid = (long) effects.get(i);
 			try {
 				Effect effect = (Effect) UUIDTable.get(uuid);
-				changed = changed || effect.processSubevent(s);
+				changed |= effect.processSubevent(s);
 			} catch (UUIDDoesNotExistException ex) {
 				ex.printStackTrace();
 			}
 		}
 		return changed;
+	}
+
+	public void invokeTask(long uuid) {
+		try {
+			UUIDTableElement element = UUIDTable.get(uuid);
+			if (element instanceof Task) {
+				Task t = (Task) element;
+				t.invoke(this);
+			}
+		} catch (UUIDDoesNotExistException e) {
+			e.printStackTrace();
+			return;
+		}
+	}
+
+	public void invokeQueuedEvent(Event e, Vector start, Vector end) {
+		EventGroup container = null;
+		for (EventGroup group : queuedEvents) {
+			if (group.contains(e)) {
+				container = group;
+				e.invoke(start, end, this);
+				break;
+			}
+		}
+
+		if (container != null) {
+			queuedEvents.remove(container);
+		}
+	}
+
+	public void queueEventGroup(EventGroup group) {
+		queuedEvents.add(group);
+	}
+
+	public void clearQueuedEvents() {
+		queuedEvents.clear();
 	}
 
 	@SuppressWarnings("unchecked")

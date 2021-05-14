@@ -6,6 +6,8 @@ import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.dndsuite.core.UUIDTable;
+import com.dndsuite.core.UUIDTableElement;
 import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Condition;
@@ -21,9 +23,9 @@ import com.dndsuite.core.json.parsers.functions.GrantAdvantage;
 import com.dndsuite.core.json.parsers.functions.GrantDisadvantage;
 import com.dndsuite.exceptions.ConditionMismatchException;
 import com.dndsuite.exceptions.FunctionMismatchException;
-import com.dndsuite.exceptions.UUIDKeyMissingException;
+import com.dndsuite.exceptions.UUIDNotAssignedException;
 
-public class Effect extends JSONLoader {
+public class Effect extends JSONLoader implements UUIDTableElement {
 
 	public static final Map<String, Condition> CONDITION_MAP = new HashMap<String, Condition>() {
 
@@ -57,23 +59,41 @@ public class Effect extends JSONLoader {
 
 	public Effect(JSONObject json) {
 		super(json);
+		UUIDTable.addToTable(this);
 	}
 
 	@SuppressWarnings("unchecked")
 	public Effect(String file, GameObject source, GameObject target) {
 		super("effects/" + file);
+
 		try {
 			json.put("source", source.getUUID());
 			json.put("target", target.getUUID());
-		} catch (UUIDKeyMissingException ex) {
+		} catch (UUIDNotAssignedException ex) {
 			ex.printStackTrace();
 		}
+
+		UUIDTable.addToTable(this);
 	}
 
 	@Override
-	protected void parseBasePattern() {
+	protected void parseResourceData() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public long getUUID() throws UUIDNotAssignedException {
+		if (json.containsKey("uuid")) {
+			return (long) json.get("uuid");
+		}
+		throw new UUIDNotAssignedException(this);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public void assignUUID(long uuid) {
+		json.put("uuid", uuid);
 	}
 
 	public boolean processSubevent(Subevent s) {

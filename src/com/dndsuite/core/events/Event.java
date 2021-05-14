@@ -37,6 +37,11 @@ public class Event extends JSONLoader {
 
 	protected DamageCalculation baseDamage;
 
+	/**
+	 * Not to be used in client program
+	 * 
+	 * @param json
+	 */
 	public Event(JSONObject json) {
 		super(json);
 	}
@@ -46,7 +51,7 @@ public class Event extends JSONLoader {
 	}
 
 	@Override
-	protected void parseBasePattern() {
+	protected void parseResourceData() {
 		// TODO Auto-generated method stub
 
 	}

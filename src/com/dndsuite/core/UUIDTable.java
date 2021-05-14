@@ -3,30 +3,28 @@ package com.dndsuite.core;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
-import com.dndsuite.exceptions.UUIDKeyMissingException;
+import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 public final class UUIDTable {
 
-	private static ConcurrentHashMap<Long, JSONLoader> table = new ConcurrentHashMap<Long, JSONLoader>();
+	private static ConcurrentHashMap<Long, UUIDTableElement> table = new ConcurrentHashMap<Long, UUIDTableElement>();
 
-	@SuppressWarnings("unchecked")
-	public static void addToTable(JSONLoader element) {
+	public static void addToTable(UUIDTableElement element) {
 		long key;
 		try {
 			key = element.getUUID();
-		} catch (UUIDKeyMissingException e) {
+		} catch (UUIDNotAssignedException e) {
 			Random r = new Random();
 			do {
 				key = r.nextInt(Integer.MAX_VALUE);
 			} while (table.containsKey(key));
-			element.getJSONData().put("uuid", key);
+			element.assignUUID(key);
 		}
 		table.put(key, element);
 	}
 
-	public static JSONLoader get(long uuid) throws UUIDDoesNotExistException {
+	public static UUIDTableElement get(long uuid) throws UUIDDoesNotExistException {
 		if (!table.containsKey(uuid)) {
 			throw new UUIDDoesNotExistException(uuid);
 		}

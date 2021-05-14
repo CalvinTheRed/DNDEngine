@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import com.dndsuite.core.UUIDTable;
 import com.dndsuite.dnd.VirtualBoard;
-import com.dndsuite.exceptions.UUIDKeyMissingException;
+import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 class GameObjectTest {
 
@@ -38,23 +38,29 @@ class GameObjectTest {
 	}
 
 	@Test
-	@DisplayName("UUIDTable tests")
+	@DisplayName("UUIDTable loading")
 	void test001() {
 		GameObject o = new GameObject(new JSONObject());
-		UUIDTable.addToTable(o);
 
 		try {
 			assertTrue(UUIDTable.containsKey(o.getUUID()));
-		} catch (UUIDKeyMissingException ex) {
+		} catch (UUIDNotAssignedException ex) {
 			ex.printStackTrace();
 			fail("UUID key(s) missing");
 		}
 	}
 
 	@Test
-	@DisplayName("Ability Score Modifiers")
+	@DisplayName("Invoke Tasks")
 	@SuppressWarnings("unchecked")
 	void test002() {
+		// TODO: this test case requires json files to be created
+	}
+
+	@Test
+	@DisplayName("Ability Score Modifiers")
+	@SuppressWarnings("unchecked")
+	void test003() {
 		GameObject o;
 		JSONObject oJson;
 

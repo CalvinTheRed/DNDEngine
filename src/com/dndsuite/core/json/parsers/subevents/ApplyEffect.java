@@ -9,7 +9,7 @@ import com.dndsuite.core.events.Event;
 import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.SubeventMismatchException;
-import com.dndsuite.exceptions.UUIDKeyMissingException;
+import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 public class ApplyEffect extends Subevent {
 
@@ -32,6 +32,7 @@ public class ApplyEffect extends Subevent {
 		} else if (subeventTargetAlias.equals("target")) {
 			subeventTarget = eTarget;
 		} else {
+			// TODO: is this the best way to handle this situation?
 			System.out.println("[ApplyEffect] invalid apply_to value detected: " + subeventTargetAlias);
 			return;
 		}
@@ -42,7 +43,7 @@ public class ApplyEffect extends Subevent {
 		JSONArray effects = (JSONArray) subeventTarget.getJSONData().remove("effects");
 		try {
 			effects.add(effect.getUUID());
-		} catch (UUIDKeyMissingException ex) {
+		} catch (UUIDNotAssignedException ex) {
 			ex.printStackTrace();
 		}
 		subeventTarget.getJSONData().put("effects", effects);
