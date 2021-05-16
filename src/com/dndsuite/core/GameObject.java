@@ -1,21 +1,14 @@
-package com.dndsuite.core.gameobjects;
+package com.dndsuite.core;
 
 import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import com.dndsuite.core.UUIDTable;
-import com.dndsuite.core.UUIDTableElement;
-import com.dndsuite.core.effects.Effect;
-import com.dndsuite.core.events.Event;
-import com.dndsuite.core.events.EventGroup;
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.AbilityScoreCalculation;
 import com.dndsuite.core.json.parsers.subevents.DamageCalculation;
-import com.dndsuite.core.tasks.Task;
-import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
@@ -129,6 +122,7 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 	}
 
 	public void invokeTask(long uuid) {
+		// TODO: dedicate a subevent to collecting all Tasks available to this
 		try {
 			UUIDTableElement element = UUIDTable.get(uuid);
 			if (element instanceof Task) {
@@ -219,6 +213,14 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 
 	public JSONObject getHealth() {
 		return (JSONObject) json.get("health");
+	}
+
+	public long getProficiencyBonus() {
+		if (json.containsKey("level")) {
+			long level = (long) json.get("level");
+			return 2L + (level - 1L) / 4L;
+		}
+		return 0L;
 	}
 
 }

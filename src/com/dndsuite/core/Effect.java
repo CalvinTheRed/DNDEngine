@@ -1,4 +1,4 @@
-package com.dndsuite.core.effects;
+package com.dndsuite.core;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,9 +6,6 @@ import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import com.dndsuite.core.UUIDTable;
-import com.dndsuite.core.UUIDTableElement;
-import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Condition;
 import com.dndsuite.core.json.parsers.Function;
@@ -23,11 +20,15 @@ import com.dndsuite.core.json.parsers.functions.GrantAdvantage;
 import com.dndsuite.core.json.parsers.functions.GrantDisadvantage;
 import com.dndsuite.exceptions.ConditionMismatchException;
 import com.dndsuite.exceptions.FunctionMismatchException;
+import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 public class Effect extends JSONLoader implements UUIDTableElement {
 
 	public static final Map<String, Condition> CONDITION_MAP = new HashMap<String, Condition>() {
+
+		// TODO: design a way for the Slow spell to limit the number of AttackRoll
+		// subevents that can be invoked on a turn
 
 		/**
 		 * 
@@ -110,6 +111,8 @@ public class Effect extends JSONLoader implements UUIDTableElement {
 				}
 			} catch (ConditionMismatchException ex) {
 				ex.printStackTrace();
+			} catch (JSONFormatException ex) {
+				ex.printStackTrace();
 			}
 
 			if (conditionsMet) {
@@ -128,6 +131,8 @@ public class Effect extends JSONLoader implements UUIDTableElement {
 					}
 					return true;
 				} catch (FunctionMismatchException ex) {
+					ex.printStackTrace();
+				} catch (JSONFormatException ex) {
 					ex.printStackTrace();
 				}
 			}

@@ -13,9 +13,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.dndsuite.core.Event;
+import com.dndsuite.core.GameObject;
 import com.dndsuite.core.UUIDTable;
-import com.dndsuite.core.events.Event;
-import com.dndsuite.core.gameobjects.GameObject;
+import com.dndsuite.core.VirtualBoard;
 import com.dndsuite.core.json.parsers.conditions.DealsDamageType;
 import com.dndsuite.core.json.parsers.conditions.HasTag;
 import com.dndsuite.core.json.parsers.conditions.IsCriticalHit;
@@ -25,8 +26,8 @@ import com.dndsuite.core.json.parsers.conditions.IsRollBelow;
 import com.dndsuite.core.json.parsers.subevents.ArmorClassCalculation;
 import com.dndsuite.core.json.parsers.subevents.AttackRoll;
 import com.dndsuite.core.json.parsers.subevents.DamageCalculation;
-import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.exceptions.ConditionMismatchException;
+import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.Vector;
 import com.dndsuite.maths.dice.Die;
@@ -69,6 +70,9 @@ class ConditionTest {
 		} catch (ConditionMismatchException ex) {
 			ex.printStackTrace();
 			fail("Condition mismatch");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON formatting error");
 		}
 	}
 
@@ -115,6 +119,9 @@ class ConditionTest {
 		} catch (ConditionMismatchException ex) {
 			ex.printStackTrace();
 			fail("Condition mismatch");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON formatting error");
 		}
 	}
 
@@ -161,6 +168,9 @@ class ConditionTest {
 		} catch (ConditionMismatchException ex) {
 			ex.printStackTrace();
 			fail("Condition mismatch");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON formatting error");
 		}
 	}
 
@@ -212,6 +222,9 @@ class ConditionTest {
 		} catch (ConditionMismatchException ex) {
 			ex.printStackTrace();
 			fail("Condition mismatch");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON formatting error");
 		}
 	}
 
@@ -263,6 +276,9 @@ class ConditionTest {
 		} catch (ConditionMismatchException ex) {
 			ex.printStackTrace();
 			fail("Condition mismatch");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON formatting error");
 		}
 	}
 
@@ -310,6 +326,9 @@ class ConditionTest {
 		} catch (ConditionMismatchException ex) {
 			ex.printStackTrace();
 			fail("Condition mismatch");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON formatting error");
 		}
 	}
 

@@ -4,11 +4,12 @@ import java.util.ArrayList;
 
 import org.json.simple.JSONObject;
 
+import com.dndsuite.core.Effect;
+import com.dndsuite.core.Event;
+import com.dndsuite.core.GameObject;
 import com.dndsuite.core.Taggable;
 import com.dndsuite.core.UUIDTable;
-import com.dndsuite.core.effects.Effect;
-import com.dndsuite.core.events.Event;
-import com.dndsuite.core.gameobjects.GameObject;
+import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
 public abstract class Subevent implements Taggable {
@@ -60,6 +61,6 @@ public abstract class Subevent implements Taggable {
 	public abstract Subevent clone();
 
 	public abstract void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
-			throws SubeventMismatchException;
+			throws SubeventMismatchException, JSONFormatException;
 
 }

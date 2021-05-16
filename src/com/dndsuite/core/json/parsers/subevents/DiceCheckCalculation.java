@@ -7,7 +7,7 @@ import com.dndsuite.core.GameObject;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
-public class ArmorClassCalculation extends Subevent implements Calculation {
+public class DiceCheckCalculation extends Subevent implements Calculation {
 	private long base;
 	private long set = -1;
 	private long bonus = 0;
@@ -19,24 +19,24 @@ public class ArmorClassCalculation extends Subevent implements Calculation {
 		String subevent = (String) json.get("subevent");
 		addTag(subevent);
 		addTag("calculation");
-		if (!subevent.equals("armor_class_calculation")) {
-			throw new SubeventMismatchException("armor_class_calculation", subevent);
+		if (!subevent.equals("dice_check_calculation")) {
+			throw new SubeventMismatchException("dice_check_calculation", subevent);
 		}
 
-		// TODO: create a better AC base algorithm
-		base = 10L + eTarget.getAbilityModifier("dex");
-
+		String dcAbility = (String) json.get("dc_ability");
+		base = 8L + eTarget.getProficiencyBonus() + eTarget.getAbilityModifier(dcAbility);
 		presentToEffects(eSource, eTarget);
+
 	}
 
 	@Override
 	public String toString() {
-		return "ArmorClassCalculation Subevent";
+		return "DiceCheckCalculation Subevent";
 	}
 
 	@Override
-	public ArmorClassCalculation clone() {
-		ArmorClassCalculation clone = new ArmorClassCalculation();
+	public DiceCheckCalculation clone() {
+		DiceCheckCalculation clone = new DiceCheckCalculation();
 		clone.parent = getParentEvent();
 		return clone;
 	}

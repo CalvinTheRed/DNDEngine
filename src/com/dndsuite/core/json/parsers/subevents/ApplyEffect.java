@@ -3,10 +3,10 @@ package com.dndsuite.core.json.parsers.subevents;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.dndsuite.core.Effect;
+import com.dndsuite.core.Event;
+import com.dndsuite.core.GameObject;
 import com.dndsuite.core.UUIDTable;
-import com.dndsuite.core.effects.Effect;
-import com.dndsuite.core.events.Event;
-import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.exceptions.UUIDNotAssignedException;

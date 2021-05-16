@@ -1,12 +1,8 @@
-package com.dndsuite.core.tasks;
+package com.dndsuite.core;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import com.dndsuite.core.UUIDTable;
-import com.dndsuite.core.UUIDTableElement;
-import com.dndsuite.core.events.EventGroup;
-import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
 

@@ -10,8 +10,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.dndsuite.core.Taggable;
-import com.dndsuite.core.UUIDTableElement;
-import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 public abstract class JSONLoader implements Taggable {
 	protected JSONObject json;
@@ -74,17 +72,7 @@ public abstract class JSONLoader implements Taggable {
 	@Override
 	@SuppressWarnings("unchecked")
 	public String toString() {
-		String name = (String) json.getOrDefault("name", "<?>");
-		try {
-			if (this instanceof UUIDTableElement) {
-				UUIDTableElement element = (UUIDTableElement) this;
-				name += " (" + element.getUUID() + ")";
-			}
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-		}
-
-		return name;
+		return (String) json.getOrDefault("name", "<?>");
 	}
 
 	@SuppressWarnings("unchecked")

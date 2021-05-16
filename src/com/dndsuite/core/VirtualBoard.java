@@ -1,10 +1,9 @@
-package com.dndsuite.dnd;
+package com.dndsuite.core;
 
 import java.util.ArrayList;
 
 import org.json.simple.JSONObject;
 
-import com.dndsuite.core.gameobjects.GameObject;
 import com.dndsuite.exceptions.InvalidAreaOfEffectException;
 import com.dndsuite.exceptions.OutOfRangeException;
 import com.dndsuite.maths.Vector;

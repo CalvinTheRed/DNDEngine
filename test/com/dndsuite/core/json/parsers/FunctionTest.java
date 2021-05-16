@@ -15,6 +15,7 @@ import com.dndsuite.core.json.parsers.functions.GrantAdvantage;
 import com.dndsuite.core.json.parsers.functions.GrantDisadvantage;
 import com.dndsuite.core.json.parsers.subevents.AttackRoll;
 import com.dndsuite.exceptions.FunctionMismatchException;
+import com.dndsuite.exceptions.JSONFormatException;
 
 class FunctionTest {
 
@@ -44,8 +45,6 @@ class FunctionTest {
 		JSONObject fJson = new JSONObject();
 		fJson.put("function", "grant_advantage");
 
-		JSONObject oJson = new JSONObject();
-
 		f = new GrantAdvantage();
 		s = new AttackRoll();
 
@@ -55,6 +54,9 @@ class FunctionTest {
 		} catch (FunctionMismatchException ex) {
 			ex.printStackTrace();
 			fail("Function mismatch");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON formatting error");
 		}
 	}
 
@@ -68,8 +70,6 @@ class FunctionTest {
 		JSONObject fJson = new JSONObject();
 		fJson.put("function", "grant_disadvantage");
 
-		JSONObject oJson = new JSONObject();
-
 		f = new GrantDisadvantage();
 		s = new AttackRoll();
 
@@ -79,6 +79,9 @@ class FunctionTest {
 		} catch (FunctionMismatchException ex) {
 			ex.printStackTrace();
 			fail("Function mismatch");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON formatting error");
 		}
 	}
 

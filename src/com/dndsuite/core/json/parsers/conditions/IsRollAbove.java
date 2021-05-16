@@ -2,7 +2,7 @@ package com.dndsuite.core.json.parsers.conditions;
 
 import org.json.simple.JSONObject;
 
-import com.dndsuite.core.effects.Effect;
+import com.dndsuite.core.Effect;
 import com.dndsuite.core.json.parsers.Condition;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.Calculation;

@@ -1,4 +1,4 @@
-package com.dndsuite.core.events;
+package com.dndsuite.core;
 
 import java.util.ArrayList;
 

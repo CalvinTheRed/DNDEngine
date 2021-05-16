@@ -10,11 +10,10 @@ import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.dice.Die;
 
-public class AttackRoll extends Subevent implements Calculation {
+public class SavingThrow extends Subevent implements Calculation {
 	private long base;
 	private long set = -1;
 	private long bonus = 0;
-	private long criticalThreshold;
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -24,20 +23,16 @@ public class AttackRoll extends Subevent implements Calculation {
 		String subevent = (String) json.get("subevent");
 		addTag(subevent);
 		addTag("calculation");
-		if (!subevent.equals("attack_roll")) {
-			throw new SubeventMismatchException("attack_roll", subevent);
+		if (!subevent.equals("saving_throw")) {
+			throw new SubeventMismatchException("saving_throw", subevent);
 		}
 
-		// Load critical hit threshold (default is 20)
-		if (json.containsKey("critical_threshold")) {
-			criticalThreshold = (long) json.get("critical_threshold");
-		} else {
-			criticalThreshold = 20;
-		}
+		// Load dc ability
+		String dcAbility = (String) json.get("dc_ability");
 
-		// Load attack ability
-		String attackAbility = (String) json.get("attack_ability");
-		addTag(attackAbility);
+		// Load save ability
+		String saveAbility = (String) json.get("save_ability");
+		addTag(saveAbility);
 
 		presentToEffects(eSource, eTarget);
 
@@ -66,28 +61,22 @@ public class AttackRoll extends Subevent implements Calculation {
 			base = d20.getRoll();
 		}
 
-		// Check for critical hit/miss and inform parent Event
-		if (base >= criticalThreshold) {
-			e.addTag("critical_hit");
-		} else if (base == 1) {
-			e.addTag("critical_miss");
-		}
+		// Apply save ability bonus
+		addBonus(eTarget.getAbilityModifier(saveAbility));
 
-		// Apply attack ability bonus
-		addBonus(eSource.getAbilityModifier(attackAbility));
-
-		// Determine the armor class of the target
-		ArmorClassCalculation acc = new ArmorClassCalculation();
-		JSONObject accJson = new JSONObject();
-		accJson.put("subevent", "armor_class_calculation");
-		acc.parse(accJson, e, eSource, eTarget);
-		long ac = acc.get();
+		// Determine the dc of the source
+		DiceCheckCalculation dcc = new DiceCheckCalculation();
+		JSONObject dccJson = new JSONObject();
+		dccJson.put("subevent", "dice_check_calculation");
+		dccJson.put("dc_ability", dcAbility);
+		dcc.parse(dccJson, e, eSource, eTarget);
+		long dc = dcc.get();
 
 		JSONArray fallout;
-		if ((get() >= ac && !e.hasTag("critical_miss")) || base >= criticalThreshold) {
-			fallout = (JSONArray) json.get("hit");
+		if (get() >= dc) {
+			fallout = (JSONArray) json.get("pass");
 		} else {
-			fallout = (JSONArray) json.get("miss");
+			fallout = (JSONArray) json.get("fail");
 		}
 
 		for (Object o : fallout) {
@@ -105,24 +94,14 @@ public class AttackRoll extends Subevent implements Calculation {
 
 	@Override
 	public String toString() {
-		return "AttackRoll Subevent";
+		return "SavingThrow Subevent";
 	}
 
 	@Override
-	public AttackRoll clone() {
-		AttackRoll clone = new AttackRoll();
+	public SavingThrow clone() {
+		SavingThrow clone = new SavingThrow();
 		clone.parent = getParentEvent();
 		return clone;
-	}
-
-	public void setCriticalThreshold(int criticalThreshold) {
-		if (criticalThreshold < this.criticalThreshold) {
-			this.criticalThreshold = criticalThreshold;
-		}
-	}
-
-	public long getCriticalThreshold() {
-		return criticalThreshold;
 	}
 
 	@Override

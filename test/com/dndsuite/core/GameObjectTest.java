@@ -1,4 +1,4 @@
-package com.dndsuite.core.gameobjects;
+package com.dndsuite.core;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,8 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.dndsuite.core.UUIDTable;
-import com.dndsuite.dnd.VirtualBoard;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 class GameObjectTest {
@@ -65,12 +63,6 @@ class GameObjectTest {
 		JSONObject oJson;
 
 		oJson = new JSONObject();
-		JSONArray pos = new JSONArray();
-		pos.add(0L);
-		pos.add(0L);
-		pos.add(0L);
-		oJson.put("pos", pos);
-		oJson.put("tags", new JSONArray());
 		JSONObject abilityScores = new JSONObject();
 		abilityScores.put("str", 7L);
 		abilityScores.put("dex", 8L);
@@ -89,6 +81,40 @@ class GameObjectTest {
 		assertEquals(0L, o.getAbilityModifier("int"));
 		assertEquals(0L, o.getAbilityModifier("wis"));
 		assertEquals(1L, o.getAbilityModifier("cha"));
+	}
+
+	@Test
+	@DisplayName("Proficiency bonus")
+	@SuppressWarnings("unchecked")
+	void test004() {
+		GameObject o;
+		JSONObject oJson;
+
+		oJson = new JSONObject();
+		oJson.put("level", 1L);
+		o = new GameObject(oJson);
+		assertEquals(2, o.getProficiencyBonus());
+
+		oJson = new JSONObject();
+		oJson.put("level", 4L);
+		o = new GameObject(oJson);
+		assertEquals(2, o.getProficiencyBonus());
+
+		oJson = new JSONObject();
+		oJson.put("level", 5L);
+		o = new GameObject(oJson);
+		assertEquals(3, o.getProficiencyBonus());
+
+		oJson = new JSONObject();
+		oJson.put("level", 8L);
+		o = new GameObject(oJson);
+		assertEquals(3, o.getProficiencyBonus());
+
+		oJson = new JSONObject();
+		oJson.put("level", 9L);
+		o = new GameObject(oJson);
+		assertEquals(4, o.getProficiencyBonus());
+
 	}
 
 }

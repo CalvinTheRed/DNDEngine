@@ -14,7 +14,7 @@ public final class UUIDTable {
 		long key;
 		try {
 			key = element.getUUID();
-		} catch (UUIDNotAssignedException e) {
+		} catch (UUIDNotAssignedException ex) {
 			Random r = new Random();
 			do {
 				key = r.nextInt(Integer.MAX_VALUE);

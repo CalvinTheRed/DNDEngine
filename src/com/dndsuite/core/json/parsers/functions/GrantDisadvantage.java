@@ -2,7 +2,7 @@ package com.dndsuite.core.json.parsers.functions;
 
 import org.json.simple.JSONObject;
 
-import com.dndsuite.core.effects.Effect;
+import com.dndsuite.core.Effect;
 import com.dndsuite.core.json.parsers.Function;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.FunctionMismatchException;

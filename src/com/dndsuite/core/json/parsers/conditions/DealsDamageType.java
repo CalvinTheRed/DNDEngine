@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import org.json.simple.JSONObject;
 
-import com.dndsuite.core.effects.Effect;
-import com.dndsuite.core.events.Event;
+import com.dndsuite.core.Effect;
+import com.dndsuite.core.Event;
 import com.dndsuite.core.json.parsers.Condition;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.ConditionMismatchException;

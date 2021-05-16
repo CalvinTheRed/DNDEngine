@@ -1,13 +1,13 @@
-package com.dndsuite.core.events;
+package com.dndsuite.core;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import com.dndsuite.core.GameObject;
 import com.dndsuite.core.UUIDTable;
-import com.dndsuite.core.gameobjects.GameObject;
-import com.dndsuite.dnd.VirtualBoard;
+import com.dndsuite.core.VirtualBoard;
 import com.dndsuite.maths.Vector;
 
 class EventTest {

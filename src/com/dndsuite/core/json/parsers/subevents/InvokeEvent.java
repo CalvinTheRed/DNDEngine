@@ -2,17 +2,19 @@ package com.dndsuite.core.json.parsers.subevents;
 
 import org.json.simple.JSONObject;
 
-import com.dndsuite.core.events.Event;
-import com.dndsuite.core.gameobjects.GameObject;
+import com.dndsuite.core.Event;
+import com.dndsuite.core.GameObject;
+import com.dndsuite.core.ReceptorQueue;
 import com.dndsuite.core.json.parsers.Subevent;
+import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
-import com.dndsuite.maths.Vector;
 
 public class InvokeEvent extends Subevent {
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
-			throws SubeventMismatchException {
+			throws SubeventMismatchException, JSONFormatException {
 		parent = e;
 		String subevent = (String) json.get("subevent");
 		addTag(subevent);
@@ -23,18 +25,11 @@ public class InvokeEvent extends Subevent {
 		String eventName = (String) json.get("event");
 		Event event = new Event(eventName);
 
-		Vector targetPos = null;
-		String targetPosAlias = (String) json.get("target_pos");
-		if (targetPosAlias.equals("source")) {
-			targetPos = eSource.getPos();
-		} else if (targetPosAlias.equals("target")) {
-			targetPos = eTarget.getPos();
-		} else if (targetPosAlias.equals("custom")) {
-			// TODO: implement this
-			// Some kind of interrupt requiring outside input?
-		}
-		// TODO: need to find a way to interrupt to get new targeting data from user
-		// event.invoke(sourcePos, start, end, eSource);
+		JSONObject pauseNotes = new JSONObject();
+		pauseNotes.put("requirement", "event_invocation");
+		pauseNotes.put("source", eSource);
+		event.pause(pauseNotes);
+		ReceptorQueue.enqueue(event);
 	}
 
 	@Override
