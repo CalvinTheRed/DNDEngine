@@ -17,8 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.dndsuite.core.GameObject;
-import com.dndsuite.core.VirtualBoard;
 import com.dndsuite.exceptions.InvalidAreaOfEffectException;
 import com.dndsuite.exceptions.OutOfRangeException;
 import com.dndsuite.maths.Vector;

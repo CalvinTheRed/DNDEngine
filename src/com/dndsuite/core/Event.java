@@ -11,7 +11,8 @@ import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.ApplyEffect;
 import com.dndsuite.core.json.parsers.subevents.AttackRoll;
 import com.dndsuite.core.json.parsers.subevents.Damage;
-import com.dndsuite.core.json.parsers.subevents.DamageCalculation;
+import com.dndsuite.core.json.parsers.subevents.DamageDiceCollection;
+import com.dndsuite.core.json.parsers.subevents.SavingThrow;
 import com.dndsuite.exceptions.InvalidAreaOfEffectException;
 import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.OutOfRangeException;
@@ -31,10 +32,11 @@ public class Event extends JSONLoader implements Receptor {
 			put("apply_effect", new ApplyEffect());
 			put("attack_roll", new AttackRoll());
 			put("damage", new Damage());
+			put("saving_throw", new SavingThrow());
 		}
 	};
 
-	protected DamageCalculation baseDamage;
+	protected DamageDiceCollection baseDiceCollection;
 	protected JSONObject pauseNotes;
 
 	/**
@@ -58,8 +60,8 @@ public class Event extends JSONLoader implements Receptor {
 
 	@SuppressWarnings("unchecked")
 	public void invoke(Vector start, Vector end, GameObject source) {
-		// generate base damage subevent and roll damage
-		baseDamage = new DamageCalculation();
+		// generate base damage subevent and r
+		baseDiceCollection = new DamageDiceCollection();
 		JSONArray damageList = (JSONArray) json.getOrDefault("damage", new JSONArray());
 		for (Object o : damageList) {
 			JSONObject damageElement = (JSONObject) o;
@@ -69,11 +71,8 @@ public class Event extends JSONLoader implements Receptor {
 			String damageType = (String) damageElement.get("damage_type");
 			DamageDiceGroup group = new DamageDiceGroup(dice, size, damageType);
 			group.addBonus(bonus);
-			baseDamage.addDamageDiceGroup(group);
+			baseDiceCollection.addDamageDiceGroup(group);
 		}
-		while (source.processSubevent(baseDamage))
-			;
-		baseDamage.roll();
 
 		// iterate through subevents
 		JSONArray subevents = (JSONArray) json.get("subevents");
@@ -101,13 +100,14 @@ public class Event extends JSONLoader implements Receptor {
 		return new Event(json);
 	}
 
-	public DamageCalculation getBaseDamage() {
-		return baseDamage.clone();
+	public DamageDiceCollection getBaseDiceCollection() {
+		return baseDiceCollection;
 	}
 
 	@Override
 	public void pause(JSONObject pauseNotes) {
 		this.pauseNotes = pauseNotes;
+		ReceptorQueue.enqueue(this);
 
 	}
 

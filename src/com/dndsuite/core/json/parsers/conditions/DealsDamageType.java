@@ -21,7 +21,7 @@ public class DealsDamageType implements Condition {
 		}
 
 		Event parent = s.getParentEvent();
-		ArrayList<DamageDiceGroup> damageDice = parent.getBaseDamage().getDamageDice();
+		ArrayList<DamageDiceGroup> damageDice = parent.getBaseDiceCollection().getDamageDice();
 		for (DamageDiceGroup group : damageDice) {
 			if (group.getDamageType().equals(json.get("damage_type"))) {
 				return true;

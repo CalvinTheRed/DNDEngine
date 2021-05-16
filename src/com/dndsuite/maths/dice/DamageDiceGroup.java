@@ -19,6 +19,12 @@ public class DamageDiceGroup extends DiceGroup implements Taggable {
 		tags = new ArrayList<String>();
 	}
 
+	public DamageDiceGroup(long numDice, long dieSize, long bonus, String damageType) {
+		super(numDice, dieSize, bonus);
+		this.damageType = damageType;
+		tags = new ArrayList<String>();
+	}
+
 	public String getDamageType() {
 		return damageType;
 	}

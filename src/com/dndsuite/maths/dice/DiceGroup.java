@@ -1,6 +1,6 @@
 package com.dndsuite.maths.dice;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * This class represents a collection of dice. The dice need not all be of the
@@ -10,22 +10,30 @@ import java.util.LinkedList;
  *
  */
 public class DiceGroup {
-	protected LinkedList<Die> dice;
+	protected ArrayList<Die> dice;
 	protected long bonus;
 
 	public DiceGroup(long numDice, long dieSize) {
-		dice = new LinkedList<Die>();
+		dice = new ArrayList<Die>();
 		for (int i = 0; i < numDice; i++) {
 			dice.add(new Die(dieSize));
 		}
 		bonus = 0;
 	}
 
+	public DiceGroup(long numDice, long dieSize, long bonus) {
+		dice = new ArrayList<Die>();
+		for (int i = 0; i < numDice; i++) {
+			dice.add(new Die(dieSize));
+		}
+		this.bonus = bonus;
+	}
+
 	public void addDie(Die d) {
 		dice.add(d);
 	}
 
-	public LinkedList<Die> getDice() {
+	public ArrayList<Die> getDice() {
 		return dice;
 	}
 

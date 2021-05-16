@@ -25,7 +25,7 @@ import com.dndsuite.core.json.parsers.conditions.IsRollAbove;
 import com.dndsuite.core.json.parsers.conditions.IsRollBelow;
 import com.dndsuite.core.json.parsers.subevents.ArmorClassCalculation;
 import com.dndsuite.core.json.parsers.subevents.AttackRoll;
-import com.dndsuite.core.json.parsers.subevents.DamageCalculation;
+import com.dndsuite.core.json.parsers.subevents.DamageDiceCollection;
 import com.dndsuite.exceptions.ConditionMismatchException;
 import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
@@ -299,7 +299,7 @@ class ConditionTest {
 		oJson.put("effects", new JSONArray());
 
 		JSONObject sJson = new JSONObject();
-		sJson.put("subevent", "damage_calculation");
+		sJson.put("subevent", "damage_dice_collection");
 
 		JSONObject eJson = new JSONObject();
 		JSONArray damageList = new JSONArray();
@@ -316,7 +316,7 @@ class ConditionTest {
 
 		try {
 			e.invoke(new Vector(), new Vector(), o);
-			s = new DamageCalculation();
+			s = new DamageDiceCollection();
 			s.parse(sJson, e, o, o);
 			c = new DealsDamageType();
 			assertTrue(c.parse(cJson, null, s));

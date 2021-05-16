@@ -3,7 +3,7 @@ package com.dndsuite.maths.dice;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -11,9 +11,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import com.dndsuite.maths.dice.DiceGroup;
-import com.dndsuite.maths.dice.Die;
 
 public class DiceGroupTest {
 
@@ -40,7 +37,7 @@ public class DiceGroupTest {
 		int dieSize = 1;
 		DiceGroup group = new DiceGroup(numDice, dieSize);
 		assertEquals(group.getBonus(), 0);
-		LinkedList<Die> list = group.getDice();
+		ArrayList<Die> list = group.getDice();
 		assertEquals(list.size(), numDice);
 		for (Die d : list) {
 			assertEquals(d.getSize(), dieSize);

@@ -21,9 +21,14 @@ import com.dndsuite.core.VirtualBoard;
 import com.dndsuite.core.json.parsers.subevents.AbilityScoreCalculation;
 import com.dndsuite.core.json.parsers.subevents.ArmorClassCalculation;
 import com.dndsuite.core.json.parsers.subevents.AttackRoll;
+import com.dndsuite.core.json.parsers.subevents.Damage;
+import com.dndsuite.core.json.parsers.subevents.DamageCalculation;
+import com.dndsuite.core.json.parsers.subevents.DamageDiceCollection;
 import com.dndsuite.core.json.parsers.subevents.DiceCheckCalculation;
 import com.dndsuite.core.json.parsers.subevents.SavingThrow;
 import com.dndsuite.exceptions.SubeventMismatchException;
+import com.dndsuite.maths.Vector;
+import com.dndsuite.maths.dice.DamageDiceGroup;
 import com.dndsuite.maths.dice.Die;
 
 class SubeventTest {
@@ -102,59 +107,10 @@ class SubeventTest {
 	}
 
 	@Test
-	@DisplayName("DiceCheckCalculation")
+	@DisplayName("ApplyEffect")
 	@SuppressWarnings("unchecked")
 	void test002() {
-		Subevent s = new DiceCheckCalculation();
-		JSONObject sJson;
-		JSONObject oJson;
-		GameObject o;
-
-		oJson = new JSONObject();
-		JSONObject abilityScores = new JSONObject();
-		abilityScores.put("wis", 12L);
-		oJson.put("ability_scores", abilityScores);
-		oJson.put("effects", new JSONArray());
-		oJson.put("level", 5L);
-		o = new GameObject(oJson);
-
-		sJson = new JSONObject();
-		sJson.put("subevent", "dice_check_calculation");
-		sJson.put("dc_ability", "wis");
-
-		try {
-			DiceCheckCalculation dcc = (DiceCheckCalculation) s;
-			// Default armor class
-			dcc.parse(sJson, null, o, o);
-			assertEquals(12L, dcc.get());
-
-			// armor class w/ bonus
-			dcc.parse(sJson, null, o, o);
-			dcc.addBonus(2L);
-			dcc.addBonus(5L);
-			assertEquals(19L, dcc.get());
-
-			// armor class w/ set
-			dcc.parse(sJson, null, o, o);
-			dcc.setTo(13L);
-			assertEquals(13L, dcc.get());
-
-			// armor class w/ set & bonus
-			dcc.parse(sJson, null, o, o);
-			dcc.setTo(13L);
-			dcc.addBonus(7L);
-			assertEquals(13L, dcc.get());
-
-			// armor class w/ multiple sets
-			dcc.parse(sJson, null, o, o);
-			dcc.setTo(13L);
-			dcc.setTo(7L);
-			assertEquals(13L, dcc.get());
-
-		} catch (SubeventMismatchException ex) {
-			ex.printStackTrace();
-			fail("Subevent mismatch");
-		}
+		fail("not yet implemented");
 	}
 
 	@Test
@@ -385,9 +341,239 @@ class SubeventTest {
 	}
 
 	@Test
-	@DisplayName("SavingThrow")
+	@DisplayName("Damage")
 	@SuppressWarnings("unchecked")
 	void test005() {
+		Damage s;
+		JSONObject oJson;
+		JSONObject eJson;
+		JSONObject sJson;
+		GameObject o;
+		Event e;
+
+		oJson = new JSONObject();
+		oJson.put("effects", new JSONArray());
+		JSONObject health = new JSONObject();
+		health.put("max", 10L);
+		health.put("base", 10L);
+		health.put("current", 10L);
+		health.put("tmp", 0L);
+		oJson.put("health", health);
+		o = new GameObject(oJson);
+
+		eJson = new JSONObject();
+		JSONArray damageList = new JSONArray();
+		JSONObject damageElement = new JSONObject();
+		damageElement.put("dice", 1L);
+		damageElement.put("size", 6L);
+		damageElement.put("damage_type", "cold");
+		damageList.add(damageElement);
+		eJson.put("damage", damageList);
+		eJson.put("subevents", new JSONArray());
+
+		sJson = new JSONObject();
+		sJson.put("subevent", "damage");
+
+		e = new Event(eJson);
+
+		try {
+			// damage dealt correctly
+			Die.enableDiceControl(new long[] { 5L });
+			s = new Damage();
+			e.invoke(new Vector(), new Vector(), o);
+			s.parse(sJson, e, o, o);
+			assertEquals(5L, (long) o.getHealth().get("current"));
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+			fail("Subevent mismatch");
+		}
+	}
+
+	@Test
+	@DisplayName("DamageCalculation")
+	@SuppressWarnings("unchecked")
+	void test006() {
+		DamageCalculation s;
+		JSONObject oJson;
+		JSONObject eJson;
+		JSONObject sJson;
+		GameObject o;
+		Event e;
+
+		oJson = new JSONObject();
+		oJson.put("effects", new JSONArray());
+		JSONObject health = new JSONObject();
+		health.put("max", 10L);
+		health.put("base", 10L);
+		health.put("current", 10L);
+		health.put("tmp", 0L);
+		oJson.put("health", health);
+		o = new GameObject(oJson);
+
+		eJson = new JSONObject();
+		JSONArray damageList = new JSONArray();
+		JSONObject damageElement = new JSONObject();
+		damageElement.put("dice", 1L);
+		damageElement.put("size", 6L);
+		damageElement.put("damage_type", "cold");
+		damageList.add(damageElement);
+		eJson.put("damage", damageList);
+		eJson.put("subevents", new JSONArray());
+
+		sJson = new JSONObject();
+		sJson.put("subevent", "damage_calculation");
+
+		e = new Event(eJson);
+
+		try {
+			Die.enableDiceControl(new long[] { 1L });
+			s = new DamageCalculation();
+			e.invoke(new Vector(), new Vector(), o);
+			s.setDamageDice(e.getBaseDiceCollection());
+
+			// apply damage bonus to existing damage type
+			s.addDamageBonus(2L, "cold");
+			assertEquals(1L, s.getDamageDice().size());
+			assertEquals(2L, s.getDamageDice().get(0).getBonus());
+
+			// apply damage bonus to new damage type
+			s.addDamageBonus(2L, "fire");
+			assertEquals(2L, s.getDamageDice().size());
+			assertEquals(2L, s.getDamageDice().get(1).getBonus());
+
+			// damage dealt correctly
+			s.parse(sJson, e, o, o);
+			assertEquals(5L, (long) o.getHealth().get("current"));
+
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+			fail("Subevent mismatch");
+		}
+	}
+
+	@Test
+	@DisplayName("DamageDiceCollection")
+	@SuppressWarnings("unchecked")
+	void test007() {
+		DamageDiceCollection s;
+		JSONObject oJson;
+		JSONObject eJson;
+		JSONObject sJson;
+		GameObject o;
+		Event e;
+
+		oJson = new JSONObject();
+		oJson.put("effects", new JSONArray());
+		JSONObject health = new JSONObject();
+		health.put("max", 10L);
+		health.put("base", 10L);
+		health.put("current", 10L);
+		health.put("tmp", 0L);
+		oJson.put("health", health);
+		o = new GameObject(oJson);
+
+		eJson = new JSONObject();
+		JSONArray damageList = new JSONArray();
+		JSONObject damageElement = new JSONObject();
+		damageElement.put("dice", 1L);
+		damageElement.put("size", 6L);
+		damageElement.put("damage_type", "cold");
+		damageList.add(damageElement);
+		eJson.put("damage", damageList);
+		eJson.put("subevents", new JSONArray());
+
+		sJson = new JSONObject();
+		sJson.put("subevent", "damage_dice_collection");
+
+		e = new Event(eJson);
+
+		try {
+			Die.enableDiceControl(new long[] { 1L, 1L });
+			e.invoke(new Vector(), new Vector(), o);
+			s = e.getBaseDiceCollection();
+
+			// add damage dice group to damage, with inbuilt bonus
+			s.addDamageDiceGroup(new DamageDiceGroup(1L, 6L, 1L, "cold"));
+			assertEquals(1, s.getDamageDice().size());
+			assertEquals(2, s.getDamageDice().get(0).getDice().size());
+
+			// damage dealt correctly
+			s.parse(sJson, e, o, o);
+			assertEquals(7L, (long) o.getHealth().get("current"));
+
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+			fail("Subevent mismatch");
+		}
+	}
+
+	@Test
+	@DisplayName("DiceCheckCalculation")
+	@SuppressWarnings("unchecked")
+	void test008() {
+		Subevent s = new DiceCheckCalculation();
+		JSONObject sJson;
+		JSONObject oJson;
+		GameObject o;
+
+		oJson = new JSONObject();
+		JSONObject abilityScores = new JSONObject();
+		abilityScores.put("wis", 12L);
+		oJson.put("ability_scores", abilityScores);
+		oJson.put("effects", new JSONArray());
+		oJson.put("level", 5L);
+		o = new GameObject(oJson);
+
+		sJson = new JSONObject();
+		sJson.put("subevent", "dice_check_calculation");
+		sJson.put("dc_ability", "wis");
+
+		try {
+			DiceCheckCalculation dcc = (DiceCheckCalculation) s;
+			// Default armor class
+			dcc.parse(sJson, null, o, o);
+			assertEquals(12L, dcc.get());
+
+			// armor class w/ bonus
+			dcc.parse(sJson, null, o, o);
+			dcc.addBonus(2L);
+			dcc.addBonus(5L);
+			assertEquals(19L, dcc.get());
+
+			// armor class w/ set
+			dcc.parse(sJson, null, o, o);
+			dcc.setTo(13L);
+			assertEquals(13L, dcc.get());
+
+			// armor class w/ set & bonus
+			dcc.parse(sJson, null, o, o);
+			dcc.setTo(13L);
+			dcc.addBonus(7L);
+			assertEquals(13L, dcc.get());
+
+			// armor class w/ multiple sets
+			dcc.parse(sJson, null, o, o);
+			dcc.setTo(13L);
+			dcc.setTo(7L);
+			assertEquals(13L, dcc.get());
+
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+			fail("Subevent mismatch");
+		}
+	}
+
+	@Test
+	@DisplayName("InvokeEvent")
+	@SuppressWarnings("unchecked")
+	void test009() {
+		fail("not yet implemented");
+	}
+
+	@Test
+	@DisplayName("SavingThrow")
+	@SuppressWarnings("unchecked")
+	void test00A() {
 		SavingThrow s;
 		JSONObject sJson;
 		JSONObject oJson;

@@ -9,30 +9,34 @@ import com.dndsuite.core.GameObject;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.dice.DamageDiceGroup;
+import com.dndsuite.maths.dice.Die;
 
-public class DamageCalculation extends Subevent {
+public class DamageDiceCollection extends Subevent {
 	protected ArrayList<DamageDiceGroup> damageDice = new ArrayList<DamageDiceGroup>();
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
 			throws SubeventMismatchException {
 		parent = e;
 		String subevent = (String) json.get("subevent");
 		addTag(subevent);
-		if (!subevent.equals("damage_calculation")) {
-			throw new SubeventMismatchException("damage_calculation", subevent);
+		if (!subevent.equals("damage_dice_collection")) {
+			throw new SubeventMismatchException("damage_dice_collection", subevent);
 		}
-
-		roll();
 
 		presentToEffects(eSource, eTarget);
 
-		eTarget.takeDamage(this);
+		JSONObject sJson = new JSONObject();
+		sJson.put("subevent", "damage_calculation");
+		DamageCalculation s = new DamageCalculation();
+		s.setDamageDice(this);
+		s.parse(sJson, e, eSource, eTarget);
 	}
 
 	@Override
-	public DamageCalculation clone() {
-		DamageCalculation clone = new DamageCalculation();
+	public DamageDiceCollection clone() {
+		DamageDiceCollection clone = new DamageDiceCollection();
 		clone.parent = getParentEvent();
 		clone.appliedEffects.addAll(appliedEffects);
 		clone.tags.addAll(tags);
@@ -40,33 +44,26 @@ public class DamageCalculation extends Subevent {
 		return clone;
 	}
 
-	public void addDamageBonus(long bonus, String damageType) {
+	public void addDamageDiceGroup(DamageDiceGroup newGroup) {
 		for (DamageDiceGroup group : damageDice) {
-			if (group.getDamageType().equals(damageType)) {
-				group.addBonus(bonus);
+			if (group.getDamageType().equals(newGroup.getDamageType())) {
+				for (Die die : newGroup.getDice()) {
+					group.addDie(die);
+				}
+				group.addBonus(newGroup.getBonus());
 				return;
 			}
 		}
-		damageDice.add(new DamageDiceGroup(0, 0, bonus, damageType));
-	}
-
-	public void roll() {
-		for (DamageDiceGroup group : damageDice) {
-			group.roll();
-		}
+		damageDice.add(newGroup);
 	}
 
 	public ArrayList<DamageDiceGroup> getDamageDice() {
 		return damageDice;
 	}
 
-	public void setDamageDice(DamageDiceCollection s) {
-		damageDice = s.getDamageDice();
-	}
-
 	@Override
 	public String toString() {
-		return "DamageCalculation Subevent";
+		return "DamageDiceCollection Subevent";
 	}
 
 }

@@ -4,7 +4,6 @@ import org.json.simple.JSONObject;
 
 import com.dndsuite.core.Event;
 import com.dndsuite.core.GameObject;
-import com.dndsuite.core.ReceptorQueue;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
@@ -29,7 +28,6 @@ public class InvokeEvent extends Subevent {
 		pauseNotes.put("requirement", "event_invocation");
 		pauseNotes.put("source", eSource);
 		event.pause(pauseNotes);
-		ReceptorQueue.enqueue(event);
 	}
 
 	@Override

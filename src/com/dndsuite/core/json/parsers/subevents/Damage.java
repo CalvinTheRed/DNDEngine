@@ -20,10 +20,10 @@ public class Damage extends Subevent {
 			throw new SubeventMismatchException("damage", subevent);
 		}
 
-		DamageCalculation damage = e.getBaseDamage();
-		JSONObject dJson = new JSONObject();
-		dJson.put("subevent", "damage_calculation");
-		damage.parse(dJson, e, eSource, eTarget);
+		DamageDiceCollection s = e.getBaseDiceCollection();
+		JSONObject sJson = new JSONObject();
+		sJson.put("subevent", "damage_dice_collection");
+		s.parse(sJson, e, eSource, eTarget);
 	}
 
 	@Override
