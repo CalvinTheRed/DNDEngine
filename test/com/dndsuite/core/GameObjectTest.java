@@ -145,6 +145,7 @@ class GameObjectTest {
 		iJson.put("tags", tags);
 		iJson.put("uuid", uuid);
 		iJson.put("name", "Test Item");
+		iJson.put("equipped_effects", new JSONArray());
 
 		i = new Item(iJson);
 		o = new GameObject(oJson);
