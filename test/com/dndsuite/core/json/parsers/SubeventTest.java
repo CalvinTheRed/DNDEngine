@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.util.ArrayList;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.AfterAll;
@@ -26,8 +28,10 @@ import com.dndsuite.core.json.parsers.subevents.Damage;
 import com.dndsuite.core.json.parsers.subevents.DamageCalculation;
 import com.dndsuite.core.json.parsers.subevents.DamageDiceCollection;
 import com.dndsuite.core.json.parsers.subevents.DiceCheckCalculation;
+import com.dndsuite.core.json.parsers.subevents.ItemDamage;
 import com.dndsuite.core.json.parsers.subevents.SavingThrow;
 import com.dndsuite.core.json.parsers.subevents.UnequipItem;
+import com.dndsuite.exceptions.CannotUnequipItemException;
 import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.Vector;
@@ -574,9 +578,143 @@ class SubeventTest {
 	}
 
 	@Test
-	@DisplayName("SavingThrow")
+	@DisplayName("ItemDamage")
 	@SuppressWarnings("unchecked")
 	void test00A() {
+		ItemDamage s = new ItemDamage();
+		JSONObject iJson;
+		JSONObject oJson;
+		JSONObject sJson;
+		GameObject o;
+		Item i;
+
+		// NOTE: this test does not incorporate mainhand ability modifier damage
+
+		long uuid = 1234L;
+
+		iJson = new JSONObject();
+		JSONArray damageList = new JSONArray();
+		JSONObject damageElement = new JSONObject();
+		damageElement.put("dice", 1L);
+		damageElement.put("size", 8L);
+		damageElement.put("damage_type", "cold");
+		damageList.add(damageElement);
+		iJson.put("damage", damageList);
+		iJson.put("equipped_effects", new JSONArray());
+		JSONArray tags = new JSONArray();
+		tags.add("versatile");
+		iJson.put("tags", tags);
+		iJson.put("uuid", uuid);
+
+		i = new Item(iJson);
+		UUIDTable.addToTable(i);
+
+		oJson = new JSONObject();
+		oJson.put("effects", new JSONArray());
+		JSONObject inventory = new JSONObject();
+		inventory.put("mainhand", -1L);
+		inventory.put("offhand", -1L);
+		inventory.put("items", new JSONArray());
+		oJson.put("inventory", inventory);
+		JSONObject health = new JSONObject();
+		health.put("max", 10L);
+		health.put("base", 10L);
+		health.put("current", 10L);
+		health.put("tmp", 0L);
+		oJson.put("health", health);
+
+		sJson = new JSONObject();
+		sJson.put("subevent", "item_damage");
+
+		o = new GameObject(oJson);
+		try {
+			ArrayList<DamageDiceGroup> damageDice;
+			DamageDiceCollection ddc;
+			DamageDiceGroup group;
+
+			// unarmed attack, mainhand
+			sJson.put("hand", "mainhand");
+			ddc = s.getBaseCollection(sJson, o);
+			damageDice = ddc.getDamageDice();
+			assertEquals(1, damageDice.size());
+			group = damageDice.get(0);
+			assertEquals(1, group.getDice().size());
+			assertEquals(4, group.getDice().get(0).getSize());
+			assertEquals("bludgeoning", group.getDamageType());
+
+			// unarmed attack, offhand
+			sJson.put("hand", "offhand");
+			ddc = s.getBaseCollection(sJson, o);
+			damageDice = ddc.getDamageDice();
+			assertEquals(1, damageDice.size());
+			group = damageDice.get(0);
+			assertEquals(1, group.getDice().size());
+			assertEquals(4, group.getDice().get(0).getSize());
+			assertEquals("bludgeoning", group.getDamageType());
+
+			// one-handed attack, mainhand
+			o.equipMainhand(uuid);
+			sJson.put("hand", "mainhand");
+			ddc = s.getBaseCollection(sJson, o);
+			damageDice = ddc.getDamageDice();
+			assertEquals(1, damageDice.size());
+			group = damageDice.get(0);
+			assertEquals(1, group.getDice().size());
+			assertEquals(8, group.getDice().get(0).getSize());
+			assertEquals("cold", group.getDamageType());
+			o.stowMainhand();
+
+			// one-handed attack, offhand
+			o.equipOffhand(uuid);
+			sJson.put("hand", "offhand");
+			ddc = s.getBaseCollection(sJson, o);
+			damageDice = ddc.getDamageDice();
+			assertEquals(1, damageDice.size());
+			group = damageDice.get(0);
+			assertEquals(1, group.getDice().size());
+			assertEquals(8, group.getDice().get(0).getSize());
+			assertEquals("cold", group.getDamageType());
+			o.stowOffhand();
+
+			// versatile attack, mainhand
+			o.equipMainhand(uuid);
+			o.toggleVersatile();
+			sJson.put("hand", "mainhand");
+			ddc = s.getBaseCollection(sJson, o);
+			damageDice = ddc.getDamageDice();
+			assertEquals(1, damageDice.size());
+			group = damageDice.get(0);
+			assertEquals(1, group.getDice().size());
+			assertEquals(10, group.getDice().get(0).getSize());
+			assertEquals("cold", group.getDamageType());
+			o.stowMainhand();
+
+			// versatile attack, offhand
+			o.equipMainhand(uuid);
+			o.toggleVersatile();
+			sJson.put("hand", "offhand");
+			ddc = s.getBaseCollection(sJson, o);
+			damageDice = ddc.getDamageDice();
+			assertEquals(1, damageDice.size());
+			group = damageDice.get(0);
+			assertEquals(1, group.getDice().size());
+			assertEquals(10, group.getDice().get(0).getSize()); // doesn't upsize
+			assertEquals("cold", group.getDamageType());
+			o.stowMainhand();
+
+		} catch (CannotUnequipItemException ex) {
+			ex.printStackTrace();
+			fail("Could not unequip item");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON format error");
+		}
+	}
+
+	@Test
+	@DisplayName("SavingThrow")
+	@SuppressWarnings("unchecked")
+	void test00B() {
 		SavingThrow s;
 		JSONObject sJson;
 		JSONObject oJson;
@@ -714,7 +852,7 @@ class SubeventTest {
 	@Test
 	@DisplayName("UnequipItem")
 	@SuppressWarnings("unchecked")
-	void test00B() {
+	void test00C() {
 		UnequipItem s;
 		JSONObject sJson;
 		JSONObject oJson;
