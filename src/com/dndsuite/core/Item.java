@@ -1,8 +1,10 @@
 package com.dndsuite.core;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.dndsuite.core.json.JSONLoader;
+import com.dndsuite.exceptions.UUIDDoesNotExistException;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 public class Item extends JSONLoader implements UUIDTableElement {
@@ -15,10 +17,25 @@ public class Item extends JSONLoader implements UUIDTableElement {
 		super("items/" + file);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void parseResourceData() {
-		// TODO Auto-generated method stub
+		JSONArray effectNames = (JSONArray) json.remove("equipped_effects");
+		JSONArray effectUUIDs = new JSONArray();
+		while (effectNames.size() > 0) {
+			// TODO: ensure source/target UUIDs are provided here
+			String effectName = (String) effectNames.remove(0);
+			// TODO: does null, null work?
+			Effect e = new Effect(effectName, null, null);
+			UUIDTable.addToTable(e);
+			try {
+				effectUUIDs.add(e.getUUID());
+			} catch (UUIDNotAssignedException ex) {
+				ex.printStackTrace();
+			}
 
+		}
+		json.put("equipped_effects", effectUUIDs);
 	}
 
 	@Override
@@ -36,11 +53,44 @@ public class Item extends JSONLoader implements UUIDTableElement {
 	}
 
 	public void equipBy(GameObject o) {
-		// TODO: equip stuff here
+		try {
+			JSONArray equippedEffects = (JSONArray) json.get("equipped_effects");
+			for (Object obj : equippedEffects) {
+				long uuid = (long) obj;
+				Effect e = (Effect) UUIDTable.get(uuid);
+				e.setSource(o);
+				e.setTarget(o);
+				o.addEffect(e);
+			}
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public void unequipBy(GameObject o) {
-		// TODO: unequip stuff here, assuming success
+		try {
+			JSONArray equippedEffects = (JSONArray) json.get("equipped_effects");
+			for (Object obj : equippedEffects) {
+				long uuid = (long) obj;
+				Effect e = (Effect) UUIDTable.get(uuid);
+				e.setSource(null);
+				e.setTarget(null);
+				o.removeEffect(e);
+			}
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public JSONArray getDamage() {
+		JSONArray improvised = new JSONArray();
+		JSONObject damage = new JSONObject();
+		damage.put("dice", 1L);
+		damage.put("size", 4L);
+		damage.put("damage_type", "bludgeoning");
+		improvised.add(damage);
+		return (JSONArray) json.getOrDefault("damage", improvised);
 	}
 
 }

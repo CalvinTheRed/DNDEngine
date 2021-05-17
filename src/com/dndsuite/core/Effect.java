@@ -21,6 +21,7 @@ import com.dndsuite.core.json.parsers.functions.GrantDisadvantage;
 import com.dndsuite.exceptions.ConditionMismatchException;
 import com.dndsuite.exceptions.FunctionMismatchException;
 import com.dndsuite.exceptions.JSONFormatException;
+import com.dndsuite.exceptions.UUIDDoesNotExistException;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 public class Effect extends JSONLoader implements UUIDTableElement {
@@ -138,6 +139,42 @@ public class Effect extends JSONLoader implements UUIDTableElement {
 			}
 		}
 		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setSource(GameObject o) {
+		try {
+			json.put("source", o.getUUID());
+		} catch (UUIDNotAssignedException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setTarget(GameObject o) {
+		try {
+			json.put("target", o.getUUID());
+		} catch (UUIDNotAssignedException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public GameObject getSource() {
+		try {
+			return (GameObject) UUIDTable.get((long) json.get("source"));
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+
+	public GameObject getTarget() {
+		try {
+			return (GameObject) UUIDTable.get((long) json.get("target"));
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
+			return null;
+		}
 	}
 
 }

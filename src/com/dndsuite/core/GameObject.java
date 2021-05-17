@@ -132,8 +132,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 				Task t = (Task) element;
 				t.invoke(this);
 			}
-		} catch (UUIDDoesNotExistException e) {
-			e.printStackTrace();
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
 			return;
 		}
 	}
@@ -159,6 +159,39 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 
 	public void clearQueuedEvents() {
 		queuedEvents.clear();
+	}
+
+	@SuppressWarnings("unchecked")
+	public void addEffect(Effect effect) {
+		JSONArray effectUUIDs = (JSONArray) json.get("effects");
+		boolean redundant = false;
+		for (Object o : effectUUIDs) {
+			long uuid = (long) o;
+			try {
+				Effect e = (Effect) UUIDTable.get(uuid);
+				if (e.toString().equals(effect.toString())) {
+					redundant = true;
+				}
+			} catch (UUIDDoesNotExistException ex) {
+				ex.printStackTrace();
+			}
+		}
+		if (!redundant) {
+			try {
+				effectUUIDs.add(effect.getUUID());
+			} catch (UUIDNotAssignedException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+
+	public void removeEffect(Effect effect) {
+		JSONArray effectUUIDs = (JSONArray) json.get("effects");
+		try {
+			effectUUIDs.remove(effect.getUUID());
+		} catch (UUIDNotAssignedException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
