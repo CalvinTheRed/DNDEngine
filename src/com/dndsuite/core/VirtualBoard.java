@@ -139,13 +139,13 @@ public final class VirtualBoard {
 				if (end.sub(sourcePos).mag() <= (double) range.get("long")) {
 					objects.add(nearestObject(end, new String[] {}));
 				} else {
-					throw new OutOfRangeException();
+					throw new OutOfRangeException((double) range.get("long"), end.sub(sourcePos).mag());
 				}
 			} else if (areaOfEffect.get("range") instanceof Double) {
 				if (end.sub(sourcePos).mag() <= (double) areaOfEffect.get("range")) {
 					objects.add(nearestObject(end, new String[] {}));
 				} else {
-					throw new OutOfRangeException();
+					throw new OutOfRangeException((double) areaOfEffect.get("range"), end.sub(sourcePos).mag());
 				}
 			} else {
 				throw new InvalidAreaOfEffectException();
@@ -158,7 +158,7 @@ public final class VirtualBoard {
 				if (start.sub(sourcePos).mag() <= (double) areaOfEffect.get("range")) {
 					objects.addAll(objectsInCone(start, end, (double) areaOfEffect.get("length"), new String[] {}));
 				} else {
-					throw new OutOfRangeException();
+					throw new OutOfRangeException((double) areaOfEffect.get("range"), start.sub(sourcePos).mag());
 				}
 			} else {
 				throw new InvalidAreaOfEffectException();
@@ -177,7 +177,7 @@ public final class VirtualBoard {
 				if (start.sub(sourcePos).mag() <= (double) areaOfEffect.get("range")) {
 					objects.addAll(objectsInCube(start, end, (double) areaOfEffect.get("radius"), new String[] {}));
 				} else {
-					throw new OutOfRangeException();
+					throw new OutOfRangeException((double) areaOfEffect.get("range"), start.sub(sourcePos).mag());
 				}
 			} else {
 				throw new InvalidAreaOfEffectException();
@@ -192,7 +192,7 @@ public final class VirtualBoard {
 					objects.addAll(objectsInLine(start, end, (double) areaOfEffect.get("length"),
 							(double) areaOfEffect.get("radius"), new String[] {}));
 				} else {
-					throw new OutOfRangeException();
+					throw new OutOfRangeException((double) areaOfEffect.get("range"), start.sub(sourcePos).mag());
 				}
 			} else {
 				throw new InvalidAreaOfEffectException();
@@ -205,7 +205,7 @@ public final class VirtualBoard {
 				if (start.sub(sourcePos).mag() <= (double) areaOfEffect.get("range")) {
 					objects.addAll(objectsInSphere(start, (double) areaOfEffect.get("radius"), new String[] {}));
 				} else {
-					throw new OutOfRangeException();
+					throw new OutOfRangeException((double) areaOfEffect.get("range"), start.sub(sourcePos).mag());
 				}
 			} else {
 				throw new InvalidAreaOfEffectException();

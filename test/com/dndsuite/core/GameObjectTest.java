@@ -1,6 +1,7 @@
 package com.dndsuite.core;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.dndsuite.exceptions.CannotUnequipItemException;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 class GameObjectTest {
@@ -115,6 +117,134 @@ class GameObjectTest {
 		o = new GameObject(oJson);
 		assertEquals(4, o.getProficiencyBonus());
 
+	}
+
+	@Test
+	@DisplayName("Item equipping & unequipping")
+	@SuppressWarnings("unchecked")
+	void test005() {
+		GameObject o;
+		JSONObject oJson;
+		JSONObject iJson;
+		Item i;
+
+		oJson = new JSONObject();
+		JSONObject inventory = new JSONObject();
+		inventory.put("mainhand", -1L);
+		inventory.put("offhand", -1L);
+		JSONArray items = new JSONArray();
+		inventory.put("items", items);
+		oJson.put("inventory", inventory);
+		oJson.put("effects", new JSONArray());
+
+		long uuid = 1234L;
+
+		iJson = new JSONObject();
+		JSONArray tags = new JSONArray();
+		tags.add("versatile");
+		iJson.put("tags", tags);
+		iJson.put("uuid", uuid);
+		iJson.put("name", "Test Item");
+
+		i = new Item(iJson);
+		o = new GameObject(oJson);
+
+		UUIDTable.addToTable(i);
+
+		try {
+			// mainhand null -> single-handed
+			o.equipMainhand(uuid);
+			assertTrue(o.hasItem(uuid));
+			assertEquals(i, o.getMainhand());
+			assertEquals(null, o.getOffhand());
+
+			// mainhand single-handed -> null
+			o.stowMainhand();
+			assertTrue(o.hasItem(uuid));
+			assertEquals(null, o.getMainhand());
+			assertEquals(null, o.getOffhand());
+
+			// clear inventory manually
+			items.clear();
+			assertFalse(o.hasItem(uuid));
+
+			// offhand null -> single-handed
+			o.equipOffhand(uuid);
+			assertTrue(o.hasItem(uuid));
+			assertEquals(null, o.getMainhand());
+			assertEquals(i, o.getOffhand());
+
+			// offhand single-handed -> null
+			o.stowOffhand();
+			assertTrue(o.hasItem(uuid));
+			assertEquals(null, o.getMainhand());
+			assertEquals(null, o.getOffhand());
+
+			// clear inventory manually
+			items.clear();
+			assertFalse(o.hasItem(uuid));
+
+			// mainmhand null -> versatile toggle -> null
+			o.equipMainhand(uuid);
+			assertTrue(o.hasItem(uuid));
+			assertEquals(i, o.getMainhand());
+			assertEquals(null, o.getOffhand());
+			o.toggleVersatile();
+			assertEquals(i, o.getOffhand());
+			o.toggleVersatile();
+			assertEquals(null, o.getOffhand());
+			o.toggleVersatile();
+			o.stowMainhand();
+			assertEquals(null, o.getMainhand());
+			assertEquals(null, o.getOffhand());
+			o.equipMainhand(uuid);
+			o.toggleVersatile();
+			assertEquals(i, o.getMainhand());
+			assertEquals(i, o.getOffhand());
+			o.stowOffhand();
+			assertEquals(null, o.getMainhand());
+			assertEquals(null, o.getOffhand());
+
+			// offhand versatile (does nothing)
+			o.equipOffhand(uuid);
+			assertTrue(o.hasItem(uuid));
+			assertEquals(null, o.getMainhand());
+			assertEquals(i, o.getOffhand());
+			o.toggleVersatile();
+			assertEquals(null, o.getMainhand());
+			assertEquals(i, o.getOffhand());
+			o.stowOffhand();
+			assertEquals(null, o.getOffhand());
+
+			// clear inventory manually
+			items.clear();
+			assertFalse(o.hasItem(uuid));
+			tags.add("two_handed");
+
+			// mainhand null -> two_handed -> null
+			o.equipMainhand(uuid);
+			assertEquals(i, o.getMainhand());
+			assertEquals(i, o.getOffhand());
+			o.stowMainhand();
+			assertEquals(null, o.getMainhand());
+			assertEquals(null, o.getOffhand());
+
+			// clear inventory manually
+			items.clear();
+			assertFalse(o.hasItem(uuid));
+
+			// mainhand null -> two_handed -> null
+			o.equipOffhand(uuid);
+			assertEquals(i, o.getMainhand());
+			assertEquals(i, o.getOffhand());
+			o.stowOffhand();
+			assertEquals(null, o.getMainhand());
+			assertEquals(null, o.getOffhand());
+
+		} catch (CannotUnequipItemException ex) {
+			ex.printStackTrace();
+			fail("Cannot unequip item");
+		}
 	}
 
 }

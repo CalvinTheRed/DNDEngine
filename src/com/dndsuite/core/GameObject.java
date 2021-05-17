@@ -9,6 +9,9 @@ import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.AbilityScoreCalculation;
 import com.dndsuite.core.json.parsers.subevents.DamageCalculation;
+import com.dndsuite.core.json.parsers.subevents.UnequipItem;
+import com.dndsuite.exceptions.CannotUnequipItemException;
+import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
@@ -185,7 +188,7 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 
 	@SuppressWarnings("unchecked")
 	private void takeDamage(long damage) {
-		JSONObject health = (JSONObject) json.remove("health");
+		JSONObject health = (JSONObject) json.get("health");
 		long base = (long) health.get("base");
 		long max = (long) health.get("max");
 		long tmp = (long) health.get("tmp");
@@ -197,7 +200,7 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 				damage = -tmp;
 				tmp = 0;
 			}
-			health.put(tmp, tmp);
+			health.put("tmp", tmp);
 		}
 
 		current -= damage;
@@ -207,8 +210,6 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 			// instant-kill check would happen here based on magnitude of current
 		}
 		health.put("current", current);
-
-		json.put("health", health);
 	}
 
 	public JSONObject getHealth() {
@@ -221,6 +222,264 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 			return 2L + (level - 1L) / 4L;
 		}
 		return 0L;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void equipMainhand(long uuid) throws CannotUnequipItemException {
+		JSONObject inventory = (JSONObject) json.get("inventory");
+		JSONArray items = (JSONArray) inventory.get("items");
+		if (!items.contains(uuid)) {
+			items.add(uuid);
+		}
+
+		UnequipItem s = new UnequipItem();
+		JSONObject sJson = new JSONObject();
+		sJson.put("subevent", "unequip_item");
+
+		try {
+			Item item = (Item) UUIDTable.get(uuid);
+			if ((long) inventory.get("mainhand") != -1L) {
+				Item mainhand = (Item) inventory.get("mainhand");
+				sJson.put("item_uuid", mainhand.getUUID());
+				s.parse(sJson, null, this, this);
+
+				if (s.getSuccess()) {
+					mainhand.unequipBy(this);
+					inventory.put("mainhand", -1L);
+				} else {
+					throw new CannotUnequipItemException(mainhand);
+				}
+			}
+			if (item.hasTag("two_handed")) {
+				if ((long) inventory.get("offhand") != -1L) {
+					Item offhand = (Item) inventory.get("offhand");
+					sJson.put("item_uuid", offhand.getUUID());
+					s.parse(sJson, null, this, this);
+
+					if (s.getSuccess()) {
+						offhand.unequipBy(this);
+						inventory.put("offhand", uuid);
+					} else {
+						throw new CannotUnequipItemException(offhand);
+					}
+				} else {
+					inventory.put("offhand", uuid);
+				}
+			}
+			item.equipBy(this);
+			inventory.put("mainhand", uuid);
+
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
+		} catch (UUIDNotAssignedException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void equipOffhand(long uuid) throws CannotUnequipItemException {
+		JSONObject inventory = (JSONObject) json.get("inventory");
+		JSONArray items = (JSONArray) inventory.get("items");
+		if (!items.contains(uuid)) {
+			items.add(uuid);
+		}
+
+		UnequipItem s = new UnequipItem();
+		JSONObject sJson = new JSONObject();
+		sJson.put("subevent", "unequip_item");
+
+		try {
+			Item item = (Item) UUIDTable.get(uuid);
+			if ((long) inventory.get("offhand") != -1L) {
+				Item offhand = (Item) inventory.get("offhand");
+				sJson.put("item_uuid", offhand.getUUID());
+				s.parse(sJson, null, this, this);
+
+				if (s.getSuccess()) {
+					offhand.unequipBy(this);
+					inventory.put("offhand", -1L);
+				} else {
+					throw new CannotUnequipItemException(offhand);
+				}
+			}
+			if (item.hasTag("two_handed")) {
+				if ((long) inventory.get("mainhand") != -1L) {
+					Item mainhand = (Item) inventory.get("mainhand");
+					sJson.put("item_uuid", mainhand.getUUID());
+					s.parse(sJson, null, this, this);
+
+					if (s.getSuccess()) {
+						mainhand.unequipBy(this);
+						inventory.put("mainhand", uuid);
+					} else {
+						throw new CannotUnequipItemException(mainhand);
+					}
+				} else {
+					inventory.put("mainhand", uuid);
+				}
+			}
+			item.equipBy(this);
+			inventory.put("offhand", uuid);
+
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
+		} catch (UUIDNotAssignedException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void stowMainhand() throws CannotUnequipItemException {
+		JSONObject inventory = (JSONObject) json.get("inventory");
+		long uuid = (long) inventory.get("mainhand");
+
+		UnequipItem s = new UnequipItem();
+		JSONObject sJson = new JSONObject();
+		sJson.put("subevent", "unequip_item");
+
+		try {
+			Item mainhand = (Item) UUIDTable.get(uuid);
+			sJson.put("item_uuid", mainhand.getUUID());
+			s.parse(sJson, null, this, this);
+
+			if (s.getSuccess()) {
+				if (uuid == (long) inventory.get("offhand")) {
+					inventory.put("offhand", -1L);
+				}
+				mainhand.unequipBy(this);
+				inventory.put("mainhand", -1L);
+			} else {
+				throw new CannotUnequipItemException(mainhand);
+			}
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+		} catch (UUIDNotAssignedException ex) {
+			ex.printStackTrace();
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void stowOffhand() throws CannotUnequipItemException {
+		JSONObject inventory = (JSONObject) json.get("inventory");
+		long uuid = (long) inventory.get("offhand");
+
+		UnequipItem s = new UnequipItem();
+		JSONObject sJson = new JSONObject();
+		sJson.put("subevent", "unequip_item");
+
+		try {
+			Item mainhand = (Item) UUIDTable.get(uuid);
+			sJson.put("item_uuid", mainhand.getUUID());
+			s.parse(sJson, null, this, this);
+
+			if (s.getSuccess()) {
+				if (uuid == (long) inventory.get("offhand")) {
+					inventory.put("offhand", -1L);
+				}
+				mainhand.unequipBy(this);
+				inventory.put("mainhand", -1L);
+			} else {
+				throw new CannotUnequipItemException(mainhand);
+			}
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+		} catch (UUIDNotAssignedException ex) {
+			ex.printStackTrace();
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void toggleVersatile() throws CannotUnequipItemException {
+		JSONObject inventory = (JSONObject) json.get("inventory");
+		long mainhandUUID = (long) inventory.get("mainhand");
+		long offhandUUID = (long) inventory.get("offhand");
+		if (mainhandUUID == -1L) {
+			return;
+		}
+
+		UnequipItem s = new UnequipItem();
+		JSONObject sJson = new JSONObject();
+		sJson.put("subevent", "unequip_item");
+
+		try {
+			Item mainhand = (Item) UUIDTable.get(mainhandUUID);
+			if (mainhand.hasTag("versatile")) {
+				if (mainhandUUID != offhandUUID) {
+					if (offhandUUID != -1L) {
+						Item offhand = (Item) UUIDTable.get(offhandUUID);
+						sJson.put("item_uuid", offhandUUID);
+						s.parse(sJson, null, this, this);
+						if (s.getSuccess()) {
+							offhand.unequipBy(this);
+							inventory.put("offhand", -1L);
+						} else {
+							throw new CannotUnequipItemException(offhand);
+						}
+					}
+					inventory.put("offhand", mainhandUUID);
+				} else {
+					inventory.put("offhand", -1L);
+				}
+			}
+		} catch (SubeventMismatchException ex) {
+			ex.printStackTrace();
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public Item getMainhand() {
+		JSONObject inventory = (JSONObject) json.get("inventory");
+		if ((long) inventory.get("mainhand") == -1L) {
+			return null;
+		}
+
+		long uuid = (long) inventory.get("mainhand");
+		try {
+			return (Item) UUIDTable.get(uuid);
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+
+	public Item getOffhand() {
+		JSONObject inventory = (JSONObject) json.get("inventory");
+		if ((long) inventory.get("offhand") == -1L) {
+			return null;
+		}
+
+		long uuid = (long) inventory.get("offhand");
+		try {
+			return (Item) UUIDTable.get(uuid);
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+
+	public boolean hasItem(long uuid) {
+		JSONObject inventory = (JSONObject) json.get("inventory");
+		JSONArray items = (JSONArray) inventory.get("items");
+		return items.contains(uuid);
 	}
 
 }
