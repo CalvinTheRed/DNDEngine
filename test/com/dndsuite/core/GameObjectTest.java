@@ -5,8 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,12 +39,13 @@ class GameObjectTest {
 	}
 
 	@Test
-	@DisplayName("UUIDTable loading")
+	@DisplayName("Added to UUIDTable and VirtualBoard upon construction")
 	void test001() {
-		GameObject o = new GameObject(new JSONObject());
+		GameObject dummy = new GameObject(new JSONObject());
 
 		try {
-			assertTrue(UUIDTable.containsKey(o.getUUID()));
+			assertTrue(UUIDTable.containsKey(dummy.getUUID()));
+			assertTrue(VirtualBoard.contains(dummy));
 		} catch (UUIDNotAssignedException ex) {
 			ex.printStackTrace();
 			fail("UUID key(s) missing");
@@ -59,192 +61,332 @@ class GameObjectTest {
 
 	@Test
 	@DisplayName("Ability Score Modifiers")
-	@SuppressWarnings("unchecked")
 	void test003() {
-		GameObject o;
-		JSONObject oJson;
+		try {
+			JSONParser parser = new JSONParser();
+			String jsonString = "{\"ability_scores\":{\"str\":7,\"dex\":8,\"con\":9,\"int\":10,\"wis\":11,\"cha\":12},\"effects\":[]}";
+			JSONObject gameObjectJson = (JSONObject) parser.parse(jsonString);
+			GameObject dummy = new GameObject(gameObjectJson);
 
-		oJson = new JSONObject();
-		JSONObject abilityScores = new JSONObject();
-		abilityScores.put("str", 7L);
-		abilityScores.put("dex", 8L);
-		abilityScores.put("con", 9L);
-		abilityScores.put("int", 10L);
-		abilityScores.put("wis", 11L);
-		abilityScores.put("cha", 12L);
-		oJson.put("ability_scores", abilityScores);
-		oJson.put("effects", new JSONArray());
+			assertEquals(-2L, dummy.getAbilityModifier("str"));
+			assertEquals(-1L, dummy.getAbilityModifier("dex"));
+			assertEquals(-1L, dummy.getAbilityModifier("con"));
+			assertEquals(0L, dummy.getAbilityModifier("int"));
+			assertEquals(0L, dummy.getAbilityModifier("wis"));
+			assertEquals(1L, dummy.getAbilityModifier("cha"));
 
-		o = new GameObject(oJson);
-
-		assertEquals(-2L, o.getAbilityModifier("str"));
-		assertEquals(-1L, o.getAbilityModifier("dex"));
-		assertEquals(-1L, o.getAbilityModifier("con"));
-		assertEquals(0L, o.getAbilityModifier("int"));
-		assertEquals(0L, o.getAbilityModifier("wis"));
-		assertEquals(1L, o.getAbilityModifier("cha"));
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+			fail("Parse exception");
+		}
 	}
 
 	@Test
 	@DisplayName("Proficiency bonus")
 	@SuppressWarnings("unchecked")
 	void test004() {
-		GameObject o;
-		JSONObject oJson;
+		try {
+			JSONParser parser = new JSONParser();
+			String jsonString = "{}";
+			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
+			GameObject dummy = new GameObject(dummyJson);
 
-		oJson = new JSONObject();
-		oJson.put("level", 1L);
-		o = new GameObject(oJson);
-		assertEquals(2, o.getProficiencyBonus());
+			dummyJson.put("level", 1L);
+			assertEquals(2L, dummy.getProficiencyBonus());
 
-		oJson = new JSONObject();
-		oJson.put("level", 4L);
-		o = new GameObject(oJson);
-		assertEquals(2, o.getProficiencyBonus());
+			dummyJson.put("level", 4L);
+			assertEquals(2L, dummy.getProficiencyBonus());
 
-		oJson = new JSONObject();
-		oJson.put("level", 5L);
-		o = new GameObject(oJson);
-		assertEquals(3, o.getProficiencyBonus());
+			dummyJson.put("level", 5L);
+			assertEquals(3L, dummy.getProficiencyBonus());
 
-		oJson = new JSONObject();
-		oJson.put("level", 8L);
-		o = new GameObject(oJson);
-		assertEquals(3, o.getProficiencyBonus());
+			dummyJson.put("level", 8L);
+			assertEquals(3L, dummy.getProficiencyBonus());
 
-		oJson = new JSONObject();
-		oJson.put("level", 9L);
-		o = new GameObject(oJson);
-		assertEquals(4, o.getProficiencyBonus());
+			dummyJson.put("level", 9L);
+			assertEquals(4L, dummy.getProficiencyBonus());
 
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+			fail("Parse exception");
+		}
 	}
 
 	@Test
-	@DisplayName("Item equipping & unequipping")
-	@SuppressWarnings("unchecked")
+	@DisplayName("Equip & stow one-handed item (mainhand)")
 	void test005() {
-		GameObject o;
-		JSONObject oJson;
-		JSONObject iJson;
-		Item i;
-
-		oJson = new JSONObject();
-		JSONObject inventory = new JSONObject();
-		inventory.put("mainhand", -1L);
-		inventory.put("offhand", -1L);
-		JSONArray items = new JSONArray();
-		inventory.put("items", items);
-		oJson.put("inventory", inventory);
-		oJson.put("effects", new JSONArray());
-
-		long uuid = 1234L;
-
-		iJson = new JSONObject();
-		JSONArray tags = new JSONArray();
-		tags.add("versatile");
-		iJson.put("tags", tags);
-		iJson.put("uuid", uuid);
-		iJson.put("name", "Test Item");
-		iJson.put("equipped_effects", new JSONArray());
-
-		i = new Item(iJson);
-		o = new GameObject(oJson);
-
-		UUIDTable.addToTable(i);
-
 		try {
-			// mainhand null -> single-handed
-			o.equipMainhand(uuid);
-			assertTrue(o.hasItem(uuid));
-			assertEquals(i, o.getMainhand());
-			assertEquals(null, o.getOffhand());
+			JSONParser parser = new JSONParser();
+			String jsonString;
 
-			// mainhand single-handed -> null
-			o.stowMainhand();
-			assertTrue(o.hasItem(uuid));
-			assertEquals(null, o.getMainhand());
-			assertEquals(null, o.getOffhand());
+			// Create item to be wielded
+			jsonString = "{\"tags\":[],\"equipped_effects\":[]}";
+			JSONObject itemJson = (JSONObject) parser.parse(jsonString);
+			Item item = new Item(itemJson);
+			long itemUUID = item.getUUID();
 
-			// clear inventory manually
-			items.clear();
-			assertFalse(o.hasItem(uuid));
+			// Create GameObject to wield the item
+			jsonString = "{\"inventory\":{\"mainhand\":-1,\"offhand\":-1,\"items\":[]},\"effects\":[]}";
+			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
+			GameObject dummy = new GameObject(dummyJson);
 
-			// offhand null -> single-handed
-			o.equipOffhand(uuid);
-			assertTrue(o.hasItem(uuid));
-			assertEquals(null, o.getMainhand());
-			assertEquals(i, o.getOffhand());
+			// confirm inventory is empty
+			assertEquals(null, dummy.getMainhand());
+			assertFalse(dummy.hasItem(itemUUID));
 
-			// offhand single-handed -> null
-			o.stowOffhand();
-			assertTrue(o.hasItem(uuid));
-			assertEquals(null, o.getMainhand());
-			assertEquals(null, o.getOffhand());
+			// equip item
+			dummy.equipMainhand(itemUUID);
+			assertEquals(item, dummy.getMainhand());
+			assertTrue(dummy.hasItem(itemUUID));
 
-			// clear inventory manually
-			items.clear();
-			assertFalse(o.hasItem(uuid));
+			// unequip item
+			dummy.stowMainhand();
+			assertEquals(null, dummy.getMainhand());
+			assertTrue(dummy.hasItem(itemUUID));
 
-			// mainmhand null -> versatile toggle -> null
-			o.equipMainhand(uuid);
-			assertTrue(o.hasItem(uuid));
-			assertEquals(i, o.getMainhand());
-			assertEquals(null, o.getOffhand());
-			o.toggleVersatile();
-			assertEquals(i, o.getOffhand());
-			o.toggleVersatile();
-			assertEquals(null, o.getOffhand());
-			o.toggleVersatile();
-			o.stowMainhand();
-			assertEquals(null, o.getMainhand());
-			assertEquals(null, o.getOffhand());
-			o.equipMainhand(uuid);
-			o.toggleVersatile();
-			assertEquals(i, o.getMainhand());
-			assertEquals(i, o.getOffhand());
-			o.stowOffhand();
-			assertEquals(null, o.getMainhand());
-			assertEquals(null, o.getOffhand());
-
-			// offhand versatile (does nothing)
-			o.equipOffhand(uuid);
-			assertTrue(o.hasItem(uuid));
-			assertEquals(null, o.getMainhand());
-			assertEquals(i, o.getOffhand());
-			o.toggleVersatile();
-			assertEquals(null, o.getMainhand());
-			assertEquals(i, o.getOffhand());
-			o.stowOffhand();
-			assertEquals(null, o.getOffhand());
-
-			// clear inventory manually
-			items.clear();
-			assertFalse(o.hasItem(uuid));
-			tags.add("two_handed");
-
-			// mainhand null -> two_handed -> null
-			o.equipMainhand(uuid);
-			assertEquals(i, o.getMainhand());
-			assertEquals(i, o.getOffhand());
-			o.stowMainhand();
-			assertEquals(null, o.getMainhand());
-			assertEquals(null, o.getOffhand());
-
-			// clear inventory manually
-			items.clear();
-			assertFalse(o.hasItem(uuid));
-
-			// mainhand null -> two_handed -> null
-			o.equipOffhand(uuid);
-			assertEquals(i, o.getMainhand());
-			assertEquals(i, o.getOffhand());
-			o.stowOffhand();
-			assertEquals(null, o.getMainhand());
-			assertEquals(null, o.getOffhand());
-
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+			fail("Parse exception");
+		} catch (UUIDNotAssignedException ex) {
+			ex.printStackTrace();
+			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
-			fail("Cannot unequip item");
+			fail("Could not unequip item");
+		}
+	}
+
+	@Test
+	@DisplayName("Equip & stow one-handed item (offhand)")
+	void test006() {
+		try {
+			JSONParser parser = new JSONParser();
+			String jsonString;
+
+			// Create item to be wielded
+			jsonString = "{\"tags\":[],\"equipped_effects\":[]}";
+			JSONObject itemJson = (JSONObject) parser.parse(jsonString);
+			Item item = new Item(itemJson);
+			long itemUUID = item.getUUID();
+
+			// Create GameObject to wield the item
+			jsonString = "{\"inventory\":{\"mainhand\":-1,\"offhand\":-1,\"items\":[]},\"effects\":[]}";
+			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
+			GameObject dummy = new GameObject(dummyJson);
+
+			// confirm inventory is empty
+			assertEquals(null, dummy.getOffhand());
+			assertFalse(dummy.hasItem(itemUUID));
+
+			// equip item
+			dummy.equipOffhand(itemUUID);
+			assertEquals(item, dummy.getOffhand());
+			assertTrue(dummy.hasItem(itemUUID));
+
+			// unequip item
+			dummy.stowOffhand();
+			assertEquals(null, dummy.getOffhand());
+			assertTrue(dummy.hasItem(itemUUID));
+
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+			fail("Parse exception");
+		} catch (UUIDNotAssignedException ex) {
+			ex.printStackTrace();
+			fail("UUID not assigned");
+		} catch (CannotUnequipItemException ex) {
+			ex.printStackTrace();
+			fail("Could not unequip item");
+		}
+	}
+
+	@Test
+	@DisplayName("Equip & stow two-handed item (mainhand)")
+	void test007() {
+		try {
+			JSONParser parser = new JSONParser();
+			String jsonString;
+
+			// Create item to be wielded
+			jsonString = "{\"tags\":[\"two_handed\"],\"equipped_effects\":[]}";
+			JSONObject itemJson = (JSONObject) parser.parse(jsonString);
+			Item item = new Item(itemJson);
+			long itemUUID = item.getUUID();
+
+			// Create GameObject to wield the item
+			jsonString = "{\"inventory\":{\"mainhand\":-1,\"offhand\":-1,\"items\":[]},\"effects\":[]}";
+			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
+			GameObject dummy = new GameObject(dummyJson);
+
+			// confirm inventory is empty
+			assertEquals(null, dummy.getMainhand());
+			assertFalse(dummy.hasItem(itemUUID));
+
+			// equip item
+			dummy.equipMainhand(itemUUID);
+			assertEquals(item, dummy.getMainhand());
+			assertEquals(item, dummy.getOffhand());
+			assertTrue(dummy.hasItem(itemUUID));
+
+			// unequip item
+			dummy.stowMainhand();
+			assertEquals(null, dummy.getMainhand());
+			assertEquals(null, dummy.getOffhand());
+			assertTrue(dummy.hasItem(itemUUID));
+
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+			fail("Parse exception");
+		} catch (UUIDNotAssignedException ex) {
+			ex.printStackTrace();
+			fail("UUID not assigned");
+		} catch (CannotUnequipItemException ex) {
+			ex.printStackTrace();
+			fail("Could not unequip item");
+		}
+	}
+
+	@Test
+	@DisplayName("Equip & stow two-handed item (offhand)")
+	void test008() {
+		try {
+			JSONParser parser = new JSONParser();
+			String jsonString;
+
+			// Create item to be wielded
+			jsonString = "{\"tags\":[\"two_handed\"],\"equipped_effects\":[]}";
+			JSONObject itemJson = (JSONObject) parser.parse(jsonString);
+			Item item = new Item(itemJson);
+			long itemUUID = item.getUUID();
+
+			// Create GameObject to wield the item
+			jsonString = "{\"inventory\":{\"mainhand\":-1,\"offhand\":-1,\"items\":[]},\"effects\":[]}";
+			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
+			GameObject dummy = new GameObject(dummyJson);
+
+			// confirm inventory is empty
+			assertEquals(null, dummy.getMainhand());
+			assertFalse(dummy.hasItem(itemUUID));
+
+			// equip item
+			dummy.equipOffhand(itemUUID);
+			assertEquals(item, dummy.getMainhand());
+			assertEquals(item, dummy.getOffhand());
+			assertTrue(dummy.hasItem(itemUUID));
+
+			// unequip item
+			dummy.stowOffhand();
+			assertEquals(null, dummy.getMainhand());
+			assertEquals(null, dummy.getOffhand());
+			assertTrue(dummy.hasItem(itemUUID));
+
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+			fail("Parse exception");
+		} catch (UUIDNotAssignedException ex) {
+			ex.printStackTrace();
+			fail("UUID not assigned");
+		} catch (CannotUnequipItemException ex) {
+			ex.printStackTrace();
+			fail("Could not unequip item");
+		}
+	}
+
+	@Test
+	@DisplayName("Manipulating versatile items")
+	void test009() {
+		try {
+			JSONParser parser = new JSONParser();
+			String jsonString;
+
+			// Create item to be wielded
+			jsonString = "{\"tags\":[\"versatile\"],\"equipped_effects\":[]}";
+			JSONObject itemJson = (JSONObject) parser.parse(jsonString);
+			Item item = new Item(itemJson);
+			long itemUUID = item.getUUID();
+
+			// Create GameObject to wield the item
+			jsonString = "{\"inventory\":{\"mainhand\":-1,\"offhand\":-1,\"items\":[]},\"effects\":[]}";
+			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
+			GameObject dummy = new GameObject(dummyJson);
+
+			// confirm inventory is empty
+			assertEquals(null, dummy.getMainhand());
+			assertFalse(dummy.hasItem(itemUUID));
+
+			// equip item
+			dummy.equipMainhand(itemUUID);
+			assertEquals(item, dummy.getMainhand());
+			assertEquals(null, dummy.getOffhand());
+			assertTrue(dummy.hasItem(itemUUID));
+
+			// switch to two hands
+			dummy.toggleVersatile();
+			assertEquals(item, dummy.getMainhand());
+			assertEquals(item, dummy.getOffhand());
+
+			// switch to one hand
+			dummy.toggleVersatile();
+			assertEquals(item, dummy.getMainhand());
+			assertEquals(null, dummy.getOffhand());
+
+			// stow while holding with two hands (mainhand)
+			dummy.toggleVersatile();
+			dummy.stowMainhand();
+			assertEquals(null, dummy.getMainhand());
+			assertEquals(null, dummy.getOffhand());
+
+			// stow while holding with two hands (offhand)
+			dummy.equipMainhand(itemUUID);
+			dummy.toggleVersatile();
+			dummy.stowOffhand();
+			assertEquals(null, dummy.getMainhand());
+			assertEquals(null, dummy.getOffhand());
+
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+			fail("Parse exception");
+		} catch (UUIDNotAssignedException ex) {
+			ex.printStackTrace();
+			fail("UUID not assigned");
+		} catch (CannotUnequipItemException ex) {
+			ex.printStackTrace();
+			fail("Could not unequip item");
+		}
+	}
+
+	@Test
+	@DisplayName("Take damage value")
+	void test00A() {
+		try {
+			JSONParser parser = new JSONParser();
+			String jsonString = "{\"health\":{\"max\":20,\"base\":20,\"current\":20,\"tmp\":15}}";
+			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
+			GameObject dummy = new GameObject(dummyJson);
+
+			// reduce temporary hit points
+			dummy.takeDamage(10L);
+			assertEquals(5L, (long) dummy.getHealth().get("tmp"));
+			assertEquals(20L, (long) dummy.getHealth().get("current"));
+
+			// reduce temporary and actual hit points
+			dummy.takeDamage(10L);
+			assertEquals(0L, (long) dummy.getHealth().get("tmp"));
+			assertEquals(15L, (long) dummy.getHealth().get("current"));
+
+			// reduce actual hit points
+			dummy.takeDamage(10L);
+			assertEquals(0L, (long) dummy.getHealth().get("tmp"));
+			assertEquals(5L, (long) dummy.getHealth().get("current"));
+
+			// reduce actual hit points below 0
+			dummy.takeDamage(10L);
+			assertEquals(0L, (long) dummy.getHealth().get("tmp"));
+			assertEquals(0L, (long) dummy.getHealth().get("current"));
+
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+			fail("Parse exception");
 		}
 	}
 

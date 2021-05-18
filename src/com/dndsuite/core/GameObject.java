@@ -220,7 +220,7 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void takeDamage(long damage) {
+	public void takeDamage(long damage) {
 		JSONObject health = (JSONObject) json.get("health");
 		long base = (long) health.get("base");
 		long max = (long) health.get("max");
@@ -232,6 +232,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 			if (tmp < 0) {
 				damage = -tmp;
 				tmp = 0;
+			} else {
+				damage = 0;
 			}
 			health.put("tmp", tmp);
 		}

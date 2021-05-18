@@ -11,10 +11,14 @@ public class Item extends JSONLoader implements UUIDTableElement {
 
 	public Item(JSONObject json) {
 		super(json);
+
+		UUIDTable.addToTable(this);
 	}
 
 	public Item(String file) {
 		super("items/" + file);
+
+		UUIDTable.addToTable(this);
 	}
 
 	@SuppressWarnings("unchecked")
