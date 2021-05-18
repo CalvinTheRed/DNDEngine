@@ -1,4 +1,4 @@
-package com.dndsuite.core.json.parsers.subevents;
+package com.dndsuite.core.json.parsers.subevents.uninvokable;
 
 import java.util.ArrayList;
 
@@ -45,6 +45,7 @@ public class DamageDiceCollection extends Subevent {
 	}
 
 	public void addDamageDiceGroup(DamageDiceGroup newGroup) {
+		newGroup.roll();
 		for (DamageDiceGroup group : damageDice) {
 			if (group.getDamageType().equals(newGroup.getDamageType())) {
 				for (Die die : newGroup.getDice()) {

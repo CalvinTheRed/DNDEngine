@@ -1,4 +1,4 @@
-package com.dndsuite.core.json.parsers.subevents;
+package com.dndsuite.core.json.parsers.subevents.uninvokable;
 
 import java.util.ArrayList;
 
@@ -23,7 +23,7 @@ public class DamageCalculation extends Subevent {
 			throw new SubeventMismatchException("damage_calculation", subevent);
 		}
 
-		roll();
+		// roll();
 
 		presentToEffects(eSource, eTarget);
 

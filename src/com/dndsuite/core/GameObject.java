@@ -7,9 +7,9 @@ import org.json.simple.JSONObject;
 
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Subevent;
-import com.dndsuite.core.json.parsers.subevents.AbilityScoreCalculation;
-import com.dndsuite.core.json.parsers.subevents.DamageCalculation;
-import com.dndsuite.core.json.parsers.subevents.UnequipItem;
+import com.dndsuite.core.json.parsers.subevents.uninvokable.AbilityScoreCalculation;
+import com.dndsuite.core.json.parsers.subevents.uninvokable.DamageCalculation;
+import com.dndsuite.core.json.parsers.subevents.uninvokable.UnequipItem;
 import com.dndsuite.exceptions.CannotUnequipItemException;
 import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;

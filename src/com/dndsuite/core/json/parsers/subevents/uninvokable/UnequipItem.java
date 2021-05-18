@@ -1,4 +1,4 @@
-package com.dndsuite.core.json.parsers.subevents;
+package com.dndsuite.core.json.parsers.subevents.uninvokable;
 
 import org.json.simple.JSONObject;
 

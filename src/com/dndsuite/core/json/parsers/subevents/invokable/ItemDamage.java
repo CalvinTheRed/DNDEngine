@@ -1,4 +1,4 @@
-package com.dndsuite.core.json.parsers.subevents;
+package com.dndsuite.core.json.parsers.subevents.invokable;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -7,6 +7,7 @@ import com.dndsuite.core.Event;
 import com.dndsuite.core.GameObject;
 import com.dndsuite.core.Item;
 import com.dndsuite.core.json.parsers.Subevent;
+import com.dndsuite.core.json.parsers.subevents.uninvokable.DamageDiceCollection;
 import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.dice.DamageDiceGroup;

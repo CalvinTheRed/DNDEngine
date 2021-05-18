@@ -78,15 +78,15 @@ public class DamageDiceGroup extends DiceGroup implements Taggable {
 		int effectiveness = getEffectiveness();
 
 		if (effectiveness == INEFFECTIVE) {
-			effectiveness = 0;
+			damageValue = 0L;
 		} else if (effectiveness == ENHANCED) {
-			effectiveness *= 2;
+			damageValue *= 2;
 		} else if (effectiveness == RESISTED) {
-			effectiveness /= 2;
+			damageValue /= 2;
 		}
 
-		if (damageValue < 1) {
-			damageValue = 1;
+		if (damageValue < 1L) {
+			damageValue = 1L;
 		}
 
 		return damageValue;

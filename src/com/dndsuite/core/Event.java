@@ -8,12 +8,12 @@ import org.json.simple.JSONObject;
 
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Subevent;
-import com.dndsuite.core.json.parsers.subevents.ApplyEffect;
-import com.dndsuite.core.json.parsers.subevents.AttackRoll;
-import com.dndsuite.core.json.parsers.subevents.Damage;
-import com.dndsuite.core.json.parsers.subevents.DamageDiceCollection;
-import com.dndsuite.core.json.parsers.subevents.ItemDamage;
-import com.dndsuite.core.json.parsers.subevents.SavingThrow;
+import com.dndsuite.core.json.parsers.subevents.invokable.ApplyEffect;
+import com.dndsuite.core.json.parsers.subevents.invokable.AttackRoll;
+import com.dndsuite.core.json.parsers.subevents.invokable.Damage;
+import com.dndsuite.core.json.parsers.subevents.invokable.ItemDamage;
+import com.dndsuite.core.json.parsers.subevents.invokable.SavingThrow;
+import com.dndsuite.core.json.parsers.subevents.uninvokable.DamageDiceCollection;
 import com.dndsuite.exceptions.InvalidAreaOfEffectException;
 import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.OutOfRangeException;

@@ -1,13 +1,14 @@
-package com.dndsuite.core.json.parsers.subevents;
+package com.dndsuite.core.json.parsers.subevents.uninvokable;
 
 import org.json.simple.JSONObject;
 
 import com.dndsuite.core.Event;
 import com.dndsuite.core.GameObject;
 import com.dndsuite.core.json.parsers.Subevent;
+import com.dndsuite.core.json.parsers.subevents.Calculation;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
-public class DiceCheckCalculation extends Subevent implements Calculation {
+public class AbilityScoreCalculation extends Subevent implements Calculation {
 	private long base;
 	private long set = -1;
 	private long bonus = 0;
@@ -19,24 +20,25 @@ public class DiceCheckCalculation extends Subevent implements Calculation {
 		String subevent = (String) json.get("subevent");
 		addTag(subevent);
 		addTag("calculation");
-		if (!subevent.equals("dice_check_calculation")) {
-			throw new SubeventMismatchException("dice_check_calculation", subevent);
+		if (!subevent.equals("ability_score_calculation")) {
+			throw new SubeventMismatchException("ability_score_calculation", subevent);
 		}
 
-		String dcAbility = (String) json.get("dc_ability");
-		base = 8L + eTarget.getProficiencyBonus() + eTarget.getAbilityModifier(dcAbility);
-		presentToEffects(eSource, eTarget);
+		String ability = (String) json.get("ability");
+		JSONObject abilityScores = (JSONObject) eTarget.getJSONData().get("ability_scores");
+		base = (long) abilityScores.get(ability);
 
+		presentToEffects(eSource, eTarget);
 	}
 
 	@Override
 	public String toString() {
-		return "DiceCheckCalculation Subevent";
+		return "AbilityScoreCalculation Subevent";
 	}
 
 	@Override
-	public DiceCheckCalculation clone() {
-		DiceCheckCalculation clone = new DiceCheckCalculation();
+	public AbilityScoreCalculation clone() {
+		AbilityScoreCalculation clone = new AbilityScoreCalculation();
 		clone.parent = getParentEvent();
 		return clone;
 	}

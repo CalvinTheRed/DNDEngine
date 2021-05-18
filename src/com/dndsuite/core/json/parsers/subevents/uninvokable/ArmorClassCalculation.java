@@ -1,10 +1,11 @@
-package com.dndsuite.core.json.parsers.subevents;
+package com.dndsuite.core.json.parsers.subevents.uninvokable;
 
 import org.json.simple.JSONObject;
 
 import com.dndsuite.core.Event;
 import com.dndsuite.core.GameObject;
 import com.dndsuite.core.json.parsers.Subevent;
+import com.dndsuite.core.json.parsers.subevents.Calculation;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
 public class ArmorClassCalculation extends Subevent implements Calculation {
@@ -43,6 +44,7 @@ public class ArmorClassCalculation extends Subevent implements Calculation {
 
 	@Override
 	public void setTo(long set) {
+		// this function to be used for unarmored defense
 		if (set > this.set) {
 			this.set = set;
 		}
@@ -56,7 +58,7 @@ public class ArmorClassCalculation extends Subevent implements Calculation {
 	@Override
 	public long get() {
 		if (set != -1) {
-			return set;
+			return set + bonus;
 		}
 		return base + bonus;
 	}

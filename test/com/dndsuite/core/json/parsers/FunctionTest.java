@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import com.dndsuite.core.json.parsers.functions.GrantAdvantage;
 import com.dndsuite.core.json.parsers.functions.GrantDisadvantage;
-import com.dndsuite.core.json.parsers.subevents.AttackRoll;
+import com.dndsuite.core.json.parsers.subevents.invokable.AttackRoll;
 import com.dndsuite.exceptions.FunctionMismatchException;
 import com.dndsuite.exceptions.JSONFormatException;
 
