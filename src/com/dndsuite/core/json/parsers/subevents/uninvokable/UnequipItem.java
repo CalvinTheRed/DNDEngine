@@ -7,7 +7,6 @@ import com.dndsuite.core.GameObject;
 import com.dndsuite.core.Item;
 import com.dndsuite.core.UUIDTable;
 import com.dndsuite.core.json.parsers.Subevent;
-import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
 
@@ -18,7 +17,7 @@ public class UnequipItem extends Subevent {
 
 	@Override
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
-			throws SubeventMismatchException, JSONFormatException {
+			throws SubeventMismatchException {
 		parent = e;
 		String subevent = (String) json.get("subevent");
 		addTag(subevent);

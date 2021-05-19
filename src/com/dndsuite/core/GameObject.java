@@ -11,7 +11,6 @@ import com.dndsuite.core.json.parsers.subevents.uninvokable.AbilityScoreCalculat
 import com.dndsuite.core.json.parsers.subevents.uninvokable.DamageCalculation;
 import com.dndsuite.core.json.parsers.subevents.uninvokable.UnequipItem;
 import com.dndsuite.exceptions.CannotUnequipItemException;
-import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
@@ -306,8 +305,6 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
-		} catch (JSONFormatException ex) {
-			ex.printStackTrace();
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
 		} catch (UUIDNotAssignedException ex) {
@@ -362,8 +359,6 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
-		} catch (JSONFormatException ex) {
-			ex.printStackTrace();
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
 		} catch (UUIDNotAssignedException ex) {
@@ -398,8 +393,6 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 			ex.printStackTrace();
 		} catch (UUIDNotAssignedException ex) {
 			ex.printStackTrace();
-		} catch (JSONFormatException ex) {
-			ex.printStackTrace();
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
 		}
@@ -431,8 +424,6 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
 		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-		} catch (JSONFormatException ex) {
 			ex.printStackTrace();
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
@@ -473,8 +464,6 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 				}
 			}
 		} catch (SubeventMismatchException ex) {
-			ex.printStackTrace();
-		} catch (JSONFormatException ex) {
 			ex.printStackTrace();
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();

@@ -1,8 +1,6 @@
 package com.dndsuite.core.json.parsers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
@@ -21,10 +19,8 @@ import com.dndsuite.core.Item;
 import com.dndsuite.core.UUIDTable;
 import com.dndsuite.core.json.parsers.subevents.invokable.ItemDamage;
 import com.dndsuite.core.json.parsers.subevents.uninvokable.DamageDiceCollection;
-import com.dndsuite.core.json.parsers.subevents.uninvokable.UnequipItem;
 import com.dndsuite.exceptions.CannotUnequipItemException;
 import com.dndsuite.exceptions.JSONFormatException;
-import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.dice.DamageDiceGroup;
 
 class SubeventTest {
@@ -176,68 +172,6 @@ class SubeventTest {
 		} catch (JSONFormatException ex) {
 			ex.printStackTrace();
 			fail("JSON format error");
-		}
-	}
-
-	@Test
-	@DisplayName("UnequipItem")
-	@SuppressWarnings("unchecked")
-	void test00C() {
-		UnequipItem s;
-		JSONObject sJson;
-		JSONObject oJson;
-		JSONObject iJson;
-		GameObject o;
-		Item i;
-
-		oJson = new JSONObject();
-		oJson.put("effects", new JSONArray());
-		o = new GameObject(oJson);
-
-		long uuid = 1234L;
-
-		sJson = new JSONObject();
-		sJson.put("subevent", "unequip_item");
-		sJson.put("item_uuid", uuid);
-
-		iJson = new JSONObject();
-		iJson.put("tags", new JSONArray());
-		iJson.put("uuid", uuid);
-		iJson.put("name", "Test Item");
-
-		i = new Item(iJson);
-		s = new UnequipItem();
-		o = new GameObject(oJson);
-
-		UUIDTable.addToTable(i);
-
-		try {
-			// no changes
-			s.parse(sJson, null, o, o);
-			assertTrue(s.getSuccess());
-
-			// with prevention
-			s.parse(sJson, null, o, o);
-			s.prevent();
-			assertFalse(s.getSuccess());
-
-			// with permission
-			s.parse(sJson, null, o, o);
-			s.permit();
-			assertTrue(s.getSuccess());
-
-			// with prevention and permission
-			s.parse(sJson, null, o, o);
-			s.prevent();
-			s.permit();
-			assertTrue(s.getSuccess());
-
-		} catch (SubeventMismatchException ex) {
-			ex.printStackTrace();
-			fail("Subevent mismatch");
-		} catch (JSONFormatException ex) {
-			ex.printStackTrace();
-			fail("JSON format exception");
 		}
 	}
 
