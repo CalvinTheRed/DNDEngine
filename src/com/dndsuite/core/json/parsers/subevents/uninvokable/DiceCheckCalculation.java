@@ -26,6 +26,7 @@ public class DiceCheckCalculation extends Subevent implements Calculation {
 
 		String dcAbility = (String) json.get("dc_ability");
 		base = 8L + eTarget.getProficiencyBonus() + eTarget.getAbilityModifier(dcAbility);
+
 		presentToEffects(eSource, eTarget);
 
 	}

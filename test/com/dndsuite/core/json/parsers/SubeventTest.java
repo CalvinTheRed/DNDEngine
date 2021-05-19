@@ -23,7 +23,6 @@ import com.dndsuite.core.UUIDTable;
 import com.dndsuite.core.json.parsers.subevents.invokable.ItemDamage;
 import com.dndsuite.core.json.parsers.subevents.invokable.SavingThrow;
 import com.dndsuite.core.json.parsers.subevents.uninvokable.DamageDiceCollection;
-import com.dndsuite.core.json.parsers.subevents.uninvokable.DiceCheckCalculation;
 import com.dndsuite.core.json.parsers.subevents.uninvokable.UnequipItem;
 import com.dndsuite.exceptions.CannotUnequipItemException;
 import com.dndsuite.exceptions.JSONFormatException;
@@ -47,69 +46,6 @@ class SubeventTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
-	}
-
-	@Test
-	@DisplayName("DiceCheckCalculation")
-	@SuppressWarnings("unchecked")
-	void test008() {
-		Subevent s = new DiceCheckCalculation();
-		JSONObject sJson;
-		JSONObject oJson;
-		GameObject o;
-
-		oJson = new JSONObject();
-		JSONObject abilityScores = new JSONObject();
-		abilityScores.put("wis", 12L);
-		oJson.put("ability_scores", abilityScores);
-		oJson.put("effects", new JSONArray());
-		oJson.put("level", 5L);
-		o = new GameObject(oJson);
-
-		sJson = new JSONObject();
-		sJson.put("subevent", "dice_check_calculation");
-		sJson.put("dc_ability", "wis");
-
-		try {
-			DiceCheckCalculation dcc = (DiceCheckCalculation) s;
-			// Default armor class
-			dcc.parse(sJson, null, o, o);
-			assertEquals(12L, dcc.get());
-
-			// armor class w/ bonus
-			dcc.parse(sJson, null, o, o);
-			dcc.addBonus(2L);
-			dcc.addBonus(5L);
-			assertEquals(19L, dcc.get());
-
-			// armor class w/ set
-			dcc.parse(sJson, null, o, o);
-			dcc.setTo(13L);
-			assertEquals(13L, dcc.get());
-
-			// armor class w/ set & bonus
-			dcc.parse(sJson, null, o, o);
-			dcc.setTo(13L);
-			dcc.addBonus(7L);
-			assertEquals(13L, dcc.get());
-
-			// armor class w/ multiple sets
-			dcc.parse(sJson, null, o, o);
-			dcc.setTo(13L);
-			dcc.setTo(7L);
-			assertEquals(13L, dcc.get());
-
-		} catch (SubeventMismatchException ex) {
-			ex.printStackTrace();
-			fail("Subevent mismatch");
-		}
-	}
-
-	@Test
-	@DisplayName("InvokeEvent")
-	@SuppressWarnings("unchecked")
-	void test009() {
-		fail("not yet implemented");
 	}
 
 	@Test
