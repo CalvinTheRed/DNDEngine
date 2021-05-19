@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Test;
 
 import com.dndsuite.core.Event;
 import com.dndsuite.core.GameObject;
+import com.dndsuite.core.UUIDTable;
+import com.dndsuite.core.VirtualBoard;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.Vector;
 import com.dndsuite.maths.dice.Die;
@@ -35,6 +37,8 @@ class DamageCalculationTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
+		UUIDTable.clear();
+		VirtualBoard.clearGameObjects();
 	}
 
 	@Test

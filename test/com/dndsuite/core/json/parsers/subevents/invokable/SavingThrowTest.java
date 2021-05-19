@@ -1,7 +1,6 @@
 package com.dndsuite.core.json.parsers.subevents.invokable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.json.simple.JSONObject;
@@ -21,7 +20,7 @@ import com.dndsuite.core.VirtualBoard;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.dice.Die;
 
-class AttackRollTest {
+class SavingThrowTest {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -58,17 +57,17 @@ class AttackRollTest {
 			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
 			GameObject dummy = new GameObject(dummyJson);
 
-			// set up AttackRoll subevent
-			jsonString = "{\"subevent\":\"attack_roll\",\"attack_ability\":\"str\",\"hit\":[],\"miss\":[]}";
+			// set up SavingThrow subevent
+			jsonString = "{\"subevent\":\"saving_throw\",\"save_ability\":\"dex\",\"dc_ability\":\"wis\",\"pass\":[],\"fail\":[]}";
 			JSONObject subeventJson = (JSONObject) parser.parse(jsonString);
-			AttackRoll attackRoll = new AttackRoll();
+			SavingThrow savingThrow = new SavingThrow();
 
 			long roll = 10L;
 
-			// check value of attack roll
+			// check value of saving throw
 			Die.enableDiceControl(new long[] { roll });
-			attackRoll.parse(subeventJson, parentEvent, dummy, dummy);
-			assertEquals(roll + 1L, attackRoll.get()); // +1L comes from str modifier
+			savingThrow.parse(subeventJson, parentEvent, dummy, dummy);
+			assertEquals(roll + 1L, savingThrow.get()); // +1L comes from dex modifier
 
 		} catch (ParseException ex) {
 			ex.printStackTrace();
@@ -96,25 +95,25 @@ class AttackRollTest {
 			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
 			GameObject dummy = new GameObject(dummyJson);
 
-			// set up AttackRoll subevent
-			jsonString = "{\"subevent\":\"attack_roll\",\"attack_ability\":\"str\",\"hit\":[],\"miss\":[]}";
+			// set up SavingThrow subevent
+			jsonString = "{\"subevent\":\"saving_throw\",\"save_ability\":\"dex\",\"dc_ability\":\"wis\",\"pass\":[],\"fail\":[]}";
 			JSONObject subeventJson = (JSONObject) parser.parse(jsonString);
-			AttackRoll attackRoll = new AttackRoll();
+			SavingThrow savingThrow = new SavingThrow();
 
 			// grant advantage
-			attackRoll.addTag("advantage");
+			savingThrow.addTag("advantage");
 			long hiRoll = 15L;
 			long loRoll = 5L;
 
-			// check value of attack roll (case 1)
+			// check value of saving throw (case 1)
 			Die.enableDiceControl(new long[] { loRoll, hiRoll });
-			attackRoll.parse(subeventJson, parentEvent, dummy, dummy);
-			assertEquals(hiRoll, attackRoll.get());
+			savingThrow.parse(subeventJson, parentEvent, dummy, dummy);
+			assertEquals(hiRoll, savingThrow.get());
 
-			// check value of attack roll (case 2)
+			// check value of saving throw (case 2)
 			Die.enableDiceControl(new long[] { hiRoll, loRoll });
-			attackRoll.parse(subeventJson, parentEvent, dummy, dummy);
-			assertEquals(hiRoll, attackRoll.get());
+			savingThrow.parse(subeventJson, parentEvent, dummy, dummy);
+			assertEquals(hiRoll, savingThrow.get());
 
 		} catch (ParseException ex) {
 			ex.printStackTrace();
@@ -142,25 +141,25 @@ class AttackRollTest {
 			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
 			GameObject dummy = new GameObject(dummyJson);
 
-			// set up AttackRoll subevent
-			jsonString = "{\"subevent\":\"attack_roll\",\"attack_ability\":\"str\",\"hit\":[],\"miss\":[]}";
+			// set up SavingThrow subevent
+			jsonString = "{\"subevent\":\"saving_throw\",\"save_ability\":\"dex\",\"dc_ability\":\"wis\",\"pass\":[],\"fail\":[]}";
 			JSONObject subeventJson = (JSONObject) parser.parse(jsonString);
-			AttackRoll attackRoll = new AttackRoll();
+			SavingThrow savingThrow = new SavingThrow();
 
 			// grant disadvantage
-			attackRoll.addTag("disadvantage");
+			savingThrow.addTag("disadvantage");
 			long hiRoll = 15L;
 			long loRoll = 5L;
 
-			// check value of attack roll (case 1)
+			// check value of saving throw (case 1)
 			Die.enableDiceControl(new long[] { loRoll, hiRoll });
-			attackRoll.parse(subeventJson, parentEvent, dummy, dummy);
-			assertEquals(loRoll, attackRoll.get());
+			savingThrow.parse(subeventJson, parentEvent, dummy, dummy);
+			assertEquals(loRoll, savingThrow.get());
 
-			// check value of attack roll (case 2)
+			// check value of saving throw (case 2)
 			Die.enableDiceControl(new long[] { hiRoll, loRoll });
-			attackRoll.parse(subeventJson, parentEvent, dummy, dummy);
-			assertEquals(loRoll, attackRoll.get());
+			savingThrow.parse(subeventJson, parentEvent, dummy, dummy);
+			assertEquals(loRoll, savingThrow.get());
 
 		} catch (ParseException ex) {
 			ex.printStackTrace();
@@ -188,19 +187,19 @@ class AttackRollTest {
 			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
 			GameObject dummy = new GameObject(dummyJson);
 
-			// set up AttackRoll subevent
-			jsonString = "{\"subevent\":\"attack_roll\",\"attack_ability\":\"str\",\"hit\":[],\"miss\":[]}";
+			// set up SavingThrow subevent
+			jsonString = "{\"subevent\":\"saving_throw\",\"save_ability\":\"dex\",\"dc_ability\":\"wis\",\"pass\":[],\"fail\":[]}";
 			JSONObject subeventJson = (JSONObject) parser.parse(jsonString);
-			AttackRoll attackRoll = new AttackRoll();
+			SavingThrow savingThrow = new SavingThrow();
 
 			long roll = 10L;
 			long bonus = 2L;
-			attackRoll.addBonus(bonus);
+			savingThrow.addBonus(bonus);
 
-			// check value of attack roll
+			// check value of saving throw
 			Die.enableDiceControl(new long[] { roll });
-			attackRoll.parse(subeventJson, parentEvent, dummy, dummy);
-			assertEquals(roll + bonus, attackRoll.get());
+			savingThrow.parse(subeventJson, parentEvent, dummy, dummy);
+			assertEquals(roll + bonus, savingThrow.get());
 
 		} catch (ParseException ex) {
 			ex.printStackTrace();
@@ -228,19 +227,19 @@ class AttackRollTest {
 			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
 			GameObject dummy = new GameObject(dummyJson);
 
-			// set up AttackRoll subevent
-			jsonString = "{\"subevent\":\"attack_roll\",\"attack_ability\":\"str\",\"hit\":[],\"miss\":[]}";
+			// set up SavingThrow subevent
+			jsonString = "{\"subevent\":\"saving_throw\",\"save_ability\":\"dex\",\"dc_ability\":\"wis\",\"pass\":[],\"fail\":[]}";
 			JSONObject subeventJson = (JSONObject) parser.parse(jsonString);
-			AttackRoll attackRoll = new AttackRoll();
+			SavingThrow savingThrow = new SavingThrow();
 
 			long roll = 10L;
 			long set = 5L;
-			attackRoll.setTo(set);
+			savingThrow.setTo(set);
 
-			// check value of attack roll
+			// check value of saving throw
 			Die.enableDiceControl(new long[] { roll });
-			attackRoll.parse(subeventJson, parentEvent, dummy, dummy);
-			assertEquals(set, attackRoll.get());
+			savingThrow.parse(subeventJson, parentEvent, dummy, dummy);
+			assertEquals(set, savingThrow.get());
 
 		} catch (ParseException ex) {
 			ex.printStackTrace();
@@ -268,135 +267,21 @@ class AttackRollTest {
 			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
 			GameObject dummy = new GameObject(dummyJson);
 
-			// set up AttackRoll subevent
-			jsonString = "{\"subevent\":\"attack_roll\",\"attack_ability\":\"str\",\"hit\":[],\"miss\":[]}";
+			// set up SavingThrow subevent
+			jsonString = "{\"subevent\":\"saving_throw\",\"save_ability\":\"dex\",\"dc_ability\":\"wis\",\"pass\":[],\"fail\":[]}";
 			JSONObject subeventJson = (JSONObject) parser.parse(jsonString);
-			AttackRoll attackRoll = new AttackRoll();
+			SavingThrow savingThrow = new SavingThrow();
 
 			long roll = 10L;
 			long set = 5L;
 			long bonus = 2L;
-			attackRoll.setTo(set);
-			attackRoll.addBonus(bonus);
+			savingThrow.setTo(set);
+			savingThrow.addBonus(bonus);
 
-			// check value of attack roll
+			// check value of saving throw
 			Die.enableDiceControl(new long[] { roll });
-			attackRoll.parse(subeventJson, parentEvent, dummy, dummy);
-			assertEquals(set + bonus, attackRoll.get());
-
-		} catch (ParseException ex) {
-			ex.printStackTrace();
-			fail("Parse exception");
-		} catch (SubeventMismatchException ex) {
-			ex.printStackTrace();
-			fail("Subevent mismatch");
-		}
-	}
-
-	@Test
-	@DisplayName("Critical miss")
-	void test007() {
-		try {
-			JSONParser parser = new JSONParser();
-			String jsonString;
-
-			// set up parent Event
-			jsonString = "{\"tags\":[]}";
-			JSONObject eventJson = (JSONObject) parser.parse(jsonString);
-			Event parentEvent = new Event(eventJson);
-
-			// set up dummy GameObject actor
-			jsonString = "{\"ability_scores\":{\"str\":10,\"dex\":10,\"con\":10,\"int\":10,\"wis\":10,\"cha\":10},\"effects\":[]}";
-			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
-			GameObject dummy = new GameObject(dummyJson);
-
-			// set up AttackRoll subevent
-			jsonString = "{\"subevent\":\"attack_roll\",\"attack_ability\":\"str\",\"hit\":[],\"miss\":[]}";
-			JSONObject subeventJson = (JSONObject) parser.parse(jsonString);
-			AttackRoll attackRoll = new AttackRoll();
-
-			long roll = 1L;
-
-			// check value of attack roll
-			Die.enableDiceControl(new long[] { roll });
-			attackRoll.parse(subeventJson, parentEvent, dummy, dummy);
-			assertTrue(parentEvent.hasTag("critical_miss"));
-
-		} catch (ParseException ex) {
-			ex.printStackTrace();
-			fail("Parse exception");
-		} catch (SubeventMismatchException ex) {
-			ex.printStackTrace();
-			fail("Subevent mismatch");
-		}
-	}
-
-	@Test
-	@DisplayName("Critical hit")
-	void test008() {
-		try {
-			JSONParser parser = new JSONParser();
-			String jsonString;
-
-			// set up parent Event
-			jsonString = "{\"tags\":[]}";
-			JSONObject eventJson = (JSONObject) parser.parse(jsonString);
-			Event parentEvent = new Event(eventJson);
-
-			// set up dummy GameObject actor
-			jsonString = "{\"ability_scores\":{\"str\":10,\"dex\":10,\"con\":10,\"int\":10,\"wis\":10,\"cha\":10},\"effects\":[]}";
-			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
-			GameObject dummy = new GameObject(dummyJson);
-
-			// set up AttackRoll subevent
-			jsonString = "{\"subevent\":\"attack_roll\",\"attack_ability\":\"str\",\"hit\":[],\"miss\":[]}";
-			JSONObject subeventJson = (JSONObject) parser.parse(jsonString);
-			AttackRoll attackRoll = new AttackRoll();
-
-			long roll = 20L;
-
-			// check value of attack roll
-			Die.enableDiceControl(new long[] { roll });
-			attackRoll.parse(subeventJson, parentEvent, dummy, dummy);
-			assertTrue(parentEvent.hasTag("critical_hit"));
-
-		} catch (ParseException ex) {
-			ex.printStackTrace();
-			fail("Parse exception");
-		} catch (SubeventMismatchException ex) {
-			ex.printStackTrace();
-			fail("Subevent mismatch");
-		}
-	}
-
-	@Test
-	@DisplayName("Critical hit (lower critical threshold)")
-	void test009() {
-		try {
-			JSONParser parser = new JSONParser();
-			String jsonString;
-
-			// set up parent Event
-			jsonString = "{\"tags\":[]}";
-			JSONObject eventJson = (JSONObject) parser.parse(jsonString);
-			Event parentEvent = new Event(eventJson);
-
-			// set up dummy GameObject actor
-			jsonString = "{\"ability_scores\":{\"str\":10,\"dex\":10,\"con\":10,\"int\":10,\"wis\":10,\"cha\":10},\"effects\":[]}";
-			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
-			GameObject dummy = new GameObject(dummyJson);
-
-			// set up AttackRoll subevent
-			jsonString = "{\"subevent\":\"attack_roll\",\"attack_ability\":\"str\",\"hit\":[],\"miss\":[],\"critical_threshold\":19}";
-			JSONObject subeventJson = (JSONObject) parser.parse(jsonString);
-			AttackRoll attackRoll = new AttackRoll();
-
-			long roll = 19L;
-
-			// check value of attack roll
-			Die.enableDiceControl(new long[] { roll });
-			attackRoll.parse(subeventJson, parentEvent, dummy, dummy);
-			assertTrue(parentEvent.hasTag("critical_hit"));
+			savingThrow.parse(subeventJson, parentEvent, dummy, dummy);
+			assertEquals(set + bonus, savingThrow.get());
 
 		} catch (ParseException ex) {
 			ex.printStackTrace();
