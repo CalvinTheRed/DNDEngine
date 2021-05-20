@@ -8,16 +8,31 @@ import org.json.simple.parser.ParseException;
 import com.dndsuite.core.Event;
 import com.dndsuite.core.GameObject;
 import com.dndsuite.core.Item;
+import com.dndsuite.core.Observer;
+import com.dndsuite.core.Subject;
 import com.dndsuite.exceptions.JSONFormatException;
 
-public class ItemAttackGroup extends EventGroup {
+public class ItemAttackGroup extends EventGroup implements Observer {
+	JSONObject json;
 
 	public ItemAttackGroup(JSONObject json, GameObject invoker) throws JSONFormatException {
-		parse(json, invoker);
+		this.json = json;
+		invoker.addObserver(this);
+		parse(invoker);
 	}
 
 	@SuppressWarnings("unchecked")
-	public void parse(JSONObject json, GameObject invoker) throws JSONFormatException {
+	public void parse(GameObject invoker) throws JSONFormatException {
+		JSONObject json = null;
+		try {
+			JSONParser parser = new JSONParser();
+			String jsonString = this.json.toString();
+			json = (JSONObject) parser.parse(jsonString);
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+			return;
+		}
+
 		String hand = (String) json.get("hand");
 		Item item;
 
@@ -152,6 +167,15 @@ public class ItemAttackGroup extends EventGroup {
 			ex.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public void update(Subject s) {
+		try {
+			parse((GameObject) s);
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }

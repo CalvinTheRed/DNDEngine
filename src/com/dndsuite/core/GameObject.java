@@ -19,13 +19,16 @@ import com.dndsuite.exceptions.UUIDNotAssignedException;
 import com.dndsuite.maths.Vector;
 import com.dndsuite.maths.dice.DamageDiceGroup;
 
-public class GameObject extends JSONLoader implements UUIDTableElement {
+public class GameObject extends JSONLoader implements UUIDTableElement, Subject {
 
 	ArrayList<EventGroup> queuedEvents;
+	// TODO: will observer relations ever need to be saved as json data?
+	ArrayList<Observer> observers;
 
 	public GameObject(JSONObject json) {
 		super(json);
 		queuedEvents = new ArrayList<EventGroup>();
+		observers = new ArrayList<Observer>();
 
 		UUIDTable.addToTable(this);
 		VirtualBoard.addGameObject(this);
@@ -35,6 +38,7 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 	public GameObject(String file, Vector pos, Vector rot) {
 		super("gameobjects/" + file);
 		queuedEvents = new ArrayList<EventGroup>();
+		observers = new ArrayList<Observer>();
 
 		JSONArray position = new JSONArray();
 		position.add(pos.x());
@@ -83,6 +87,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 		pos.add(newPos.x());
 		pos.add(newPos.y());
 		pos.add(newPos.z());
+
+		updateObservers();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,6 +98,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 		rot.add(newRot.x());
 		rot.add(newRot.y());
 		rot.add(newRot.z());
+
+		updateObservers();
 	}
 
 	@Override
@@ -166,6 +174,24 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 
 	}
 
+	@Override
+	public void addObserver(Observer o) {
+		observers.add(o);
+
+	}
+
+	@Override
+	public void removeObserver(Observer o) {
+		observers.remove(o);
+	}
+
+	@Override
+	public void updateObservers() {
+		for (Observer o : observers) {
+			o.update(this);
+		}
+	}
+
 	public boolean processSubevent(Subevent s) {
 		JSONArray effects = (JSONArray) json.get("effects");
 		boolean changed = false;
@@ -194,6 +220,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 		} catch (JSONFormatException ex) {
 			ex.printStackTrace();
 		}
+
+		updateObservers();
 	}
 
 	public void invokeQueuedEvent(Event e, Vector start, Vector end) {
@@ -209,10 +237,13 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 		if (container != null) {
 			queuedEvents.remove(container);
 		}
+
+		updateObservers();
 	}
 
 	public void queueEventGroup(EventGroup group) {
 		queuedEvents.add(group);
+		updateObservers();
 	}
 
 	public ArrayList<EventGroup> getQueuedEventGroups() {
@@ -221,6 +252,7 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 
 	public void clearQueuedEvents() {
 		queuedEvents.clear();
+		updateObservers();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -241,6 +273,7 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 		if (!redundant) {
 			try {
 				effectUUIDs.add(effect.getUUID());
+				updateObservers();
 			} catch (UUIDNotAssignedException ex) {
 				ex.printStackTrace();
 			}
@@ -251,6 +284,7 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 		JSONArray effectUUIDs = (JSONArray) json.get("effects");
 		try {
 			effectUUIDs.remove(effect.getUUID());
+			updateObservers();
 		} catch (UUIDNotAssignedException ex) {
 			ex.printStackTrace();
 		}
@@ -307,6 +341,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 			// instant-kill check would happen here based on magnitude of current
 		}
 		health.put("current", current);
+
+		updateObservers();
 	}
 
 	public JSONObject getHealth() {
@@ -373,6 +409,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 		} catch (UUIDNotAssignedException ex) {
 			ex.printStackTrace();
 		}
+
+		updateObservers();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -427,6 +465,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 		} catch (UUIDNotAssignedException ex) {
 			ex.printStackTrace();
 		}
+
+		updateObservers();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -459,6 +499,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
 		}
+
+		updateObservers();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -491,6 +533,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
 		}
+
+		updateObservers();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -531,6 +575,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
 		}
+
+		updateObservers();
 	}
 
 	public Item getMainhand() {

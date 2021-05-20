@@ -74,11 +74,11 @@ public class AttackRoll extends Subevent implements Calculation {
 		addBonus(eSource.getAbilityModifier(attackAbility));
 
 		// Determine the armor class of the target
-		ArmorClassCalculation acc = new ArmorClassCalculation();
-		JSONObject accJson = new JSONObject();
-		accJson.put("subevent", "armor_class_calculation");
-		acc.parse(accJson, e, eSource, eTarget);
-		long ac = acc.get();
+		ArmorClassCalculation armorClassCalculation = new ArmorClassCalculation();
+		JSONObject subeventJson = new JSONObject();
+		subeventJson.put("subevent", "armor_class_calculation");
+		armorClassCalculation.parse(subeventJson, e, eSource, eTarget);
+		long ac = armorClassCalculation.get();
 
 		JSONArray fallout;
 		if ((get() >= ac && !e.hasTag("critical_miss")) || base >= criticalThreshold) {

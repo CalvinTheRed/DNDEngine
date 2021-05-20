@@ -488,4 +488,77 @@ class ItemAttackGroupTest {
 		}
 	}
 
+	@Test
+	@DisplayName("Invoker changes equipped items")
+	void test008() {
+		try {
+			JSONParser parser = new JSONParser();
+			String jsonString;
+
+			// Construct Task
+			jsonString = "{\"tags\":[],\"item_attack_groups\":[{\"hand\":\"mainhand\",\"hit\":[],\"miss\":[]},{\"hand\":\"mainhand\",\"hit\":[],\"miss\":[]}]}";
+			JSONObject taskJson = (JSONObject) parser.parse(jsonString);
+			Task task = new Task(taskJson);
+			long taskUUID = task.getUUID();
+
+			// construct Item
+			jsonString = "{\"tags\":[\"melee\"],\"equipped_effects\":[]}";
+			JSONObject itemJson = (JSONObject) parser.parse(jsonString);
+			Item item = new Item(itemJson);
+			long itemUUID = item.getUUID();
+
+			// construct GameObject dummy
+			jsonString = "{\"effects\":[],\"tags\":[],\"inventory\":{\"mainhand\":-1,\"offhand\":-1,\"items\":[]},"
+					+ "\"tasks\":[" + taskUUID + "]}";
+			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
+			GameObject dummy = new GameObject(dummyJson);
+			dummy.equipMainhand(itemUUID);
+
+			// invoke Task to generate EventGroups
+			assertEquals(0, dummy.getQueuedEventGroups().size()); // 0 EventGroups present by default
+			dummy.invokeTask(taskUUID);
+			assertEquals(2, dummy.getQueuedEventGroups().size()); // 2 EventGroups listed in jsonString
+
+			// verify contents of EventGroups
+			JSONObject eventJson;
+			JSONArray subevents;
+			JSONObject subevent;
+			assertEquals(2, dummy.getQueuedEventGroups().get(0).getEvents().size());
+			assertEquals("Melee Attack", dummy.getQueuedEventGroups().get(0).getEvents().get(0).toString());
+			assertFalse(dummy.getQueuedEventGroups().get(0).getEvents().get(0).hasTag("improvised"));
+			eventJson = dummy.getQueuedEventGroups().get(0).getEvents().get(0).getJSONData();
+			subevents = (JSONArray) eventJson.get("subevents");
+			subevent = (JSONObject) subevents.get(0);
+			assertEquals("str", subevent.get("attack_ability"));
+			assertEquals("Thrown Attack", dummy.getQueuedEventGroups().get(0).getEvents().get(1).toString());
+			assertTrue(dummy.getQueuedEventGroups().get(0).getEvents().get(1).hasTag("improvised"));
+			eventJson = dummy.getQueuedEventGroups().get(0).getEvents().get(1).getJSONData();
+			subevents = (JSONArray) eventJson.get("subevents");
+			subevent = (JSONObject) subevents.get(0);
+			assertEquals("str", subevent.get("attack_ability"));
+
+			// unequip item
+			dummy.stowMainhand();
+			assertEquals(null, dummy.getMainhand());
+
+			// verify contents of EventGroups
+			assertEquals(1, dummy.getQueuedEventGroups().get(0).getEvents().size());
+			assertEquals("Unarmed Strike", dummy.getQueuedEventGroups().get(0).getEvents().get(0).toString());
+			eventJson = dummy.getQueuedEventGroups().get(0).getEvents().get(0).getJSONData();
+			subevents = (JSONArray) eventJson.get("subevents");
+			subevent = (JSONObject) subevents.get(0);
+			assertEquals("str", subevent.get("attack_ability"));
+
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+			fail("Parse exception");
+		} catch (UUIDNotAssignedException ex) {
+			ex.printStackTrace();
+			fail("UUID not assigned");
+		} catch (CannotUnequipItemException ex) {
+			ex.printStackTrace();
+			fail("Could not unequip item");
+		}
+	}
+
 }

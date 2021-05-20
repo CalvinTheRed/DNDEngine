@@ -77,16 +77,13 @@ public abstract class JSONLoader implements Taggable {
 
 	@SuppressWarnings("unchecked")
 	public void addTag(String tag) {
-		JSONArray tags = (JSONArray) json.remove("tags");
+		JSONArray tags = (JSONArray) json.get("tags");
 		tags.add(tag);
-		json.put("tags", tags);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void removeTag(String tag) {
-		JSONArray tags = (JSONArray) json.remove("tags");
+		JSONArray tags = (JSONArray) json.get("tags");
 		tags.remove(tag);
-		json.put("tags", tags);
 	}
 
 	public boolean hasTag(String tag) {
