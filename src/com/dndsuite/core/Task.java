@@ -3,7 +3,10 @@ package com.dndsuite.core;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.dndsuite.core.event_groups.EventGroup;
+import com.dndsuite.core.event_groups.ItemAttackGroup;
 import com.dndsuite.core.json.JSONLoader;
+import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 public class Task extends JSONLoader implements UUIDTableElement {
@@ -35,14 +38,23 @@ public class Task extends JSONLoader implements UUIDTableElement {
 	@Override
 	protected void parseResourceData() {
 		// TODO Auto-generated method stub
-
 	}
 
-	public void invoke(GameObject invoker) {
-		JSONArray eventGroups = (JSONArray) json.get("event_groups");
-		for (Object o : eventGroups) {
-			JSONObject eventGroup = (JSONObject) o;
-			invoker.queueEventGroup(new EventGroup(eventGroup));
+	public void invoke(GameObject invoker) throws JSONFormatException {
+		if (json.containsKey("item_attack_groups")) {
+			JSONArray itemAttackGroups = (JSONArray) json.get("item_attack_groups");
+			for (Object o : itemAttackGroups) {
+				JSONObject itemAttackGroupData = (JSONObject) o;
+				invoker.queueEventGroup(new ItemAttackGroup(itemAttackGroupData, invoker));
+			}
+		} else if (json.containsKey("event_groups")) {
+			JSONArray eventGroups = (JSONArray) json.get("event_groups");
+			for (Object o : eventGroups) {
+				JSONObject eventGroup = (JSONObject) o;
+				invoker.queueEventGroup(new EventGroup(eventGroup));
+			}
+		} else {
+			throw new JSONFormatException();
 		}
 	}
 

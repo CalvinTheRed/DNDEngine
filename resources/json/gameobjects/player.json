@@ -1,0 +1,23 @@
+{ 
+	"name": "Player",
+	"tags": [ 
+		"player_character"
+	],
+	"effects": [ 
+	
+	],
+	"tasks": [ 
+		"extra_attack"
+	],
+	"inventory": { 
+		"mainhand": -1,
+		"offhand": -1,
+		"items": []
+	},
+	"health": { 
+		"max": 20,
+		"base": 20,
+		"current": 20,
+		"tmp": 0
+	}
+}

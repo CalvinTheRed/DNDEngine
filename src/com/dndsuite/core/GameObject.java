@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.dndsuite.core.event_groups.EventGroup;
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.uninvokable.AbilityScoreCalculation;
 import com.dndsuite.core.json.parsers.subevents.uninvokable.DamageCalculation;
 import com.dndsuite.core.json.parsers.subevents.uninvokable.UnequipItem;
 import com.dndsuite.exceptions.CannotUnequipItemException;
+import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
@@ -133,7 +135,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 			}
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
-			return;
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
 		}
 	}
 
@@ -154,6 +157,10 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 
 	public void queueEventGroup(EventGroup group) {
 		queuedEvents.add(group);
+	}
+
+	public ArrayList<EventGroup> getQueuedEventGroups() {
+		return queuedEvents;
 	}
 
 	public void clearQueuedEvents() {

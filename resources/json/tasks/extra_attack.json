@@ -1,0 +1,27 @@
+{ 
+	"name": "Extra Attack",
+	"description": "...",
+	"tags": [ 
+	],
+	"cost": "action",
+	"item_attack_groups": [ 
+		{ 
+			"hand": "mainhand",
+			"hit": [ 
+				
+			],
+			"miss": [ 
+			
+			]
+		},
+		{ 
+			"hand": "mainhand",
+			"hit": [ 
+				
+			],
+			"miss": [ 
+			
+			]
+		}
+	]
+}

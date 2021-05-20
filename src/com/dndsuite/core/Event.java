@@ -11,7 +11,6 @@ import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.invokable.ApplyEffect;
 import com.dndsuite.core.json.parsers.subevents.invokable.AttackRoll;
 import com.dndsuite.core.json.parsers.subevents.invokable.Damage;
-import com.dndsuite.core.json.parsers.subevents.invokable.ItemDamage;
 import com.dndsuite.core.json.parsers.subevents.invokable.SavingThrow;
 import com.dndsuite.core.json.parsers.subevents.uninvokable.DamageDiceCollection;
 import com.dndsuite.exceptions.InvalidAreaOfEffectException;
@@ -33,7 +32,6 @@ public class Event extends JSONLoader implements Receptor {
 			put("apply_effect", new ApplyEffect());
 			put("attack_roll", new AttackRoll());
 			put("damage", new Damage());
-			put("item_damage", new ItemDamage());
 			put("saving_throw", new SavingThrow());
 		}
 	};

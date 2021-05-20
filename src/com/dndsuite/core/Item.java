@@ -97,4 +97,12 @@ public class Item extends JSONLoader implements UUIDTableElement {
 		return (JSONArray) json.getOrDefault("damage", improvised);
 	}
 
+	@SuppressWarnings("unchecked")
+	public JSONObject getRange() {
+		JSONObject range = new JSONObject();
+		range.put("short", 20.0);
+		range.put("long", 60.0);
+		return (JSONObject) json.getOrDefault("range", range);
+	}
+
 }
