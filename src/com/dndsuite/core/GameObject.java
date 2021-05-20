@@ -76,6 +76,24 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 		return new Vector((double) rot.get(0), (double) rot.get(1), (double) rot.get(2));
 	}
 
+	@SuppressWarnings("unchecked")
+	public void setPos(Vector newPos) {
+		JSONArray pos = (JSONArray) json.get("pos");
+		pos.clear();
+		pos.add(newPos.x());
+		pos.add(newPos.y());
+		pos.add(newPos.z());
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setRot(Vector newRot) {
+		JSONArray rot = (JSONArray) json.get("rot");
+		rot.clear();
+		rot.add(newRot.x());
+		rot.add(newRot.y());
+		rot.add(newRot.z());
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void parseResourceData() {

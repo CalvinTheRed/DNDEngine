@@ -57,6 +57,10 @@ public abstract class Subevent implements Taggable {
 		return parent;
 	}
 
+	public void setParentEvent(Event e) {
+		parent = e;
+	}
+
 	@Override
 	public abstract Subevent clone();
 

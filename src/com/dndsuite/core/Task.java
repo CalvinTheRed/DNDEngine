@@ -41,21 +41,22 @@ public class Task extends JSONLoader implements UUIDTableElement {
 	}
 
 	public void invoke(GameObject invoker) throws JSONFormatException {
+		if (json.containsKey("event_groups")) {
+			JSONArray eventGroups = (JSONArray) json.get("event_groups");
+			for (Object o : eventGroups) {
+				JSONObject eventGroup = (JSONObject) o;
+				invoker.queueEventGroup(new EventGroup(eventGroup));
+			}
+		}
+
 		if (json.containsKey("item_attack_groups")) {
 			JSONArray itemAttackGroups = (JSONArray) json.get("item_attack_groups");
 			for (Object o : itemAttackGroups) {
 				JSONObject itemAttackGroupData = (JSONObject) o;
 				invoker.queueEventGroup(new ItemAttackGroup(itemAttackGroupData, invoker));
 			}
-		} else if (json.containsKey("event_groups")) {
-			JSONArray eventGroups = (JSONArray) json.get("event_groups");
-			for (Object o : eventGroups) {
-				JSONObject eventGroup = (JSONObject) o;
-				invoker.queueEventGroup(new EventGroup(eventGroup));
-			}
-		} else {
-			throw new JSONFormatException();
 		}
+
 	}
 
 }

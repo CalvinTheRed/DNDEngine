@@ -45,7 +45,8 @@ public class ItemAttackGroup extends EventGroup {
 				itemAttack = (JSONObject) parser.parse(jsonString);
 				subevents = (JSONArray) itemAttack.get("subevents");
 				subevent = (JSONObject) subevents.get(0);
-				addHitAndMiss(subevent, json);
+				subevent.put("hit", json.get("hit"));
+				subevent.put("miss", json.get("miss"));
 				events.add(new Event(itemAttack));
 			} else {
 				if (item.hasTag("melee")) {
@@ -57,7 +58,8 @@ public class ItemAttackGroup extends EventGroup {
 					itemAttack.put("damage", item.getDamage());
 					subevents = (JSONArray) itemAttack.get("subevents");
 					subevent = (JSONObject) subevents.get(0);
-					addHitAndMiss(subevent, json);
+					subevent.put("hit", json.get("hit"));
+					subevent.put("miss", json.get("miss"));
 					events.add(new Event(itemAttack));
 
 					if (item.hasTag("finesse")) {
@@ -69,7 +71,8 @@ public class ItemAttackGroup extends EventGroup {
 						itemAttack.put("damage", item.getDamage());
 						subevents = (JSONArray) itemAttack.get("subevents");
 						subevent = (JSONObject) subevents.get(0);
-						addHitAndMiss(subevent, json);
+						subevent.put("hit", json.get("hit"));
+						subevent.put("miss", json.get("miss"));
 						events.add(new Event(itemAttack));
 					}
 				} else {
@@ -80,7 +83,8 @@ public class ItemAttackGroup extends EventGroup {
 					itemAttack = (JSONObject) parser.parse(jsonString);
 					subevents = (JSONArray) itemAttack.get("subevents");
 					subevent = (JSONObject) subevents.get(0);
-					addHitAndMiss(subevent, json);
+					subevent.put("hit", json.get("hit"));
+					subevent.put("miss", json.get("miss"));
 					events.add(new Event(itemAttack));
 				}
 
@@ -95,7 +99,8 @@ public class ItemAttackGroup extends EventGroup {
 					areaOfEffect.put("range", item.getRange());
 					subevents = (JSONArray) itemAttack.get("subevents");
 					subevent = (JSONObject) subevents.get(0);
-					addHitAndMiss(subevent, json);
+					subevent.put("hit", json.get("hit"));
+					subevent.put("miss", json.get("miss"));
 					events.add(new Event(itemAttack));
 
 					if (item.hasTag("finesse")) {
@@ -109,7 +114,8 @@ public class ItemAttackGroup extends EventGroup {
 						areaOfEffect.put("range", item.getRange());
 						subevents = (JSONArray) itemAttack.get("subevents");
 						subevent = (JSONObject) subevents.get(0);
-						addHitAndMiss(subevent, json);
+						subevent.put("hit", json.get("hit"));
+						subevent.put("miss", json.get("miss"));
 						events.add(new Event(itemAttack));
 					}
 				} else {
@@ -120,7 +126,8 @@ public class ItemAttackGroup extends EventGroup {
 					itemAttack = (JSONObject) parser.parse(jsonString);
 					subevents = (JSONArray) itemAttack.get("subevents");
 					subevent = (JSONObject) subevents.get(0);
-					addHitAndMiss(subevent, json);
+					subevent.put("hit", json.get("hit"));
+					subevent.put("miss", json.get("miss"));
 					events.add(new Event(itemAttack));
 				}
 
@@ -135,7 +142,8 @@ public class ItemAttackGroup extends EventGroup {
 					areaOfEffect.put("range", item.getRange());
 					subevents = (JSONArray) itemAttack.get("subevents");
 					subevent = (JSONObject) subevents.get(0);
-					addHitAndMiss(subevent, json);
+					subevent.put("hit", json.get("hit"));
+					subevent.put("miss", json.get("miss"));
 					events.add(new Event(itemAttack));
 				}
 			}
@@ -144,12 +152,6 @@ public class ItemAttackGroup extends EventGroup {
 			ex.printStackTrace();
 		}
 
-	}
-
-	@SuppressWarnings("unchecked")
-	private void addHitAndMiss(JSONObject subevent, JSONObject json) {
-		subevent.put("hit", json.get("hit"));
-		subevent.put("miss", json.get("miss"));
 	}
 
 }

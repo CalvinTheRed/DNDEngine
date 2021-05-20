@@ -10,6 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.dndsuite.core.UUIDTable;
+import com.dndsuite.core.VirtualBoard;
+
 class LSONLoaderTest {
 	private static JSONObject json;
 	private static JSONLoaderWrapper loader;
@@ -32,6 +35,8 @@ class LSONLoaderTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
+		UUIDTable.clear();
+		VirtualBoard.clearGameObjects();
 	}
 
 	@Test

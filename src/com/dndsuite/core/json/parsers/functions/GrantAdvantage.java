@@ -15,6 +15,7 @@ public class GrantAdvantage implements Function {
 		if (!function.equals("grant_advantage")) {
 			throw new FunctionMismatchException("grant_advantage", function);
 		}
+
 		s.addTag("advantage");
 	}
 

@@ -30,12 +30,7 @@ public class AttackRoll extends Subevent implements Calculation {
 			throw new SubeventMismatchException("attack_roll", subevent);
 		}
 
-		// Load critical hit threshold (default is 20)
-		if (json.containsKey("critical_threshold")) {
-			criticalThreshold = (long) json.get("critical_threshold");
-		} else {
-			criticalThreshold = 20;
-		}
+		criticalThreshold = (long) json.getOrDefault("critical_threshold", 20L);
 
 		// Load attack ability
 		String attackAbility = (String) json.get("attack_ability");

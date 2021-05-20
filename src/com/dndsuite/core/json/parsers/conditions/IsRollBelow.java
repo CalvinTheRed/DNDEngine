@@ -17,6 +17,8 @@ public class IsRollBelow implements Condition {
 			throw new ConditionMismatchException("is_roll_below", condition);
 		}
 
+		// TODO: this would allow for ArmorClassCalculations and
+		// DiceCheckCalculations...
 		if (s.hasTag("calculation")) {
 			Calculation c = (Calculation) s;
 			return c.getRaw() < (long) json.get("value");
