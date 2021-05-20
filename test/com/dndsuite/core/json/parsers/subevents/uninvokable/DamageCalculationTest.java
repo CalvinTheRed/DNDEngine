@@ -38,7 +38,7 @@ class DamageCalculationTest {
 	@AfterEach
 	void tearDown() throws Exception {
 		UUIDTable.clear();
-		VirtualBoard.clearGameObjects();
+		VirtualBoard.clear();
 	}
 
 	@Test

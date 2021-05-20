@@ -31,29 +31,18 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		observers = new ArrayList<Observer>();
 
 		UUIDTable.addToTable(this);
-		VirtualBoard.addGameObject(this);
+		VirtualBoard.add(this);
 	}
 
-	@SuppressWarnings("unchecked")
 	public GameObject(String file, Vector pos, Vector rot) {
 		super("gameobjects/" + file);
 		queuedEvents = new ArrayList<EventGroup>();
 		observers = new ArrayList<Observer>();
-
-		JSONArray position = new JSONArray();
-		position.add(pos.x());
-		position.add(pos.y());
-		position.add(pos.z());
-		json.put("pos", position);
-
-		JSONArray rotation = new JSONArray();
-		rotation.add(rot.x());
-		rotation.add(rot.y());
-		rotation.add(rot.z());
-		json.put("rot", rotation);
+		setPos(pos);
+		setRot(rot);
 
 		UUIDTable.addToTable(this);
-		VirtualBoard.addGameObject(this);
+		VirtualBoard.add(this);
 	}
 
 	@Override
@@ -82,7 +71,7 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 
 	@SuppressWarnings("unchecked")
 	public void setPos(Vector newPos) {
-		JSONArray pos = (JSONArray) json.get("pos");
+		JSONArray pos = (JSONArray) json.getOrDefault("pos", new JSONArray());
 		pos.clear();
 		pos.add(newPos.x());
 		pos.add(newPos.y());
@@ -93,7 +82,7 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 
 	@SuppressWarnings("unchecked")
 	public void setRot(Vector newRot) {
-		JSONArray rot = (JSONArray) json.get("rot");
+		JSONArray rot = (JSONArray) json.getOrDefault("rot", new JSONArray());
 		rot.clear();
 		rot.add(newRot.x());
 		rot.add(newRot.y());
@@ -224,12 +213,12 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		updateObservers();
 	}
 
-	public void invokeQueuedEvent(Event e, Vector start, Vector end) {
+	public void invokeQueuedEvent(Event e) {
 		EventGroup container = null;
 		for (EventGroup group : queuedEvents) {
 			if (group.contains(e)) {
 				container = group;
-				e.invoke(start, end, this);
+				e.pause();
 				break;
 			}
 		}

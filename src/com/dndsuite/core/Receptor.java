@@ -6,7 +6,7 @@ import com.dndsuite.exceptions.JSONFormatException;
 
 public interface Receptor {
 
-	public abstract void pause(JSONObject pauseNotes);
+	public abstract void pause();
 
 	public abstract void resume(JSONObject json) throws JSONFormatException;
 

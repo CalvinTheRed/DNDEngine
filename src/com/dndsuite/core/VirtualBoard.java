@@ -22,7 +22,7 @@ public final class VirtualBoard {
 	private static ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
 	// TODO: consider adding queuedGlobalEvents list here
 
-	public static boolean addGameObject(GameObject o) {
+	public static boolean add(GameObject o) {
 		if (gameObjects.contains(o)) {
 			return false;
 		}
@@ -30,11 +30,11 @@ public final class VirtualBoard {
 		return true;
 	}
 
-	public static boolean removeGameObject(GameObject o) {
+	public static boolean remove(GameObject o) {
 		return gameObjects.remove(o);
 	}
 
-	public static void clearGameObjects() {
+	public static void clear() {
 		gameObjects.clear();
 	}
 
@@ -63,8 +63,8 @@ public final class VirtualBoard {
 		return nearest;
 	}
 
-	public static ArrayList<GameObject> objectsInCone(Vector vertex, Vector end, double length, String[] filterTags) {
-		Vector rot = end.sub(vertex);
+	public static ArrayList<GameObject> objectsInCone(Vector vertex, Vector pointTo, double length, String[] filterTags) {
+		Vector rot = pointTo.sub(vertex);
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
 		for (GameObject o : gameObjects) {
 			Vector deltaPos = o.getPos().sub(vertex);
@@ -79,8 +79,8 @@ public final class VirtualBoard {
 		return objects;
 	}
 
-	public static ArrayList<GameObject> objectsInCube(Vector center, Vector end, double radius, String[] filterTags) {
-		Vector rot = end.sub(center);
+	public static ArrayList<GameObject> objectsInCube(Vector center, Vector pointTo, double radius, String[] filterTags) {
+		Vector rot = pointTo.sub(center);
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
 		Vector axis1 = rot.unit().scale(radius);
 		Vector axis2 = axis1.cross(Vector.UNIT_Y);
@@ -96,9 +96,9 @@ public final class VirtualBoard {
 		return objects;
 	}
 
-	public static ArrayList<GameObject> objectsInLine(Vector start, Vector end, double length, double radius,
+	public static ArrayList<GameObject> objectsInLine(Vector start, Vector pointTo, double length, double radius,
 			String[] filterTags) {
-		Vector rot = end.sub(start);
+		Vector rot = pointTo.sub(start);
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
 		for (GameObject o : gameObjects) {
 			Vector deltaPos = o.getPos().sub(start);

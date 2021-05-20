@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.core.json.parsers.Subevent;
@@ -46,10 +48,26 @@ public class Event extends JSONLoader implements Receptor {
 	 */
 	public Event(JSONObject json) {
 		super(json);
+
+		try {
+			JSONParser parser = new JSONParser();
+			String jsonString = "{\"request\":\"event_target_data\"}";
+			pauseNotes = (JSONObject) parser.parse(jsonString);
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public Event(String file) {
 		super("events/" + file);
+
+		try {
+			JSONParser parser = new JSONParser();
+			String jsonString = "{\"request\":\"event_target_data\"}";
+			pauseNotes = (JSONObject) parser.parse(jsonString);
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Override
@@ -59,7 +77,7 @@ public class Event extends JSONLoader implements Receptor {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void invoke(Vector start, Vector end, GameObject source) {
+	public void invoke(Vector start, Vector pointTo, GameObject source) {
 		// generate base damage subevent and r
 		baseDiceCollection = new DamageDiceCollection();
 		JSONArray damageList = (JSONArray) json.getOrDefault("damage", new JSONArray());
@@ -79,7 +97,7 @@ public class Event extends JSONLoader implements Receptor {
 		for (Object o : subevents) {
 			JSONObject subevent = (JSONObject) o;
 			try {
-				for (GameObject target : VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, end, json)) {
+				for (GameObject target : VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, pointTo, json)) {
 					SUBEVENT_MAP.get(subevent.get("subevent")).clone().parse(subevent, this, source, target);
 				}
 			} catch (SubeventMismatchException ex) {
@@ -105,20 +123,20 @@ public class Event extends JSONLoader implements Receptor {
 	}
 
 	@Override
-	public void pause(JSONObject pauseNotes) {
-		this.pauseNotes = pauseNotes;
+	public void pause() {
 		ReceptorQueue.enqueue(this);
 
 	}
 
 	@Override
 	public void resume(JSONObject json) throws JSONFormatException {
-		if (json.containsKey("start") && json.containsKey("end")) {
+		if (json.containsKey("start") && json.containsKey("point_to")) {
 			JSONArray start = (JSONArray) json.get("start");
-			JSONArray end = (JSONArray) json.get("end");
-			if (start.size() == 3 && end.size() == 3) {
+			JSONArray pointTo = (JSONArray) json.get("end");
+			if (start.size() == 3 && pointTo.size() == 3) {
 				Vector startVector = new Vector((double) start.get(0), (double) start.get(1), (double) start.get(2));
-				Vector endVector = new Vector((double) end.get(0), (double) end.get(1), (double) end.get(2));
+				Vector endVector = new Vector((double) pointTo.get(0), (double) pointTo.get(1),
+						(double) pointTo.get(2));
 				invoke(startVector, endVector, (GameObject) pauseNotes.get("source"));
 			} else {
 				throw new JSONFormatException();

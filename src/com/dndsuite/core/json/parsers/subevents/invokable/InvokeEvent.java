@@ -11,7 +11,6 @@ import com.dndsuite.exceptions.SubeventMismatchException;
 public class InvokeEvent extends Subevent {
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
 			throws SubeventMismatchException, JSONFormatException {
 		parent = e;
@@ -23,11 +22,7 @@ public class InvokeEvent extends Subevent {
 
 		String eventName = (String) json.get("event");
 		Event event = new Event(eventName);
-
-		JSONObject pauseNotes = new JSONObject();
-		pauseNotes.put("requirement", "event_invocation");
-		pauseNotes.put("source", eSource);
-		event.pause(pauseNotes);
+		event.pause();
 	}
 
 	@Override

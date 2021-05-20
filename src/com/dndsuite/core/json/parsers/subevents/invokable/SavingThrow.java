@@ -67,12 +67,12 @@ public class SavingThrow extends Subevent implements Calculation {
 		addBonus(eTarget.getAbilityModifier(saveAbility));
 
 		// Determine the dc of the source
-		DiceCheckCalculation dcc = new DiceCheckCalculation();
-		JSONObject dccJson = new JSONObject();
-		dccJson.put("subevent", "dice_check_calculation");
-		dccJson.put("dc_ability", dcAbility);
-		dcc.parse(dccJson, e, eSource, eTarget);
-		long dc = dcc.get();
+		DiceCheckCalculation diceCheckCalculation = new DiceCheckCalculation();
+		JSONObject subeventJson = new JSONObject();
+		subeventJson.put("subevent", "dice_check_calculation");
+		subeventJson.put("dc_ability", dcAbility);
+		diceCheckCalculation.parse(subeventJson, e, eSource, eTarget);
+		long dc = diceCheckCalculation.get();
 
 		JSONArray fallout;
 		if (get() >= dc) {

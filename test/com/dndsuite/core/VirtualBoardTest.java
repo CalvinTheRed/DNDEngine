@@ -47,7 +47,7 @@ public class VirtualBoardTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
-		VirtualBoard.clearGameObjects();
+		VirtualBoard.clear();
 	}
 
 	@Test
@@ -61,7 +61,7 @@ public class VirtualBoardTest {
 
 			assertTrue(VirtualBoard.contains(dummy));
 
-			VirtualBoard.removeGameObject(dummy);
+			VirtualBoard.remove(dummy);
 			assertFalse(VirtualBoard.contains(dummy));
 
 		} catch (ParseException ex) {
@@ -81,7 +81,7 @@ public class VirtualBoardTest {
 
 			assertTrue(VirtualBoard.contains(dummy));
 
-			VirtualBoard.clearGameObjects();
+			VirtualBoard.clear();
 			assertFalse(VirtualBoard.contains(dummy));
 
 		} catch (ParseException ex) {
