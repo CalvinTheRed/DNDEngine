@@ -33,7 +33,7 @@ public abstract class JSONLoader implements Taggable {
 		JSONParser jsonParser = new JSONParser();
 		try (FileReader reader = new FileReader("resources/json/" + file + ".json")) {
 			json = (JSONObject) jsonParser.parse(reader);
-			parseResourceData();
+			parseTemplate();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -63,7 +63,7 @@ public abstract class JSONLoader implements Taggable {
 		return null;
 	}
 
-	protected abstract void parseResourceData();
+	protected abstract void parseTemplate();
 
 	public JSONObject getJSONData() {
 		return json;

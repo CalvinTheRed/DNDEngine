@@ -96,14 +96,14 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected void parseResourceData() {
+	protected void parseTemplate() {
+		// iterate across all known Effects
 		JSONArray effectNames = (JSONArray) json.remove("effects");
 		JSONArray effectUUIDs = new JSONArray();
 		while (effectNames.size() > 0) {
 			// TODO: ensure source/target UUIDs are provided here
 			String effectName = (String) effectNames.remove(0);
 			Effect e = new Effect(effectName, this, this);
-			UUIDTable.addToTable(e);
 			try {
 				effectUUIDs.add(e.getUUID());
 			} catch (UUIDNotAssignedException ex) {
@@ -113,12 +113,12 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 		}
 		json.put("effects", effectUUIDs);
 
+		// iterate across all known Tasks
 		JSONArray taskNames = (JSONArray) json.remove("tasks");
 		JSONArray taskUUIDs = new JSONArray();
 		while (taskNames.size() > 0) {
 			String taskName = (String) taskNames.remove(0);
 			Task t = new Task(taskName);
-			UUIDTable.addToTable(t);
 			try {
 				taskUUIDs.add(t.getUUID());
 			} catch (UUIDNotAssignedException ex) {
@@ -126,6 +126,44 @@ public class GameObject extends JSONLoader implements UUIDTableElement {
 			}
 		}
 		json.put("tasks", taskUUIDs);
+
+		// iterate across all held items
+		if (json.containsKey("inventory")) {
+			// iterate across all non-equipped items and add to inventory
+			JSONObject inventory = (JSONObject) json.remove("inventory");
+			JSONArray items = (JSONArray) inventory.remove("items");
+			JSONArray itemUUIDs = new JSONArray();
+			while (items.size() > 0) {
+				String itemName = (String) items.remove(0);
+				Item i = new Item(itemName);
+				try {
+					itemUUIDs.add(i.getUUID());
+				} catch (UUIDNotAssignedException ex) {
+					ex.printStackTrace();
+				}
+			}
+
+			JSONObject newInventory = new JSONObject();
+			newInventory.put("items", itemUUIDs);
+
+			// iterate across all equipped items and add to inventory
+			for (Object o : inventory.keySet()) {
+				if (o instanceof JSONArray) {
+					continue;
+				}
+				String key = (String) o;
+				String itemName = (String) inventory.get(key);
+				Item i = new Item(itemName);
+				try {
+					newInventory.put(key, i.getUUID());
+					itemUUIDs.add(i.getUUID());
+				} catch (UUIDNotAssignedException ex) {
+					ex.printStackTrace();
+				}
+			}
+			json.put("inventory", newInventory);
+		}
+
 	}
 
 	public boolean processSubevent(Subevent s) {

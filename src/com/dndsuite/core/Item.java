@@ -23,7 +23,7 @@ public class Item extends JSONLoader implements UUIDTableElement {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void parseResourceData() {
+	protected void parseTemplate() {
 		JSONArray effectNames = (JSONArray) json.remove("equipped_effects");
 		JSONArray effectUUIDs = new JSONArray();
 		while (effectNames.size() > 0) {

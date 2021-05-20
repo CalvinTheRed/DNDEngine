@@ -53,7 +53,7 @@ public class Event extends JSONLoader implements Receptor {
 	}
 
 	@Override
-	protected void parseResourceData() {
+	protected void parseTemplate() {
 		// TODO Auto-generated method stub
 
 	}

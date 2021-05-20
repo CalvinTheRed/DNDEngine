@@ -57,6 +57,7 @@ public class Effect extends JSONLoader implements UUIDTableElement {
 
 	public Effect(JSONObject json) {
 		super(json);
+
 		UUIDTable.addToTable(this);
 	}
 
@@ -75,7 +76,7 @@ public class Effect extends JSONLoader implements UUIDTableElement {
 	}
 
 	@Override
-	protected void parseResourceData() {
+	protected void parseTemplate() {
 		// TODO Auto-generated method stub
 
 	}

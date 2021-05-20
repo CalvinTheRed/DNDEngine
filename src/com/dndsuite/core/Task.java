@@ -13,11 +13,13 @@ public class Task extends JSONLoader implements UUIDTableElement {
 
 	public Task(JSONObject json) {
 		super(json);
+
 		UUIDTable.addToTable(this);
 	}
 
 	public Task(String file) {
 		super("tasks/" + file);
+
 		UUIDTable.addToTable(this);
 	}
 
@@ -36,7 +38,7 @@ public class Task extends JSONLoader implements UUIDTableElement {
 	}
 
 	@Override
-	protected void parseResourceData() {
+	protected void parseTemplate() {
 		// TODO Auto-generated method stub
 	}
 

@@ -13,7 +13,7 @@ public class JSONLoaderWrapper extends JSONLoader {
 	}
 
 	@Override
-	protected void parseResourceData() {
+	protected void parseTemplate() {
 	}
 
 }
