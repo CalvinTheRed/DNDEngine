@@ -6,6 +6,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
 
+/**
+ * This class contains all objects in the library which possess a UUID value.
+ * All such objects, upon being loaded, should be passed to this class, and all
+ * objects which are saved when a save is created will be from this class.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public final class UUIDTable {
 
 	private static ConcurrentHashMap<Long, UUIDTableElement> table = new ConcurrentHashMap<Long, UUIDTableElement>();

@@ -11,6 +11,15 @@ import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.dice.DamageDiceGroup;
 import com.dndsuite.maths.dice.Die;
 
+/**
+ * DamageDiceCollection is a derivation of Subevent which cannot be invoked from
+ * within a JSON file. This Subevent is responsible for collecting all dice
+ * involved in a damage roll, prior to applying any modifiers to those dice. All
+ * dice are rolled upon being added to this Subevent.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class DamageDiceCollection extends Subevent {
 	protected ArrayList<DamageDiceGroup> damageDice = new ArrayList<DamageDiceGroup>();
 

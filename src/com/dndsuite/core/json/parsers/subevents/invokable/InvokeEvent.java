@@ -8,6 +8,14 @@ import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
+/**
+ * InvokeEffect is a derivation of Subevent which can be invoked from within a
+ * JSON file. This Subevent initiates a new Event, which can then be continued
+ * later by accessing the ReceptorQueue class.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class InvokeEvent extends Subevent {
 
 	@Override

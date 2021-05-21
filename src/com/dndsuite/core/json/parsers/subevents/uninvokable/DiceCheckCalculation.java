@@ -8,6 +8,15 @@ import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.Calculation;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
+/**
+ * DiceCheckCalculation is a derivation of Subevent which cannot be invoked from
+ * within a JSON file. This Subevent is responsible for determining the dice
+ * check value of a GameObject which is invoking a Subevent which requires a
+ * target to make a saving throw of some king, such as SavingThrow.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class DiceCheckCalculation extends Subevent implements Calculation {
 	private long base;
 	private long set = -1;
@@ -40,6 +49,9 @@ public class DiceCheckCalculation extends Subevent implements Calculation {
 	public DiceCheckCalculation clone() {
 		DiceCheckCalculation clone = new DiceCheckCalculation();
 		clone.parent = getParentEvent();
+		clone.base = base;
+		clone.set = set;
+		clone.bonus = bonus;
 		return clone;
 	}
 

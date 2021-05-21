@@ -13,10 +13,14 @@ import com.dndsuite.maths.Vector;
  * played. It is responsible for containing all GameObject objects and for
  * finding which GameObject objects are within a particular area.
  * 
- * @author calvi
+ * @author Calvin Withun
  * 
  */
 public final class VirtualBoard {
+	/**
+	 * This variable represents the angle of the vertex of a cone. In Dungeons &
+	 * Dragons, the cone arc size is 45 degrees.
+	 */
 	public static final double CONE_ARC_SIZE = Math.toRadians(45);
 
 	private static ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
@@ -63,7 +67,8 @@ public final class VirtualBoard {
 		return nearest;
 	}
 
-	public static ArrayList<GameObject> objectsInCone(Vector vertex, Vector pointTo, double length, String[] filterTags) {
+	public static ArrayList<GameObject> objectsInCone(Vector vertex, Vector pointTo, double length,
+			String[] filterTags) {
 		Vector rot = pointTo.sub(vertex);
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
 		for (GameObject o : gameObjects) {
@@ -79,7 +84,8 @@ public final class VirtualBoard {
 		return objects;
 	}
 
-	public static ArrayList<GameObject> objectsInCube(Vector center, Vector pointTo, double radius, String[] filterTags) {
+	public static ArrayList<GameObject> objectsInCube(Vector center, Vector pointTo, double radius,
+			String[] filterTags) {
 		Vector rot = pointTo.sub(center);
 		ArrayList<GameObject> objects = new ArrayList<GameObject>();
 		Vector axis1 = rot.unit().scale(radius);

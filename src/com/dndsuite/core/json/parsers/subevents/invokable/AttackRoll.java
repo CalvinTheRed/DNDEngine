@@ -12,6 +12,16 @@ import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.dice.Die;
 
+/**
+ * AttackRoll is a derivation of Subevent which can be invoked from within a
+ * JSON file. This Subevent rolls a d20 (which can have bonuses applied to it or
+ * be set to a given value) against the results of an ArmorClassCalculation
+ * Subevent. Different results may happen according to whether the roll value
+ * meets or exceeds the target threshold.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class AttackRoll extends Subevent implements Calculation {
 	private long base;
 	private long set = -1;
@@ -109,15 +119,30 @@ public class AttackRoll extends Subevent implements Calculation {
 	public AttackRoll clone() {
 		AttackRoll clone = new AttackRoll();
 		clone.parent = getParentEvent();
+		clone.base = base;
+		clone.set = set;
+		clone.bonus = bonus;
 		return clone;
 	}
 
+	/**
+	 * This function modifies the value which must be met or exceeded by a d20 roll
+	 * (with no bonuses) in order for a critical hit to occur.
+	 * 
+	 * @param criticalThreshold - the new critical hit threshold
+	 */
 	public void setCriticalThreshold(int criticalThreshold) {
 		if (criticalThreshold < this.criticalThreshold) {
 			this.criticalThreshold = criticalThreshold;
 		}
 	}
 
+	/**
+	 * This function returns the value which must be met or exceeded by a d20 roll
+	 * (with no bonuses) in order for a critical hit to occur.
+	 * 
+	 * @return the critical hit threshold
+	 */
 	public long getCriticalThreshold() {
 		return criticalThreshold;
 	}

@@ -11,6 +11,15 @@ import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.ConditionMismatchException;
 import com.dndsuite.maths.dice.DamageDiceGroup;
 
+/**
+ * DealsDamageType is a derivation of Condition. This Condition serves to
+ * determine whether an Event deals damage of a particular type. This is
+ * determined by iterating through the damage dice provided by the
+ * getBaseDiceCollection() function of the Subevent's parent Event.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class DealsDamageType implements Condition {
 
 	@Override

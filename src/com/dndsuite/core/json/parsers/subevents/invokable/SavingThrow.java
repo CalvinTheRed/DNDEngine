@@ -12,6 +12,16 @@ import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.dice.Die;
 
+/**
+ * SavingThrow is a derivation of Subevent which can be invoked from within a
+ * JSON file. This Subevent rolls a d20 (which can have bonuses applied to it or
+ * be set to a given value) against the results of a DiceCheckCollection
+ * Subevent. Different results may happen according to whether the roll value
+ * meets or exceeds the target threshold.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class SavingThrow extends Subevent implements Calculation {
 	private long base;
 	private long set = -1;
@@ -103,6 +113,9 @@ public class SavingThrow extends Subevent implements Calculation {
 	public SavingThrow clone() {
 		SavingThrow clone = new SavingThrow();
 		clone.parent = getParentEvent();
+		clone.base = base;
+		clone.set = set;
+		clone.bonus = bonus;
 		return clone;
 	}
 

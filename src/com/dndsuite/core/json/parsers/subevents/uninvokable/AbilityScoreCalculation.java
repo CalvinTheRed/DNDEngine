@@ -8,6 +8,15 @@ import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.Calculation;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
+/**
+ * AbilityScoreCalculation is a derivation of Subevent which cannot be invoked
+ * from within a JSON file. This Subevent is responsible for determining the
+ * effective value of a GameObject's ability score. This may be different from
+ * or the same as that ability score's base value.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class AbilityScoreCalculation extends Subevent implements Calculation {
 	private long base;
 	private long set = -1;
@@ -40,6 +49,9 @@ public class AbilityScoreCalculation extends Subevent implements Calculation {
 	public AbilityScoreCalculation clone() {
 		AbilityScoreCalculation clone = new AbilityScoreCalculation();
 		clone.parent = getParentEvent();
+		clone.base = base;
+		clone.set = set;
+		clone.bonus = bonus;
 		return clone;
 	}
 

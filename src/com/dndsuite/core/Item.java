@@ -7,22 +7,41 @@ import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
 
+/**
+ * Item is a class which represents any physical artifact to be found in the
+ * game. This might be a weapon, or a tool of some kind, or a random natural
+ * object such as a small rock.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class Item extends JSONLoader implements UUIDTableElement {
 
+	/**
+	 * Item constructor for loading from save JSON files.
+	 * 
+	 * @param json - the JSON data stored in a save file
+	 */
 	public Item(JSONObject json) {
 		super(json);
 
 		UUIDTable.addToTable(this);
 	}
 
+	/**
+	 * Item constructor for loading an Item from template JSON files.
+	 * 
+	 * @param file - the path to a file, as a continuation of the file path
+	 *             "resources/json/items/..."
+	 */
 	public Item(String file) {
 		super("items/" + file);
 
 		UUIDTable.addToTable(this);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void parseTemplate() {
 		JSONArray effectNames = (JSONArray) json.remove("equipped_effects");
 		JSONArray effectUUIDs = new JSONArray();
@@ -56,6 +75,12 @@ public class Item extends JSONLoader implements UUIDTableElement {
 		json.put("uuid", uuid);
 	}
 
+	/**
+	 * This function gives the Item a chance to apply Effects to its wielder upon
+	 * being equipped.
+	 * 
+	 * @param o - the GameObject which has equipped the Item
+	 */
 	public void equipBy(GameObject o) {
 		try {
 			JSONArray equippedEffects = (JSONArray) json.get("equipped_effects");
@@ -71,6 +96,12 @@ public class Item extends JSONLoader implements UUIDTableElement {
 		}
 	}
 
+	/**
+	 * This function gives the Item a chance to remove Effects from its wielder upon
+	 * being unequipped.
+	 * 
+	 * @param o - the GameObject which has unequipped the Item
+	 */
 	public void unequipBy(GameObject o) {
 		try {
 			JSONArray equippedEffects = (JSONArray) json.get("equipped_effects");

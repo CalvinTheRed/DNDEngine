@@ -2,6 +2,15 @@ package com.dndsuite.core;
 
 import java.util.ArrayList;
 
+/**
+ * ReceptorQueue is a class which contains all Receptor objects which have yet
+ * to be given a response from the user/client. This class serves as a FIFO
+ * queue, such that the Receptors are retrieved in the same order as they were
+ * queued.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public final class ReceptorQueue {
 	public static final boolean FREE = true;
 	public static final boolean WAITING = false;
@@ -16,13 +25,18 @@ public final class ReceptorQueue {
 
 	public static Receptor dequeue() {
 		Receptor r = inputQueue.remove(0);
-		if (inputQueue.size() == 0) {
-			status = FREE;
-		}
+		status = inputQueue.size() == 0;
 		return r;
 	}
 
-	public boolean getStatus() {
+	/**
+	 * This function indicates whether there are any Receptor objects which require
+	 * user input.
+	 * 
+	 * @return true if there are no unprocessed Receptors, false if there are
+	 *         unprocessed Receptors
+	 */
+	public boolean checkQueue() {
 		return status;
 	}
 

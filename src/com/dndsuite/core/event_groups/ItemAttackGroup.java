@@ -12,15 +12,44 @@ import com.dndsuite.core.Observer;
 import com.dndsuite.core.Subject;
 import com.dndsuite.exceptions.JSONFormatException;
 
+/**
+ * ItemAttackGroup is a derivation of EventGroup which represents the
+ * alternative means by which a GameObject can use an arbitrary item to perform
+ * an attack. This includes unarmed attacks, melee attacks, thrown attacks, and
+ * ranged attacks, and accounts for the finesse item property. It does not
+ * account for non-dex/str ability score-based item attacks on its own. Objects
+ * of this class subscribe to a GameObject in order to be notified whenever the
+ * GameObject changes the weapon it is wielding.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class ItemAttackGroup extends EventGroup implements Observer {
 	JSONObject json;
 
+	/**
+	 * ItemAttackGroup constructor.
+	 * 
+	 * @param json    - indicates which hand is used to make the attack (mainhand or
+	 *                offhand), as well as the collection of Subevents which occur
+	 *                upon a hit or a miss
+	 * @param invoker - the GameObject which has queued this EventGroup
+	 * @throws JSONFormatException thrown if the hand is not "mainhand" or "offhand"
+	 */
 	public ItemAttackGroup(JSONObject json, GameObject invoker) throws JSONFormatException {
 		this.json = json;
 		invoker.addObserver(this);
 		parse(invoker);
 	}
 
+	/**
+	 * This function parses the json data provided upon construction and determines
+	 * the Item held by the GameObject. It then clears and re-populates the
+	 * EventGroup's Event collection.
+	 * 
+	 * @param invoker - the GameObject which hasa queued this EventGroup
+	 * @throws JSONFormatException if the hand is not "mainhand" or "offhand"
+	 */
 	@SuppressWarnings("unchecked")
 	public void parse(GameObject invoker) throws JSONFormatException {
 		JSONObject json = null;

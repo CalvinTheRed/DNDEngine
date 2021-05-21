@@ -8,6 +8,14 @@ import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.Calculation;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
+/**
+ * ArmorClassCalculation is a derivation of Subevent which cannot be invoked
+ * from within a JSON file. This Subevent is responsible for determining the
+ * armor class of a GameObject.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class ArmorClassCalculation extends Subevent implements Calculation {
 	private long base;
 	private long set = -1;
@@ -25,6 +33,7 @@ public class ArmorClassCalculation extends Subevent implements Calculation {
 		}
 
 		// TODO: create a better AC base algorithm
+		// remember to account for inanimate objects
 		base = 10L + eTarget.getAbilityModifier("dex");
 
 		presentToEffects(eSource, eTarget);
@@ -39,6 +48,9 @@ public class ArmorClassCalculation extends Subevent implements Calculation {
 	public ArmorClassCalculation clone() {
 		ArmorClassCalculation clone = new ArmorClassCalculation();
 		clone.parent = getParentEvent();
+		clone.base = base;
+		clone.set = set;
+		clone.bonus = bonus;
 		return clone;
 	}
 

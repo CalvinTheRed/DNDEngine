@@ -8,6 +8,15 @@ import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.uninvokable.DamageDiceCollection;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
+/**
+ * Damage is a derivation of Subevent which can be invoked from within a JSON
+ * file. This Subevent generates and parses a DamageDiceCollection Subevent to
+ * begin the process of determining damage. Damage is typically determined by
+ * the JSON data of the parent Event.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class Damage extends Subevent {
 
 	@SuppressWarnings("unchecked")

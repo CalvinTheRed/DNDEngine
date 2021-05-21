@@ -7,6 +7,14 @@ import com.dndsuite.core.json.parsers.Function;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.FunctionMismatchException;
 
+/**
+ * GrantAdvantage is a derivation of Function. This Function grants the
+ * "advantage" tag to a Subevent (regardless of whether the Subevent entails the
+ * rolling of a 20-sided Die).
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class GrantAdvantage implements Function {
 
 	@Override

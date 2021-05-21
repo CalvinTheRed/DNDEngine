@@ -8,6 +8,15 @@ import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.Calculation;
 import com.dndsuite.exceptions.ConditionMismatchException;
 
+/**
+ * IsRollBelow is a derivation of Condition. THis Condition serves to determine
+ * whether a d20 roll falls below a particular threshold. This Condition returns
+ * false if it is provided any Subevent which does not entail the rolling of a
+ * 20-sided Die.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class IsRollBelow implements Condition {
 
 	@Override

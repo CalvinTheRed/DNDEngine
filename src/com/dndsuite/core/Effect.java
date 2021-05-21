@@ -22,16 +22,29 @@ import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
 
+/**
+ * Effect is a class which represents any lingering change in behavior which is
+ * applied to a GameObject. This may be something such as a bonus granted from a
+ * spell, or being intoxicated from drinking a toxin, or having an extended
+ * critical hit range in virtue of a class feature. An Effect is composed of
+ * various filters, each of which is composed of several Conditions and
+ * Functions. There is no data type associated with a filter in this library.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class Effect extends JSONLoader implements UUIDTableElement {
 
+	/**
+	 * A HashMap dedicated to mapping all of the conditions which may be referenced
+	 * by an Effect JSON file. Any condition not included in this HashMap cannot be
+	 * referenced by an Effect JSON file.
+	 */
 	public static final Map<String, Condition> CONDITION_MAP = new HashMap<String, Condition>() {
 
 		// TODO: design a way for the Slow spell to limit the number of AttackRoll
 		// subevents that can be invoked on a turn
 
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = -4761488814133689338L;
 
 		{
@@ -42,11 +55,13 @@ public class Effect extends JSONLoader implements UUIDTableElement {
 		}
 	};
 
+	/**
+	 * A HashMap dedicated to mapping all of the functions which may be referenced
+	 * by an Effect JSON file. Any function not included in this HashMap cannot be
+	 * referenced by an Effect JSON file.
+	 */
 	public static final Map<String, Function> FUNCTION_MAP = new HashMap<String, Function>() {
 
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = -6652098870662435261L;
 
 		{
@@ -55,12 +70,25 @@ public class Effect extends JSONLoader implements UUIDTableElement {
 		}
 	};
 
+	/**
+	 * Effect constructor for loading from save JSON files.
+	 * 
+	 * @param json - the JSON data stored in a save file
+	 */
 	public Effect(JSONObject json) {
 		super(json);
 
 		UUIDTable.addToTable(this);
 	}
 
+	/**
+	 * Effect constructor for loading an Effect from template JSON files.
+	 * 
+	 * @param file   - the path to a file, as a continuation of the file path
+	 *               "resources/json/effects/..."
+	 * @param source - the GameObject which created this Effect
+	 * @param target - the GameObject which this Effect is applied to
+	 */
 	@SuppressWarnings("unchecked")
 	public Effect(String file, GameObject source, GameObject target) {
 		super("effects/" + file);
@@ -95,6 +123,15 @@ public class Effect extends JSONLoader implements UUIDTableElement {
 		json.put("uuid", uuid);
 	}
 
+	/**
+	 * This function allows an Effect to assess and modify (if appropriate) a
+	 * Subevent in order to change or influence its outcome, according to the
+	 * Effect's filters. An Event cannot be applied to a Subevent if that Subevent
+	 * has already been modified by an Effect with the same name.
+	 * 
+	 * @param s - the Subevent to be evaluated
+	 * @return true if s was changed, false if s was not changed
+	 */
 	public boolean processSubevent(Subevent s) {
 		JSONArray filters = (JSONArray) json.get("filters");
 		for (int i = 0; i < filters.size(); i++) {

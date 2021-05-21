@@ -19,12 +19,27 @@ import com.dndsuite.exceptions.UUIDNotAssignedException;
 import com.dndsuite.maths.Vector;
 import com.dndsuite.maths.dice.DamageDiceGroup;
 
+/**
+ * GameObject is a class which represents any game piece which would typically
+ * appear on the game board. A GameObject may or may not have the capacity to
+ * invoke Tasks/Events (buildings cannot typically take actions, for example,
+ * despite being GameObjects), and a GameObject may or may not include an
+ * inventory. But all GameObjects have hit points and position/rotation vectors.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class GameObject extends JSONLoader implements UUIDTableElement, Subject {
 
 	ArrayList<EventGroup> queuedEvents;
 	// TODO: will observer relations ever need to be saved as json data?
 	ArrayList<Observer> observers;
 
+	/**
+	 * GameObject constructor for loading from save JSON files.
+	 * 
+	 * @param json - the JSON data stored in a save file
+	 */
 	public GameObject(JSONObject json) {
 		super(json);
 		queuedEvents = new ArrayList<EventGroup>();
@@ -34,6 +49,16 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		VirtualBoard.add(this);
 	}
 
+	/**
+	 * GameObject constructor for loading a GameObject from template JSON files.
+	 * 
+	 * @param file - the path to a file, as a continuation of the file path
+	 *             "resources/json/gameobjects/..."
+	 * @param pos  - an array indicating the position to place the new GameObject in
+	 *             the form of [x,y,z]
+	 * @param rot  - an array indicating the rotation of the new GameObject about
+	 *             each dimensional axis in the form of [x,y,z]
+	 */
 	public GameObject(String file, Vector pos, Vector rot) {
 		super("gameobjects/" + file);
 		queuedEvents = new ArrayList<EventGroup>();
@@ -181,6 +206,13 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		}
 	}
 
+	/**
+	 * This function allows a GameObject to pass a Subevent to its Effects in order
+	 * to be assessed and possibly modified
+	 * 
+	 * @param s - the Subevent to be assessed
+	 * @return true if s was changed, false if s was not changed
+	 */
 	public boolean processSubevent(Subevent s) {
 		JSONArray effects = (JSONArray) json.get("effects");
 		boolean changed = false;
@@ -196,6 +228,16 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		return changed;
 	}
 
+	/**
+	 * This function allows a GameObject to invoke a Task in order to queue
+	 * EventGroups which may be invoked at a later time. This converts resources
+	 * into actual behavior.
+	 * 
+	 * @NOTE resources are not yet implemented in this library, so all Tasks are
+	 *       without cost at this time
+	 * 
+	 * @param uuid - the UUID of the Task to be invoked
+	 */
 	public void invokeTask(long uuid) {
 		// TODO: dedicate a subevent to collecting all Tasks available to this
 		try {
@@ -213,6 +255,16 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		updateObservers();
 	}
 
+	/**
+	 * This function allows a GameObject to invoke a particular Event which has been
+	 * queued as a part of an EventGroup. This entails no resource cost, and
+	 * consumes the entire EventGroup which the desired Event is contained within.
+	 * After calling this function, the client will need to dequeue the Event from
+	 * the ReceptorQueue class and provide it with targeting information through the
+	 * resume() function (startPos, pointTo Vectors).
+	 * 
+	 * @param e - the Event to be invoked
+	 */
 	public void invokeQueuedEvent(Event e) {
 		EventGroup container = null;
 		for (EventGroup group : queuedEvents) {
@@ -230,6 +282,11 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		updateObservers();
 	}
 
+	/**
+	 * This function allows a GameObject to queue an EventGroup for later reference.
+	 * 
+	 * @param group - the EventGroup to be queued
+	 */
 	public void queueEventGroup(EventGroup group) {
 		queuedEvents.add(group);
 		updateObservers();
@@ -244,6 +301,12 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		updateObservers();
 	}
 
+	/**
+	 * This function allows a GameObject to recognize itself as the target of a new
+	 * Effect. If an Effect with the same name is already applied, nothing happens.
+	 * 
+	 * @param effect - the Effect to be applied to the GameObject
+	 */
 	@SuppressWarnings("unchecked")
 	public void addEffect(Effect effect) {
 		JSONArray effectUUIDs = (JSONArray) json.get("effects");
@@ -279,6 +342,12 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		}
 	}
 
+	/**
+	 * This function returns the functional modifier for an ability of a GameObject.
+	 * 
+	 * @param ability - the ability score whose modifier is desired
+	 * @return the modifier for the ability score in question
+	 */
 	@SuppressWarnings("unchecked")
 	public long getAbilityModifier(String ability) {
 		JSONObject ascJson = new JSONObject();
@@ -298,12 +367,29 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		return abilityScoreBuffer / 2;
 	}
 
+	/**
+	 * This function accepts a DamageCalculation Subevent and passes the damage
+	 * value within it to the other takeDamage() function. This is the final step in
+	 * the standard damage-dealing process via Subevents.
+	 * 
+	 * @param damage - the Subevent containing the final damage value of a damage
+	 *               Subevent
+	 */
 	public void takeDamage(DamageCalculation damage) {
+		long tmp = 0;
 		for (DamageDiceGroup group : damage.getDamageDice()) {
-			takeDamage(group.getDamageValue());
+			tmp += group.getDamageValue();
 		}
+		takeDamage(tmp);
 	}
 
+	/**
+	 * This function decrements the hit points of the GameObject, beginning with the
+	 * temporary hit points before moving on to the actual hit points. If the
+	 * GameObject is reduced below 0 hit points, it is set to 0 hit points.
+	 * 
+	 * @param damage - the final type-independent damage total of a damage Subevent
+	 */
 	@SuppressWarnings("unchecked")
 	public void takeDamage(long damage) {
 		JSONObject health = (JSONObject) json.get("health");
@@ -338,6 +424,13 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		return (JSONObject) json.get("health");
 	}
 
+	/**
+	 * This function returns the proficiency bonus of a GameObject as a function of
+	 * its level.
+	 * 
+	 * @return the GameObject's proficiency bonus, or 0 if the GameObject does not
+	 *         have level data
+	 */
 	public long getProficiencyBonus() {
 		if (json.containsKey("level")) {
 			long level = (long) json.get("level");
@@ -346,6 +439,20 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		return 0L;
 	}
 
+	/**
+	 * This function causes the GameObject to equip an Item in its mainhand slot, if
+	 * possible. If the GameObject does not yet possess this Item, it is added to
+	 * the GameObject's inventory as well. A two-handed Item is equipped in both
+	 * hands through this function, and versatile Items are by default only held by
+	 * one hand.
+	 * 
+	 * @param uuid - the UUID of the Item to be equipped
+	 * @throws CannotUnequipItemException if the GameObject needs to stow its
+	 *                                    mainhand Item to equip the new Item, but
+	 *                                    it cannot, this exception is thrown. The
+	 *                                    Item is added to the GameObject's
+	 *                                    inventory, ragardless.
+	 */
 	@SuppressWarnings("unchecked")
 	public void equipMainhand(long uuid) throws CannotUnequipItemException {
 		JSONObject inventory = (JSONObject) json.get("inventory");
@@ -402,6 +509,21 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		updateObservers();
 	}
 
+	/**
+	 * This function causes the GameObject to equip an Item in its offhand slot, if
+	 * possible. If the GameObject does not yet possess this Item, it is added to
+	 * the GameObject's inventory as well. A two-handed Item is equipped in both
+	 * hands through this function, and versatile Items are by default only held by
+	 * one hand. A GameObject cannot switch to holding a versatile Item with two
+	 * hands if the Item is being held in the offhand slot.
+	 * 
+	 * @param uuid - the UUID of the Item to be equipped
+	 * @throws CannotUnequipItemException if the GameObject needs to stow its
+	 *                                    offhand Item to equip the new Item, but it
+	 *                                    cannot, this exception is thrown. The Item
+	 *                                    is added to the GameObject's inventory,
+	 *                                    ragardless.
+	 */
 	@SuppressWarnings("unchecked")
 	public void equipOffhand(long uuid) throws CannotUnequipItemException {
 		JSONObject inventory = (JSONObject) json.get("inventory");
@@ -458,6 +580,14 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		updateObservers();
 	}
 
+	/**
+	 * This function causes the GameObject to stow an Item in its mainhand slot, if
+	 * possible. A two-handed Item is stowed from both hands through this function,
+	 * as well as a versatile item which is being held in both hands.
+	 * 
+	 * @throws CannotUnequipItemException if the GameObject cannot stow its mainhand
+	 *                                    Item, this exception is thrown.
+	 */
 	@SuppressWarnings("unchecked")
 	public void stowMainhand() throws CannotUnequipItemException {
 		JSONObject inventory = (JSONObject) json.get("inventory");
@@ -492,6 +622,14 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		updateObservers();
 	}
 
+	/**
+	 * This function causes the GameObject to stow an Item in its offhand slot, if
+	 * possible. A two-handed Item is stowed from both hands through this function,
+	 * as well as a versatile item which is being held in both hands.
+	 * 
+	 * @throws CannotUnequipItemException if the GameObject cannot stow its offhand
+	 *                                    Item, this exception is thrown.
+	 */
 	@SuppressWarnings("unchecked")
 	public void stowOffhand() throws CannotUnequipItemException {
 		JSONObject inventory = (JSONObject) json.get("inventory");
@@ -526,6 +664,15 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		updateObservers();
 	}
 
+	/**
+	 * This function allows a GameObject to change between holding a versatile Item
+	 * with one hand, or with two hands. Switching from one hand to two hands only
+	 * works if the Item is held in the mainhand slot.
+	 * 
+	 * @throws CannotUnequipItemException if the GameObject cannot stow its offhand
+	 *                                    Item and needs to, this exception is
+	 *                                    thrown.
+	 */
 	@SuppressWarnings("unchecked")
 	public void toggleVersatile() throws CannotUnequipItemException {
 		JSONObject inventory = (JSONObject) json.get("inventory");

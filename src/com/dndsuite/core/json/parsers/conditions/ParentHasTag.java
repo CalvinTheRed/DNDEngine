@@ -7,6 +7,13 @@ import com.dndsuite.core.json.parsers.Condition;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.ConditionMismatchException;
 
+/**
+ * ParentHasTag is a derivation of Condition. This Condition serves to determine
+ * whether the parent Event of a Subevent contains a particular tag.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class ParentHasTag implements Condition {
 
 	@Override

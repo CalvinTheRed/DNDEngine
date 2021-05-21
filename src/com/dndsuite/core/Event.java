@@ -22,12 +22,26 @@ import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.Vector;
 import com.dndsuite.maths.dice.DamageDiceGroup;
 
+/**
+ * Event is a class which represents a particular activity which can be
+ * performed by a GameObject. This may be something such as casting a spell, or
+ * using an Item to attack, or performing a skill check. An Event is composed of
+ * a collection of Subevents, each of which represent one distinct aspect of the
+ * Event.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class Event extends JSONLoader implements Receptor {
 
+	/**
+	 * A HashMap dedicated to mapping all of the Subevents which may be referenced
+	 * by an Event JSON file. Any Subevent not included in this HashMap cannot be
+	 * directly referenced by an Event JSON file. However, they may still be
+	 * assessed by Conditions or modified by Functions in an Effect JSON file.
+	 */
 	public static final Map<String, Subevent> SUBEVENT_MAP = new HashMap<String, Subevent>() {
-		/**
-		 * 
-		 */
+
 		private static final long serialVersionUID = -5295424280559257214L;
 
 		{
@@ -42,28 +56,36 @@ public class Event extends JSONLoader implements Receptor {
 	protected JSONObject pauseNotes;
 
 	/**
-	 * Not to be used in client program
+	 * Event constructor for loading from save JSON files. Such files are not
+	 * currently intended to exist; this constructor exists primarily for running
+	 * tests.
 	 * 
-	 * @param json
+	 * @param json - the JSON data stored in a save file
 	 */
 	public Event(JSONObject json) {
 		super(json);
 
 		try {
 			JSONParser parser = new JSONParser();
-			String jsonString = "{\"request\":\"event_target_data\"}";
+			String jsonString = "{\"requests\":[\"event_target_data\"]}";
 			pauseNotes = (JSONObject) parser.parse(jsonString);
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 		}
 	}
 
+	/**
+	 * Event constructor for loading an Event from template JSON files.
+	 * 
+	 * @param file - the path to a file, as a continuation of the file path
+	 *             "resources/json/events/..."
+	 */
 	public Event(String file) {
 		super("events/" + file);
 
 		try {
 			JSONParser parser = new JSONParser();
-			String jsonString = "{\"request\":\"event_target_data\"}";
+			String jsonString = "{\"requests\":[\"event_target_data\"]}";
 			pauseNotes = (JSONObject) parser.parse(jsonString);
 		} catch (ParseException ex) {
 			ex.printStackTrace();
@@ -76,6 +98,15 @@ public class Event extends JSONLoader implements Receptor {
 
 	}
 
+	/**
+	 * This function precipitates the consequences of the Event. Each Subevent
+	 * defined in the Event JSON file will be parsed and processed in order.
+	 * 
+	 * @param start   - the point at which the Event is determined to begin, if
+	 *                applicable
+	 * @param pointTo - a point at which the Event is directed, if applicable
+	 * @param source  - the GameObject which is enacting the Event
+	 */
 	@SuppressWarnings("unchecked")
 	public void invoke(Vector start, Vector pointTo, GameObject source) {
 		// generate base damage subevent and r
@@ -130,9 +161,12 @@ public class Event extends JSONLoader implements Receptor {
 
 	@Override
 	public void resume(JSONObject json) throws JSONFormatException {
-		if (json.containsKey("start") && json.containsKey("point_to")) {
-			JSONArray start = (JSONArray) json.get("start");
-			JSONArray pointTo = (JSONArray) json.get("end");
+		JSONArray responses = (JSONArray) json.get("responses");
+		JSONObject response = (JSONObject) responses.get(0);
+
+		if (response.containsKey("start") && response.containsKey("point_to")) {
+			JSONArray start = (JSONArray) response.get("start");
+			JSONArray pointTo = (JSONArray) response.get("end");
 			if (start.size() == 3 && pointTo.size() == 3) {
 				Vector startVector = new Vector((double) start.get(0), (double) start.get(1), (double) start.get(2));
 				Vector endVector = new Vector((double) pointTo.get(0), (double) pointTo.get(1),

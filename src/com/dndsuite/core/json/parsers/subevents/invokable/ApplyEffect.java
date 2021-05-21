@@ -11,6 +11,13 @@ import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.exceptions.UUIDNotAssignedException;
 
+/**
+ * ApplyEffect is a derivation of Subevent which can be invoked from within a
+ * JSON file. This Subevent loads an Effect and applies it to the target.
+ * 
+ * @author Calvin Withun
+ *
+ */
 public class ApplyEffect extends Subevent {
 
 	@Override
