@@ -20,7 +20,6 @@ import com.dndsuite.exceptions.ConditionMismatchException;
 import com.dndsuite.exceptions.FunctionMismatchException;
 import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
-import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 /**
  * Effect is a class which represents any lingering change in behavior which is
@@ -93,12 +92,8 @@ public class Effect extends JSONLoader implements UUIDTableElement {
 	public Effect(String file, GameObject source, GameObject target) {
 		super("effects/" + file);
 
-		try {
-			json.put("source", source.getUUID());
-			json.put("target", target.getUUID());
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-		}
+		json.put("source", source.getUUID());
+		json.put("target", target.getUUID());
 
 		UUIDTable.addToTable(this);
 	}
@@ -110,11 +105,9 @@ public class Effect extends JSONLoader implements UUIDTableElement {
 	}
 
 	@Override
-	public long getUUID() throws UUIDNotAssignedException {
-		if (json.containsKey("uuid")) {
-			return (long) json.get("uuid");
-		}
-		throw new UUIDNotAssignedException(this);
+	@SuppressWarnings("unchecked")
+	public long getUUID() {
+		return (long) json.getOrDefault("uuid", -1L);
 	}
 
 	@Override
@@ -177,20 +170,12 @@ public class Effect extends JSONLoader implements UUIDTableElement {
 
 	@SuppressWarnings("unchecked")
 	public void setSource(GameObject o) {
-		try {
-			json.put("source", o.getUUID());
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-		}
+		json.put("source", o.getUUID());
 	}
 
 	@SuppressWarnings("unchecked")
 	public void setTarget(GameObject o) {
-		try {
-			json.put("target", o.getUUID());
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-		}
+		json.put("target", o.getUUID());
 	}
 
 	public GameObject getSource() {

@@ -15,8 +15,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.dndsuite.core.event_groups.EventGroup;
 import com.dndsuite.exceptions.CannotUnequipItemException;
-import com.dndsuite.exceptions.UUIDNotAssignedException;
+import com.dndsuite.exceptions.JSONFormatException;
+import com.dndsuite.exceptions.UUIDDoesNotExistException;
+import com.dndsuite.maths.Vector;
+import com.dndsuite.maths.dice.Die;
 
 class GameObjectTest {
 
@@ -39,29 +43,75 @@ class GameObjectTest {
 	}
 
 	@Test
-	@DisplayName("Added to UUIDTable and VirtualBoard upon construction")
+	@DisplayName("Template parser check")
 	void test001() {
-		GameObject dummy = new GameObject(new JSONObject());
-
-		try {
-			assertTrue(UUIDTable.containsKey(dummy.getUUID()));
-			assertTrue(VirtualBoard.contains(dummy));
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID key(s) missing");
-		}
+		GameObject dummy = new GameObject("test_gameobject", new Vector(), new Vector());
+		assertTrue(UUIDTable.containsKey(dummy.getUUID()));
+		assertTrue(VirtualBoard.contains(dummy));
+		assertEquals(100L, dummy.getHealth().get("max"));
+		assertEquals(100L, dummy.getHealth().get("base"));
+		assertEquals(100L, dummy.getHealth().get("current"));
+		assertEquals(0L, dummy.getHealth().get("tmp"));
+		assertTrue(dummy.hasTag("test"));
+		assertEquals(1, dummy.getTasks().size());
+		assertEquals(0, dummy.getEffects().size());
+		assertEquals("Longsword", dummy.getMainhand().toString());
+		assertEquals(10, dummy.getInventory().keySet().size());
 	}
 
 	@Test
-	@DisplayName("Invoke Tasks")
-	@SuppressWarnings("unchecked")
+	@DisplayName("Invoke Task")
 	void test002() {
-		// TODO: this test case requires json files to be created
+		GameObject dummy = new GameObject("test_gameobject", new Vector(), new Vector());
+		dummy.invokeTask(dummy.getTasks().get(0));
+
+		assertEquals(1, dummy.getQueuedEventGroups().size());
+		assertEquals("[Melee Attack,Thrown Attack]", dummy.getQueuedEventGroups().get(0).toString());
+	}
+
+	@Test
+	@DisplayName("Invoke queued Event")
+	void test003() {
+		try {
+			GameObject dummy = new GameObject("test_gameobject", new Vector(), new Vector());
+			dummy.invokeTask(dummy.getTasks().get(0));
+
+			EventGroup selectedGroup = dummy.getQueuedEventGroups().get(0);
+			Event preferredEvent = selectedGroup.getEvents().get(0);
+
+			dummy.invokeQueuedEvent(preferredEvent);
+			assertEquals(0, dummy.getQueuedEventGroups().size());
+
+			Receptor receptor = ReceptorQueue.dequeue();
+			assertEquals(preferredEvent, receptor);
+			assertEquals(dummy.getUUID(), receptor.getPauseNotes().get("source"));
+
+			JSONParser parser = new JSONParser();
+			String jsonString = "{\"responses\":[{\"start_pos\":[0.0,0.0,0.0],\"point_to\":[0.0,0.0,0.0]}]}";
+			JSONObject response = (JSONObject) parser.parse(jsonString);
+
+			long damageRoll = 8L;
+			long attackRoll = 15L;
+			Die.enableDiceControl(new long[] { damageRoll, attackRoll });
+			receptor.resume(response);
+			assertEquals(100L - damageRoll, (long) dummy.getHealth().get("current"));
+
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+			fail("Parse exception");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON format exception");
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
+			fail("UUID does not exist");
+		}
+
 	}
 
 	@Test
 	@DisplayName("Ability Score Modifiers")
-	void test003() {
+	void test004() {
 		try {
 			JSONParser parser = new JSONParser();
 			String jsonString = "{\"ability_scores\":{\"str\":7,\"dex\":8,\"con\":9,\"int\":10,\"wis\":11,\"cha\":12},\"effects\":[]}";
@@ -84,7 +134,7 @@ class GameObjectTest {
 	@Test
 	@DisplayName("Proficiency bonus")
 	@SuppressWarnings("unchecked")
-	void test004() {
+	void test005() {
 		try {
 			JSONParser parser = new JSONParser();
 			String jsonString = "{}";
@@ -114,7 +164,7 @@ class GameObjectTest {
 
 	@Test
 	@DisplayName("Equip & stow one-handed item (mainhand)")
-	void test005() {
+	void test006() {
 		try {
 			JSONParser parser = new JSONParser();
 			String jsonString;
@@ -147,9 +197,6 @@ class GameObjectTest {
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 			fail("Parse exception");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
@@ -158,7 +205,7 @@ class GameObjectTest {
 
 	@Test
 	@DisplayName("Equip & stow one-handed item (offhand)")
-	void test006() {
+	void test007() {
 		try {
 			JSONParser parser = new JSONParser();
 			String jsonString;
@@ -191,9 +238,6 @@ class GameObjectTest {
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 			fail("Parse exception");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
@@ -202,52 +246,6 @@ class GameObjectTest {
 
 	@Test
 	@DisplayName("Equip & stow two-handed item (mainhand)")
-	void test007() {
-		try {
-			JSONParser parser = new JSONParser();
-			String jsonString;
-
-			// Create item to be wielded
-			jsonString = "{\"tags\":[\"two_handed\"],\"equipped_effects\":[]}";
-			JSONObject itemJson = (JSONObject) parser.parse(jsonString);
-			Item item = new Item(itemJson);
-			long itemUUID = item.getUUID();
-
-			// Create GameObject to wield the item
-			jsonString = "{\"inventory\":{\"mainhand\":-1,\"offhand\":-1,\"items\":[]},\"effects\":[]}";
-			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
-			GameObject dummy = new GameObject(dummyJson);
-
-			// confirm inventory is empty
-			assertEquals(null, dummy.getMainhand());
-			assertFalse(dummy.hasItem(itemUUID));
-
-			// equip item
-			dummy.equipMainhand(itemUUID);
-			assertEquals(item, dummy.getMainhand());
-			assertEquals(item, dummy.getOffhand());
-			assertTrue(dummy.hasItem(itemUUID));
-
-			// unequip item
-			dummy.stowMainhand();
-			assertEquals(null, dummy.getMainhand());
-			assertEquals(null, dummy.getOffhand());
-			assertTrue(dummy.hasItem(itemUUID));
-
-		} catch (ParseException ex) {
-			ex.printStackTrace();
-			fail("Parse exception");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
-		} catch (CannotUnequipItemException ex) {
-			ex.printStackTrace();
-			fail("Could not unequip item");
-		}
-	}
-
-	@Test
-	@DisplayName("Equip & stow two-handed item (offhand)")
 	void test008() {
 		try {
 			JSONParser parser = new JSONParser();
@@ -269,6 +267,49 @@ class GameObjectTest {
 			assertFalse(dummy.hasItem(itemUUID));
 
 			// equip item
+			dummy.equipMainhand(itemUUID);
+			assertEquals(item, dummy.getMainhand());
+			assertEquals(item, dummy.getOffhand());
+			assertTrue(dummy.hasItem(itemUUID));
+
+			// unequip item
+			dummy.stowMainhand();
+			assertEquals(null, dummy.getMainhand());
+			assertEquals(null, dummy.getOffhand());
+			assertTrue(dummy.hasItem(itemUUID));
+
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+			fail("Parse exception");
+		} catch (CannotUnequipItemException ex) {
+			ex.printStackTrace();
+			fail("Could not unequip item");
+		}
+	}
+
+	@Test
+	@DisplayName("Equip & stow two-handed item (offhand)")
+	void test009() {
+		try {
+			JSONParser parser = new JSONParser();
+			String jsonString;
+
+			// Create item to be wielded
+			jsonString = "{\"tags\":[\"two_handed\"],\"equipped_effects\":[]}";
+			JSONObject itemJson = (JSONObject) parser.parse(jsonString);
+			Item item = new Item(itemJson);
+			long itemUUID = item.getUUID();
+
+			// Create GameObject to wield the item
+			jsonString = "{\"inventory\":{\"mainhand\":-1,\"offhand\":-1,\"items\":[]},\"effects\":[]}";
+			JSONObject dummyJson = (JSONObject) parser.parse(jsonString);
+			GameObject dummy = new GameObject(dummyJson);
+
+			// confirm inventory is empty
+			assertEquals(null, dummy.getMainhand());
+			assertFalse(dummy.hasItem(itemUUID));
+
+			// equip item
 			dummy.equipOffhand(itemUUID);
 			assertEquals(item, dummy.getMainhand());
 			assertEquals(item, dummy.getOffhand());
@@ -283,9 +324,6 @@ class GameObjectTest {
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 			fail("Parse exception");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
@@ -294,7 +332,7 @@ class GameObjectTest {
 
 	@Test
 	@DisplayName("Manipulating versatile items")
-	void test009() {
+	void test00A() {
 		try {
 			JSONParser parser = new JSONParser();
 			String jsonString;
@@ -346,9 +384,6 @@ class GameObjectTest {
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 			fail("Parse exception");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
@@ -357,7 +392,7 @@ class GameObjectTest {
 
 	@Test
 	@DisplayName("Take damage value")
-	void test00A() {
+	void test00B() {
 		try {
 			JSONParser parser = new JSONParser();
 			String jsonString = "{\"health\":{\"max\":20,\"base\":20,\"current\":20,\"tmp\":15}}";

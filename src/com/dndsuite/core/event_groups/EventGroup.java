@@ -62,4 +62,15 @@ public class EventGroup {
 		return events;
 	}
 
+	@Override
+	public String toString() {
+		String name = "[";
+		for (int i = 0; i < events.size(); i++) {
+			name += events.get(i);
+			if (i + 1 < events.size()) {
+				name += ",";
+			}
+		}
+		return name + "]";
+	}
 }

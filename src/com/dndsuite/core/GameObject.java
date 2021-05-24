@@ -15,7 +15,6 @@ import com.dndsuite.exceptions.CannotUnequipItemException;
 import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
-import com.dndsuite.exceptions.UUIDNotAssignedException;
 import com.dndsuite.maths.Vector;
 import com.dndsuite.maths.dice.DamageDiceGroup;
 
@@ -71,11 +70,9 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 	}
 
 	@Override
-	public long getUUID() throws UUIDNotAssignedException {
-		if (json.containsKey("uuid")) {
-			return (long) json.get("uuid");
-		}
-		throw new UUIDNotAssignedException(this);
+	@SuppressWarnings("unchecked")
+	public long getUUID() {
+		return (long) json.getOrDefault("uuid", -1L);
 	}
 
 	@Override
@@ -101,6 +98,7 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		pos.add(newPos.x());
 		pos.add(newPos.y());
 		pos.add(newPos.z());
+		json.put("pos", pos);
 
 		updateObservers();
 	}
@@ -112,6 +110,7 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		rot.add(newRot.x());
 		rot.add(newRot.y());
 		rot.add(newRot.z());
+		json.put("rot", rot);
 
 		updateObservers();
 	}
@@ -119,37 +118,31 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void parseTemplate() {
-		// iterate across all known Effects
+		// parse Effects
 		JSONArray effectNames = (JSONArray) json.remove("effects");
 		JSONArray effectUUIDs = new JSONArray();
 		while (effectNames.size() > 0) {
 			// TODO: ensure source/target UUIDs are provided here
 			String effectName = (String) effectNames.remove(0);
 			Effect e = new Effect(effectName, this, this);
-			try {
-				effectUUIDs.add(e.getUUID());
-			} catch (UUIDNotAssignedException ex) {
-				ex.printStackTrace();
-			}
+			effectUUIDs.add(e.getUUID());
 
 		}
 		json.put("effects", effectUUIDs);
 
-		// iterate across all known Tasks
-		JSONArray taskNames = (JSONArray) json.remove("tasks");
-		JSONArray taskUUIDs = new JSONArray();
-		while (taskNames.size() > 0) {
-			String taskName = (String) taskNames.remove(0);
-			Task t = new Task(taskName);
-			try {
+		// parse Tasks, if appropriate
+		if (json.containsKey("tasks")) {
+			JSONArray taskNames = (JSONArray) json.remove("tasks");
+			JSONArray taskUUIDs = new JSONArray();
+			while (taskNames.size() > 0) {
+				String taskName = (String) taskNames.remove(0);
+				Task t = new Task(taskName);
 				taskUUIDs.add(t.getUUID());
-			} catch (UUIDNotAssignedException ex) {
-				ex.printStackTrace();
 			}
+			json.put("tasks", taskUUIDs);
 		}
-		json.put("tasks", taskUUIDs);
 
-		// iterate across all held items
+		// parse inventory, if appropriate
 		if (json.containsKey("inventory")) {
 			// iterate across all non-equipped items and add to inventory
 			JSONObject inventory = (JSONObject) json.remove("inventory");
@@ -158,31 +151,26 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 			while (items.size() > 0) {
 				String itemName = (String) items.remove(0);
 				Item i = new Item(itemName);
-				try {
-					itemUUIDs.add(i.getUUID());
-				} catch (UUIDNotAssignedException ex) {
-					ex.printStackTrace();
-				}
+				itemUUIDs.add(i.getUUID());
 			}
 
 			JSONObject newInventory = new JSONObject();
 			newInventory.put("items", itemUUIDs);
 
-			// iterate across all equipped items and add to inventory
-			for (Object o : inventory.keySet()) {
-				if (o instanceof JSONArray) {
-					continue;
-				}
-				String key = (String) o;
-				String itemName = (String) inventory.get(key);
-				Item i = new Item(itemName);
-				try {
-					newInventory.put(key, i.getUUID());
-					itemUUIDs.add(i.getUUID());
-				} catch (UUIDNotAssignedException ex) {
-					ex.printStackTrace();
+			String[] itemSlots = { "mainhand", "offhand", "head", "necklace", "armor", "cloak", "ring_1", "ring_2",
+					"boots" };
+			for (String itemSlot : itemSlots) {
+				if (inventory.containsKey(itemSlot)) {
+					String itemName = (String) inventory.get(itemSlot);
+					Item item = new Item(itemName);
+					newInventory.put(itemSlot, item.getUUID());
+					itemUUIDs.add(item.getUUID());
+				} else {
+					// if item slot is not specified in template file, default to empty
+					newInventory.put(itemSlot, -1L);
 				}
 			}
+
 			json.put("inventory", newInventory);
 		}
 
@@ -239,7 +227,6 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 	 * @param uuid - the UUID of the Task to be invoked
 	 */
 	public void invokeTask(long uuid) {
-		// TODO: dedicate a subevent to collecting all Tasks available to this
 		try {
 			UUIDTableElement element = UUIDTable.get(uuid);
 			if (element instanceof Task) {
@@ -270,7 +257,7 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		for (EventGroup group : queuedEvents) {
 			if (group.contains(e)) {
 				container = group;
-				e.pause();
+				e.invoke(this);
 				break;
 			}
 		}
@@ -323,23 +310,48 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 			}
 		}
 		if (!redundant) {
-			try {
-				effectUUIDs.add(effect.getUUID());
-				updateObservers();
-			} catch (UUIDNotAssignedException ex) {
-				ex.printStackTrace();
-			}
+			effectUUIDs.add(effect.getUUID());
+			updateObservers();
 		}
 	}
 
 	public void removeEffect(Effect effect) {
 		JSONArray effectUUIDs = (JSONArray) json.get("effects");
-		try {
-			effectUUIDs.remove(effect.getUUID());
-			updateObservers();
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
+		effectUUIDs.remove(effect.getUUID());
+		updateObservers();
+	}
+
+	/**
+	 * This function returns a collection of all Effects active on the GameObject by
+	 * UUID.
+	 * 
+	 * @return all Effects active on the GameObject by UUID
+	 */
+	public ArrayList<Long> getEffects() {
+		ArrayList<Long> effects = new ArrayList<Long>();
+		JSONArray jsonEffects = (JSONArray) json.get("effects");
+		for (Object o : jsonEffects) {
+			effects.add((long) o);
 		}
+		return effects;
+	}
+
+	/**
+	 * This function returns a collection of all Tasks available to the GameObject
+	 * by UUID. These tasks may be innate to the GameObject, or they may be granted
+	 * to the GameObject by an Effect
+	 * 
+	 * @return all Tasks which may be invoked by the GameObject (regardless of cost)
+	 *         by UUID
+	 */
+	public ArrayList<Long> getTasks() {
+		ArrayList<Long> tasks = new ArrayList<Long>();
+		JSONArray baseTasks = (JSONArray) json.get("tasks");
+		for (Object o : baseTasks) {
+			tasks.add((long) o);
+		}
+		// TODO: make uninvokable subevent dedicated to collection extra tasks
+		return tasks;
 	}
 
 	/**
@@ -440,6 +452,16 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 	}
 
 	/**
+	 * This function returns the inventory of the GameObject. Any changes made to
+	 * the returned value will influence the inventory of the GameObject.
+	 * 
+	 * @return the inventory of the GameObject
+	 */
+	public JSONObject getInventory() {
+		return (JSONObject) json.get("inventory");
+	}
+
+	/**
 	 * This function causes the GameObject to equip an Item in its mainhand slot, if
 	 * possible. If the GameObject does not yet possess this Item, it is added to
 	 * the GameObject's inventory as well. A two-handed Item is equipped in both
@@ -468,7 +490,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		try {
 			Item item = (Item) UUIDTable.get(uuid);
 			if ((long) inventory.get("mainhand") != -1L) {
-				Item mainhand = (Item) inventory.get("mainhand");
+				long mainhandUUID = (long) inventory.get("mainhand");
+				Item mainhand = (Item) UUIDTable.get(mainhandUUID);
 				sJson.put("item_uuid", mainhand.getUUID());
 				s.parse(sJson, null, this, this);
 
@@ -481,7 +504,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 			}
 			if (item.hasTag("two_handed")) {
 				if ((long) inventory.get("offhand") != -1L) {
-					Item offhand = (Item) inventory.get("offhand");
+					long offhandUUID = (long) inventory.get("offhand");
+					Item offhand = (Item) UUIDTable.get(offhandUUID);
 					sJson.put("item_uuid", offhand.getUUID());
 					s.parse(sJson, null, this, this);
 
@@ -501,8 +525,6 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
 		} catch (UUIDDoesNotExistException ex) {
-			ex.printStackTrace();
-		} catch (UUIDNotAssignedException ex) {
 			ex.printStackTrace();
 		}
 
@@ -539,7 +561,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		try {
 			Item item = (Item) UUIDTable.get(uuid);
 			if ((long) inventory.get("offhand") != -1L) {
-				Item offhand = (Item) inventory.get("offhand");
+				long offhandUUID = (long) inventory.get("offhand");
+				Item offhand = (Item) UUIDTable.get(offhandUUID);
 				sJson.put("item_uuid", offhand.getUUID());
 				s.parse(sJson, null, this, this);
 
@@ -552,7 +575,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 			}
 			if (item.hasTag("two_handed")) {
 				if ((long) inventory.get("mainhand") != -1L) {
-					Item mainhand = (Item) inventory.get("mainhand");
+					long mainhandUUID = (long) inventory.get("mainhand");
+					Item mainhand = (Item) UUIDTable.get(mainhandUUID);
 					sJson.put("item_uuid", mainhand.getUUID());
 					s.parse(sJson, null, this, this);
 
@@ -573,8 +597,6 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 			ex.printStackTrace();
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
 		}
 
 		updateObservers();
@@ -591,19 +613,19 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 	@SuppressWarnings("unchecked")
 	public void stowMainhand() throws CannotUnequipItemException {
 		JSONObject inventory = (JSONObject) json.get("inventory");
-		long uuid = (long) inventory.get("mainhand");
+		long mainhandUUID = (long) inventory.get("mainhand");
 
 		UnequipItem s = new UnequipItem();
 		JSONObject sJson = new JSONObject();
 		sJson.put("subevent", "unequip_item");
 
 		try {
-			Item mainhand = (Item) UUIDTable.get(uuid);
-			sJson.put("item_uuid", mainhand.getUUID());
+			sJson.put("item_uuid", mainhandUUID);
 			s.parse(sJson, null, this, this);
 
+			Item mainhand = (Item) UUIDTable.get(mainhandUUID);
 			if (s.getSuccess()) {
-				if (uuid == (long) inventory.get("offhand")) {
+				if (mainhandUUID == (long) inventory.get("offhand")) {
 					inventory.put("offhand", -1L);
 				}
 				mainhand.unequipBy(this);
@@ -612,8 +634,6 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 				throw new CannotUnequipItemException(mainhand);
 			}
 		} catch (SubeventMismatchException ex) {
-			ex.printStackTrace();
-		} catch (UUIDNotAssignedException ex) {
 			ex.printStackTrace();
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
@@ -633,29 +653,27 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 	@SuppressWarnings("unchecked")
 	public void stowOffhand() throws CannotUnequipItemException {
 		JSONObject inventory = (JSONObject) json.get("inventory");
-		long uuid = (long) inventory.get("offhand");
+		long offhandUUID = (long) inventory.get("offhand");
 
 		UnequipItem s = new UnequipItem();
 		JSONObject sJson = new JSONObject();
 		sJson.put("subevent", "unequip_item");
 
 		try {
-			Item mainhand = (Item) UUIDTable.get(uuid);
-			sJson.put("item_uuid", mainhand.getUUID());
+			sJson.put("item_uuid", offhandUUID);
 			s.parse(sJson, null, this, this);
 
+			Item offhand = (Item) UUIDTable.get(offhandUUID);
 			if (s.getSuccess()) {
-				if (uuid == (long) inventory.get("offhand")) {
-					inventory.put("offhand", -1L);
+				if (offhandUUID == (long) inventory.get("mainhand")) {
+					inventory.put("mainhand", -1L);
 				}
-				mainhand.unequipBy(this);
-				inventory.put("mainhand", -1L);
+				offhand.unequipBy(this);
+				inventory.put("offhand", -1L);
 			} else {
-				throw new CannotUnequipItemException(mainhand);
+				throw new CannotUnequipItemException(offhand);
 			}
 		} catch (SubeventMismatchException ex) {
-			ex.printStackTrace();
-		} catch (UUIDNotAssignedException ex) {
 			ex.printStackTrace();
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
@@ -721,9 +739,9 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 			return null;
 		}
 
-		long uuid = (long) inventory.get("mainhand");
+		long mainhandUUID = (long) inventory.get("mainhand");
 		try {
-			return (Item) UUIDTable.get(uuid);
+			return (Item) UUIDTable.get(mainhandUUID);
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
 			return null;
@@ -736,9 +754,9 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 			return null;
 		}
 
-		long uuid = (long) inventory.get("offhand");
+		long offhandUUID = (long) inventory.get("offhand");
 		try {
-			return (Item) UUIDTable.get(uuid);
+			return (Item) UUIDTable.get(offhandUUID);
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
 			return null;

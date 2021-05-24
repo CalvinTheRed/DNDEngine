@@ -7,7 +7,6 @@ import com.dndsuite.core.event_groups.EventGroup;
 import com.dndsuite.core.event_groups.ItemAttackGroup;
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.exceptions.JSONFormatException;
-import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 /**
  * Task is a class which represents the exchange between a GameObject's
@@ -44,11 +43,9 @@ public class Task extends JSONLoader implements UUIDTableElement {
 	}
 
 	@Override
-	public long getUUID() throws UUIDNotAssignedException {
-		if (json.containsKey("uuid")) {
-			return (long) json.get("uuid");
-		}
-		throw new UUIDNotAssignedException(this);
+	@SuppressWarnings("unchecked")
+	public long getUUID() {
+		return (long) json.getOrDefault("uuid", -1L);
 	}
 
 	@Override

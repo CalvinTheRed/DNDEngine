@@ -9,7 +9,6 @@ import com.dndsuite.core.GameObject;
 import com.dndsuite.core.UUIDTable;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.SubeventMismatchException;
-import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 /**
  * ApplyEffect is a derivation of Subevent which can be invoked from within a
@@ -48,11 +47,7 @@ public class ApplyEffect extends Subevent {
 		Effect effect = new Effect(effectName, eSource, subeventTarget);
 		UUIDTable.addToTable(effect);
 		JSONArray effects = (JSONArray) subeventTarget.getJSONData().remove("effects");
-		try {
-			effects.add(effect.getUUID());
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-		}
+		effects.add(effect.getUUID());
 		subeventTarget.getJSONData().put("effects", effects);
 	}
 

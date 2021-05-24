@@ -19,6 +19,7 @@ import com.dndsuite.exceptions.InvalidAreaOfEffectException;
 import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.OutOfRangeException;
 import com.dndsuite.exceptions.SubeventMismatchException;
+import com.dndsuite.exceptions.UUIDDoesNotExistException;
 import com.dndsuite.maths.Vector;
 import com.dndsuite.maths.dice.DamageDiceGroup;
 
@@ -64,14 +65,6 @@ public class Event extends JSONLoader implements Receptor {
 	 */
 	public Event(JSONObject json) {
 		super(json);
-
-		try {
-			JSONParser parser = new JSONParser();
-			String jsonString = "{\"requests\":[\"event_target_data\"]}";
-			pauseNotes = (JSONObject) parser.parse(jsonString);
-		} catch (ParseException ex) {
-			ex.printStackTrace();
-		}
 	}
 
 	/**
@@ -82,14 +75,6 @@ public class Event extends JSONLoader implements Receptor {
 	 */
 	public Event(String file) {
 		super("events/" + file);
-
-		try {
-			JSONParser parser = new JSONParser();
-			String jsonString = "{\"requests\":[\"event_target_data\"]}";
-			pauseNotes = (JSONObject) parser.parse(jsonString);
-		} catch (ParseException ex) {
-			ex.printStackTrace();
-		}
 	}
 
 	@Override
@@ -99,16 +84,33 @@ public class Event extends JSONLoader implements Receptor {
 	}
 
 	/**
+	 * This function is the initial invoke call which pauses the Event and enqueues
+	 * it to the ReceptorQueue class.
+	 * 
+	 * @param source - the GameObject which is enacting the Event
+	 */
+	public void invoke(GameObject source) {
+		try {
+			JSONParser parser = new JSONParser();
+			String jsonString = "{\"requests\":[\"event_target_data\"],\"source\":" + source.getUUID() + "}";
+			pauseNotes = (JSONObject) parser.parse(jsonString);
+			pause();
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	/**
 	 * This function precipitates the consequences of the Event. Each Subevent
 	 * defined in the Event JSON file will be parsed and processed in order.
 	 * 
-	 * @param start   - the point at which the Event is determined to begin, if
-	 *                applicable
-	 * @param pointTo - a point at which the Event is directed, if applicable
-	 * @param source  - the GameObject which is enacting the Event
+	 * @param startPos - the point at which the Event is determined to begin, if
+	 *                 applicable
+	 * @param pointTo  - a point at which the Event is directed, if applicable
+	 * @param source   - the GameObject which is enacting the Event
 	 */
 	@SuppressWarnings("unchecked")
-	public void invoke(Vector start, Vector pointTo, GameObject source) {
+	public void invoke(Vector startPos, Vector pointTo, GameObject source) {
 		// generate base damage subevent and r
 		baseDiceCollection = new DamageDiceCollection();
 		JSONArray damageList = (JSONArray) json.getOrDefault("damage", new JSONArray());
@@ -128,7 +130,7 @@ public class Event extends JSONLoader implements Receptor {
 		for (Object o : subevents) {
 			JSONObject subevent = (JSONObject) o;
 			try {
-				for (GameObject target : VirtualBoard.objectsInAreaOfEffect(source.getPos(), start, pointTo, json)) {
+				for (GameObject target : VirtualBoard.objectsInAreaOfEffect(source.getPos(), startPos, pointTo, json)) {
 					SUBEVENT_MAP.get(subevent.get("subevent")).clone().parse(subevent, this, source, target);
 				}
 			} catch (SubeventMismatchException ex) {
@@ -160,18 +162,19 @@ public class Event extends JSONLoader implements Receptor {
 	}
 
 	@Override
-	public void resume(JSONObject json) throws JSONFormatException {
+	public void resume(JSONObject json) throws JSONFormatException, UUIDDoesNotExistException {
 		JSONArray responses = (JSONArray) json.get("responses");
 		JSONObject response = (JSONObject) responses.get(0);
 
-		if (response.containsKey("start") && response.containsKey("point_to")) {
-			JSONArray start = (JSONArray) response.get("start");
-			JSONArray pointTo = (JSONArray) response.get("end");
-			if (start.size() == 3 && pointTo.size() == 3) {
-				Vector startVector = new Vector((double) start.get(0), (double) start.get(1), (double) start.get(2));
+		if (response.containsKey("start_pos") && response.containsKey("point_to")) {
+			JSONArray startPos = (JSONArray) response.get("start_pos");
+			JSONArray pointTo = (JSONArray) response.get("point_to");
+			if (startPos.size() == 3 && pointTo.size() == 3) {
+				Vector startVector = new Vector((double) startPos.get(0), (double) startPos.get(1),
+						(double) startPos.get(2));
 				Vector endVector = new Vector((double) pointTo.get(0), (double) pointTo.get(1),
 						(double) pointTo.get(2));
-				invoke(startVector, endVector, (GameObject) pauseNotes.get("source"));
+				invoke(startVector, endVector, (GameObject) UUIDTable.get((long) pauseNotes.get("source")));
 			} else {
 				throw new JSONFormatException();
 			}

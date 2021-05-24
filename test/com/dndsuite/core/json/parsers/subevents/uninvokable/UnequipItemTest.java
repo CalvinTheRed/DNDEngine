@@ -21,7 +21,6 @@ import com.dndsuite.core.UUIDTable;
 import com.dndsuite.core.VirtualBoard;
 import com.dndsuite.exceptions.CannotUnequipItemException;
 import com.dndsuite.exceptions.SubeventMismatchException;
-import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 class UnequipItemTest {
 
@@ -82,9 +81,6 @@ class UnequipItemTest {
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
 			fail("Subevent mismatch");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
@@ -131,9 +127,6 @@ class UnequipItemTest {
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
 			fail("Subevent mismatch");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
@@ -180,9 +173,6 @@ class UnequipItemTest {
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
 			fail("Subevent mismatch");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
@@ -230,9 +220,6 @@ class UnequipItemTest {
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
 			fail("Subevent mismatch");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");

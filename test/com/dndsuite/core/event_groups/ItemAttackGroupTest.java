@@ -22,7 +22,6 @@ import com.dndsuite.core.Task;
 import com.dndsuite.core.UUIDTable;
 import com.dndsuite.core.VirtualBoard;
 import com.dndsuite.exceptions.CannotUnequipItemException;
-import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 class ItemAttackGroupTest {
 
@@ -82,9 +81,6 @@ class ItemAttackGroupTest {
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 			fail("Parse exception");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		}
 	}
 
@@ -140,9 +136,6 @@ class ItemAttackGroupTest {
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 			fail("Parse exception");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
@@ -201,9 +194,6 @@ class ItemAttackGroupTest {
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 			fail("Parse exception");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
@@ -262,9 +252,6 @@ class ItemAttackGroupTest {
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 			fail("Parse exception");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
@@ -329,9 +316,6 @@ class ItemAttackGroupTest {
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 			fail("Parse exception");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
@@ -402,9 +386,6 @@ class ItemAttackGroupTest {
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 			fail("Parse exception");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
@@ -479,9 +460,6 @@ class ItemAttackGroupTest {
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 			fail("Parse exception");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
@@ -552,9 +530,6 @@ class ItemAttackGroupTest {
 		} catch (ParseException ex) {
 			ex.printStackTrace();
 			fail("Parse exception");
-		} catch (UUIDNotAssignedException ex) {
-			ex.printStackTrace();
-			fail("UUID not assigned");
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");

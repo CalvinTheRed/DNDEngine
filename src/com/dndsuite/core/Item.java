@@ -5,7 +5,6 @@ import org.json.simple.JSONObject;
 
 import com.dndsuite.core.json.JSONLoader;
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
-import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 /**
  * Item is a class which represents any physical artifact to be found in the
@@ -51,22 +50,15 @@ public class Item extends JSONLoader implements UUIDTableElement {
 			// TODO: does null, null work?
 			Effect e = new Effect(effectName, null, null);
 			UUIDTable.addToTable(e);
-			try {
-				effectUUIDs.add(e.getUUID());
-			} catch (UUIDNotAssignedException ex) {
-				ex.printStackTrace();
-			}
-
+			effectUUIDs.add(e.getUUID());
 		}
 		json.put("equipped_effects", effectUUIDs);
 	}
 
 	@Override
-	public long getUUID() throws UUIDNotAssignedException {
-		if (json.containsKey("uuid")) {
-			return (long) json.get("uuid");
-		}
-		throw new UUIDNotAssignedException(this);
+	@SuppressWarnings("unchecked")
+	public long getUUID() {
+		return (long) json.getOrDefault("uuid", -1L);
 	}
 
 	@Override

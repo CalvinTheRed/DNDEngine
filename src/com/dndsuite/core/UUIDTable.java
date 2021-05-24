@@ -1,10 +1,8 @@
 package com.dndsuite.core;
 
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.dndsuite.exceptions.UUIDDoesNotExistException;
-import com.dndsuite.exceptions.UUIDNotAssignedException;
 
 /**
  * This class contains all objects in the library which possess a UUID value.
@@ -19,13 +17,10 @@ public final class UUIDTable {
 	private static ConcurrentHashMap<Long, UUIDTableElement> table = new ConcurrentHashMap<Long, UUIDTableElement>();
 
 	public static void addToTable(UUIDTableElement element) {
-		long key;
-		try {
-			key = element.getUUID();
-		} catch (UUIDNotAssignedException ex) {
-			Random r = new Random();
+		long key = element.getUUID();
+		if (key == -1L) {
 			do {
-				key = r.nextInt(Integer.MAX_VALUE);
+				key = (long) (Math.random() * Long.MAX_VALUE);
 			} while (table.containsKey(key));
 			element.assignUUID(key);
 		}
