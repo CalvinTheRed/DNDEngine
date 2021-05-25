@@ -32,6 +32,9 @@ public class SavingThrow extends Subevent implements Calculation {
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
 			throws SubeventMismatchException, JSONFormatException {
 		super.parse(json, e, eSource, eTarget);
+		if (!(json.containsKey("subevent") && json.containsKey("dc_ability") && json.containsKey("save_ability"))) {
+
+		}
 		String subevent = (String) json.get("subevent");
 		addTag("calculation");
 		if (!subevent.equals("saving_throw")) {
@@ -76,6 +79,7 @@ public class SavingThrow extends Subevent implements Calculation {
 		addBonus(eTarget.getAbilityModifier(saveAbility));
 
 		// Determine the dc of the source
+		// TODO: allow for "spell" dc_ability parameter
 		DiceCheckCalculation diceCheckCalculation = new DiceCheckCalculation();
 		JSONObject subeventJson = new JSONObject();
 		subeventJson.put("subevent", "dice_check_calculation");
@@ -85,9 +89,9 @@ public class SavingThrow extends Subevent implements Calculation {
 
 		JSONArray fallout;
 		if (get() >= dc) {
-			fallout = (JSONArray) json.get("pass");
+			fallout = (JSONArray) json.getOrDefault("pass", new JSONArray());
 		} else {
-			fallout = (JSONArray) json.get("fail");
+			fallout = (JSONArray) json.getOrDefault("fail", new JSONArray());
 		}
 
 		for (Object o : fallout) {

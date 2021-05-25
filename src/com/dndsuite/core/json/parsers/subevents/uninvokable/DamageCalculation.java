@@ -27,6 +27,9 @@ public class DamageCalculation extends Subevent {
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
 			throws SubeventMismatchException, JSONFormatException {
 		super.parse(json, e, eSource, eTarget);
+		if (!(json.containsKey("subevent"))) {
+			throw new JSONFormatException();
+		}
 		String subevent = (String) json.get("subevent");
 		if (!subevent.equals("damage_calculation")) {
 			throw new SubeventMismatchException("damage_calculation", subevent);

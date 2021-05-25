@@ -22,6 +22,9 @@ public class InvokeEvent extends Subevent {
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
 			throws SubeventMismatchException, JSONFormatException {
 		super.parse(json, e, eSource, eTarget);
+		if (!(json.containsKey("subevent") && json.containsKey("event"))) {
+			throw new JSONFormatException();
+		}
 		String subevent = (String) json.get("subevent");
 		if (!subevent.equals("invoke_event")) {
 			throw new SubeventMismatchException("invoke_event", subevent);

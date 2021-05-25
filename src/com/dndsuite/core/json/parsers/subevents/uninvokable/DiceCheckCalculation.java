@@ -27,6 +27,9 @@ public class DiceCheckCalculation extends Subevent implements Calculation {
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
 			throws SubeventMismatchException, JSONFormatException {
 		super.parse(json, e, eSource, eTarget);
+		if (!(json.containsKey("subevent") && json.containsKey("dc_ability"))) {
+			throw new JSONFormatException();
+		}
 		String subevent = (String) json.get("subevent");
 		addTag("calculation");
 		if (!subevent.equals("dice_check_calculation")) {

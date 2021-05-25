@@ -6,6 +6,7 @@ import com.dndsuite.core.Effect;
 import com.dndsuite.core.json.parsers.Function;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.FunctionMismatchException;
+import com.dndsuite.exceptions.JSONFormatException;
 
 /**
  * GrantDisadvantage is a derivation of Function. This Function grants the
@@ -18,7 +19,11 @@ import com.dndsuite.exceptions.FunctionMismatchException;
 public class GrantDisadvantage implements Function {
 
 	@Override
-	public void parse(JSONObject json, Effect effect, Subevent s) throws FunctionMismatchException {
+	public void parse(JSONObject json, Effect effect, Subevent s)
+			throws FunctionMismatchException, JSONFormatException {
+		if (!(json.containsKey("function"))) {
+			throw new JSONFormatException();
+		}
 		String function = (String) json.get("function");
 		if (!function.equals("grant_disadvantage")) {
 			throw new FunctionMismatchException("grant_disadvantage", function);

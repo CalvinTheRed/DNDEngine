@@ -25,6 +25,9 @@ public class ApplyEffect extends Subevent {
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
 			throws SubeventMismatchException, JSONFormatException {
 		super.parse(json, e, eSource, eTarget);
+		if (!(json.containsKey("subevent") && json.containsKey("effect") && json.containsKey("apply_to"))) {
+			throw new JSONFormatException();
+		}
 		String subevent = (String) json.get("subevent");
 		if (!subevent.equals("apply_effect")) {
 			throw new SubeventMismatchException("apply_effect", subevent);
@@ -38,9 +41,7 @@ public class ApplyEffect extends Subevent {
 		} else if (subeventTargetAlias.equals("target")) {
 			subeventTarget = eTarget;
 		} else {
-			// TODO: is this the best way to handle this situation?
-			System.out.println("[ApplyEffect] invalid apply_to value detected: " + subeventTargetAlias);
-			return;
+			throw new JSONFormatException();
 		}
 
 		presentToEffects(eSource, subeventTarget);
