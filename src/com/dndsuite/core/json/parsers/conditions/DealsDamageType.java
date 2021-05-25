@@ -9,6 +9,7 @@ import com.dndsuite.core.Event;
 import com.dndsuite.core.json.parsers.Condition;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.ConditionMismatchException;
+import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.maths.dice.DamageDiceGroup;
 
 /**
@@ -23,7 +24,10 @@ import com.dndsuite.maths.dice.DamageDiceGroup;
 public class DealsDamageType implements Condition {
 
 	@Override
-	public boolean parse(JSONObject json, Effect e, Subevent s) throws ConditionMismatchException {
+	public boolean parse(JSONObject json, Effect e, Subevent s) throws ConditionMismatchException, JSONFormatException {
+		if (!(json.containsKey("condition") && json.containsKey("damage_type"))) {
+			throw new JSONFormatException();
+		}
 		String condition = (String) json.get("condition");
 		if (!condition.equals("deals_damage_type")) {
 			throw new ConditionMismatchException("deals_damage_type", condition);

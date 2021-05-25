@@ -73,8 +73,10 @@ public class Event extends JSONLoader implements Receptor {
 	 * @param file - the path to a file, as a continuation of the file path
 	 *             "resources/json/events/..."
 	 */
-	public Event(String file) {
+	@SuppressWarnings("unchecked")
+	public Event(String file, long source) {
 		super("events/" + file);
+		json.put("source", source);
 	}
 
 	@Override
@@ -186,6 +188,10 @@ public class Event extends JSONLoader implements Receptor {
 	@Override
 	public JSONObject getPauseNotes() {
 		return pauseNotes;
+	}
+
+	public long getSource() {
+		return (long) json.get("source");
 	}
 
 }

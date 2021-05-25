@@ -20,6 +20,7 @@ import com.dndsuite.core.Item;
 import com.dndsuite.core.UUIDTable;
 import com.dndsuite.core.VirtualBoard;
 import com.dndsuite.exceptions.CannotUnequipItemException;
+import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
 class UnequipItemTest {
@@ -84,6 +85,9 @@ class UnequipItemTest {
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON format exception");
 		}
 	}
 
@@ -130,6 +134,9 @@ class UnequipItemTest {
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON format exception");
 		}
 	}
 
@@ -176,6 +183,9 @@ class UnequipItemTest {
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON format exception");
 		}
 	}
 
@@ -223,6 +233,9 @@ class UnequipItemTest {
 		} catch (CannotUnequipItemException ex) {
 			ex.printStackTrace();
 			fail("Could not unequip item");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON format exception");
 		}
 	}
 

@@ -17,6 +17,7 @@ import com.dndsuite.core.Event;
 import com.dndsuite.core.GameObject;
 import com.dndsuite.core.UUIDTable;
 import com.dndsuite.core.VirtualBoard;
+import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 import com.dndsuite.maths.Vector;
 
@@ -73,6 +74,9 @@ class DiceCheckCalculationTest {
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
 			fail("Subevent mismatch");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON format exception");
 		}
 	}
 
@@ -112,6 +116,9 @@ class DiceCheckCalculationTest {
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
 			fail("Subevent mismatch");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON format exception");
 		}
 	}
 
@@ -153,6 +160,9 @@ class DiceCheckCalculationTest {
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
 			fail("Subevent mismatch");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON format exception");
 		}
 	}
 
@@ -194,6 +204,9 @@ class DiceCheckCalculationTest {
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
 			fail("Subevent mismatch");
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
+			fail("JSON format exception");
 		}
 	}
 

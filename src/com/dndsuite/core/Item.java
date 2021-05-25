@@ -79,8 +79,8 @@ public class Item extends JSONLoader implements UUIDTableElement {
 			for (Object obj : equippedEffects) {
 				long uuid = (long) obj;
 				Effect e = (Effect) UUIDTable.get(uuid);
-				e.setSource(o);
-				e.setTarget(o);
+				e.setSource(o.getUUID());
+				e.setTarget(o.getUUID());
 				o.addEffect(e);
 			}
 		} catch (UUIDDoesNotExistException ex) {
@@ -100,8 +100,8 @@ public class Item extends JSONLoader implements UUIDTableElement {
 			for (Object obj : equippedEffects) {
 				long uuid = (long) obj;
 				Effect e = (Effect) UUIDTable.get(uuid);
-				e.setSource(null);
-				e.setTarget(null);
+				e.setSource(-1L);
+				e.setTarget(-1L);
 				o.removeEffect(e);
 			}
 		} catch (UUIDDoesNotExistException ex) {

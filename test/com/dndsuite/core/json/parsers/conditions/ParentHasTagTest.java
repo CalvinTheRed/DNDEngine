@@ -57,7 +57,7 @@ class ParentHasTagTest {
 			Subevent subevent = new Damage(); // arbitrary subevent type
 			subevent.setParentEvent(event);
 
-			Condition c = new ParentHasTag();
+			Condition c = new ParentEventHasTag();
 			JSONObject conditionJson;
 
 			jsonString = "{\"condition\":\"parent_event_has_tag\",\"tag\":\"test_tag\"}";

@@ -34,12 +34,12 @@ public class EventGroup {
 	 * @param json - contains a list of Event names to be loaded and included in
 	 *             this EventGroup
 	 */
-	public EventGroup(JSONObject json) {
+	public EventGroup(JSONObject json, long source) {
 		events = new ArrayList<Event>();
 		JSONArray list = (JSONArray) json.get("events");
 		for (Object o : list) {
 			String eventName = (String) o;
-			events.add(new Event(eventName));
+			events.add(new Event(eventName, source));
 		}
 	}
 

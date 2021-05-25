@@ -7,6 +7,7 @@ import com.dndsuite.core.json.parsers.Condition;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.Calculation;
 import com.dndsuite.exceptions.ConditionMismatchException;
+import com.dndsuite.exceptions.JSONFormatException;
 
 /**
  * IsRollBelow is a derivation of Condition. THis Condition serves to determine
@@ -20,7 +21,10 @@ import com.dndsuite.exceptions.ConditionMismatchException;
 public class IsRollBelow implements Condition {
 
 	@Override
-	public boolean parse(JSONObject json, Effect e, Subevent s) throws ConditionMismatchException {
+	public boolean parse(JSONObject json, Effect e, Subevent s) throws ConditionMismatchException, JSONFormatException {
+		if (!(json.containsKey("condition") && json.containsKey("value"))) {
+			throw new JSONFormatException();
+		}
 		String condition = (String) json.get("condition");
 		if (!condition.equals("is_roll_below")) {
 			throw new ConditionMismatchException("is_roll_below", condition);

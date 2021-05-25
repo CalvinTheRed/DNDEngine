@@ -6,6 +6,7 @@ import com.dndsuite.core.Event;
 import com.dndsuite.core.GameObject;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.uninvokable.DamageDiceCollection;
+import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
 /**
@@ -22,10 +23,9 @@ public class Damage extends Subevent {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
-			throws SubeventMismatchException {
-		parent = e;
+			throws SubeventMismatchException, JSONFormatException {
+		super.parse(json, e, eSource, eTarget);
 		String subevent = (String) json.get("subevent");
-		addTag(subevent);
 		if (!subevent.equals("damage")) {
 			throw new SubeventMismatchException("damage", subevent);
 		}

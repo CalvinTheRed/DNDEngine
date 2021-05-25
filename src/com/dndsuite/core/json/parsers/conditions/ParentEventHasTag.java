@@ -6,6 +6,7 @@ import com.dndsuite.core.Effect;
 import com.dndsuite.core.json.parsers.Condition;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.exceptions.ConditionMismatchException;
+import com.dndsuite.exceptions.JSONFormatException;
 
 /**
  * ParentHasTag is a derivation of Condition. This Condition serves to determine
@@ -14,10 +15,13 @@ import com.dndsuite.exceptions.ConditionMismatchException;
  * @author Calvin Withun
  *
  */
-public class ParentHasTag implements Condition {
+public class ParentEventHasTag implements Condition {
 
 	@Override
-	public boolean parse(JSONObject json, Effect e, Subevent s) throws ConditionMismatchException {
+	public boolean parse(JSONObject json, Effect e, Subevent s) throws ConditionMismatchException, JSONFormatException {
+		if (!(json.containsKey("condition") && json.containsKey("tag"))) {
+			throw new JSONFormatException();
+		}
 		String condition = (String) json.get("condition");
 		if (!condition.equals("parent_event_has_tag")) {
 			throw new ConditionMismatchException("parent_event_has_tag", condition);

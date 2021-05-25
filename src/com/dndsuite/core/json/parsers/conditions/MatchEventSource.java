@@ -15,20 +15,27 @@ import com.dndsuite.exceptions.JSONFormatException;
  * @author Calvin Withun
  *
  */
-public class HasTag implements Condition {
+public class MatchEventSource implements Condition {
 
 	@Override
 	public boolean parse(JSONObject json, Effect e, Subevent s) throws ConditionMismatchException, JSONFormatException {
-		if (!(json.containsKey("condition") && json.containsKey("tag"))) {
+		if (!(json.containsKey("condition") && json.containsKey("event_source"))) {
 			throw new JSONFormatException();
 		}
 		String condition = (String) json.get("condition");
-		if (!condition.equals("has_tag")) {
-			throw new ConditionMismatchException("has_tag", condition);
+		if (!condition.equals("match_event_source")) {
+			throw new ConditionMismatchException("match_event_source", condition);
 		}
 
-		String tag = (String) json.get("tag");
-		return s.hasTag(tag);
+		String eventSourceAlias = (String) json.get("event_source");
+		if (eventSourceAlias.equals("effect_source")) {
+			return s.getParentEvent().getSource() == e.getSource();
+		} else if (eventSourceAlias.equals("effect_target")) {
+			return s.getParentEvent().getSource() == e.getTarget();
+		} else {
+			throw new JSONFormatException();
+		}
+
 	}
 
 }

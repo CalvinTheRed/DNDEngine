@@ -6,6 +6,7 @@ import com.dndsuite.core.Event;
 import com.dndsuite.core.GameObject;
 import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.subevents.Calculation;
+import com.dndsuite.exceptions.JSONFormatException;
 import com.dndsuite.exceptions.SubeventMismatchException;
 
 /**
@@ -24,10 +25,9 @@ public class AbilityScoreCalculation extends Subevent implements Calculation {
 
 	@Override
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
-			throws SubeventMismatchException {
-		parent = e;
+			throws SubeventMismatchException, JSONFormatException {
+		super.parse(json, e, eSource, eTarget);
 		String subevent = (String) json.get("subevent");
-		addTag(subevent);
 		addTag("calculation");
 		if (!subevent.equals("ability_score_calculation")) {
 			throw new SubeventMismatchException("ability_score_calculation", subevent);

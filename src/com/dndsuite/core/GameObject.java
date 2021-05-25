@@ -370,6 +370,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 			asc.parse(ascJson, null, this, this);
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
 		}
 
 		long abilityScoreBuffer = asc.get() - 10;
@@ -526,6 +528,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 			ex.printStackTrace();
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
 		}
 
 		updateObservers();
@@ -597,6 +601,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 			ex.printStackTrace();
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
 		}
 
 		updateObservers();
@@ -637,6 +643,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 			ex.printStackTrace();
 		} catch (UUIDDoesNotExistException ex) {
 			ex.printStackTrace();
+		} catch (JSONFormatException ex) {
+			ex.printStackTrace();
 		}
 
 		updateObservers();
@@ -676,6 +684,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
 		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
+		} catch (JSONFormatException ex) {
 			ex.printStackTrace();
 		}
 
@@ -727,6 +737,8 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		} catch (SubeventMismatchException ex) {
 			ex.printStackTrace();
 		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
+		} catch (JSONFormatException ex) {
 			ex.printStackTrace();
 		}
 

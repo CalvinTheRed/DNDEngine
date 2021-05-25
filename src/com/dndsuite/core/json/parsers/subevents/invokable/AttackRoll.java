@@ -31,10 +31,9 @@ public class AttackRoll extends Subevent implements Calculation {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
-			throws SubeventMismatchException {
-		parent = e;
+			throws SubeventMismatchException, JSONFormatException {
+		super.parse(json, e, eSource, eTarget);
 		String subevent = (String) json.get("subevent");
-		addTag(subevent);
 		addTag("calculation");
 		if (!subevent.equals("attack_roll")) {
 			throw new SubeventMismatchException("attack_roll", subevent);

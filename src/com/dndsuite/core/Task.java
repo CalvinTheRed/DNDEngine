@@ -73,7 +73,7 @@ public class Task extends JSONLoader implements UUIDTableElement {
 			JSONArray eventGroups = (JSONArray) json.get("event_groups");
 			for (Object o : eventGroups) {
 				JSONObject eventGroup = (JSONObject) o;
-				invoker.queueEventGroup(new EventGroup(eventGroup));
+				invoker.queueEventGroup(new EventGroup(eventGroup, invoker.getUUID()));
 			}
 		}
 

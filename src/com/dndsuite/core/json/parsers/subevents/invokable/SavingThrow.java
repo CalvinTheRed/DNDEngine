@@ -30,10 +30,9 @@ public class SavingThrow extends Subevent implements Calculation {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
-			throws SubeventMismatchException {
-		parent = e;
+			throws SubeventMismatchException, JSONFormatException {
+		super.parse(json, e, eSource, eTarget);
 		String subevent = (String) json.get("subevent");
-		addTag(subevent);
 		addTag("calculation");
 		if (!subevent.equals("saving_throw")) {
 			throw new SubeventMismatchException("saving_throw", subevent);

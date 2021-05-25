@@ -24,6 +24,7 @@ public abstract class Subevent implements Taggable {
 	protected ArrayList<Long> appliedEffects;
 	protected ArrayList<String> tags;
 	protected Event parent;
+	protected long target;
 
 	public Subevent() {
 		appliedEffects = new ArrayList<Long>();
@@ -97,7 +98,16 @@ public abstract class Subevent implements Taggable {
 	@Override
 	public abstract Subevent clone();
 
-	public abstract void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
-			throws SubeventMismatchException, JSONFormatException;
+	public void parse(JSONObject json, Event e, GameObject eSource, GameObject eTarget)
+			throws SubeventMismatchException, JSONFormatException {
+		parent = e;
+		target = eTarget.getUUID();
+		String subevent = (String) json.get("subevent");
+		addTag(subevent);
+	}
+
+	public long getTarget() {
+		return target;
+	}
 
 }

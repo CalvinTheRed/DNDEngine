@@ -13,13 +13,12 @@ import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.conditions.DealsDamageType;
 import com.dndsuite.core.json.parsers.conditions.HasTag;
 import com.dndsuite.core.json.parsers.conditions.IsRollBelow;
-import com.dndsuite.core.json.parsers.conditions.ParentHasTag;
+import com.dndsuite.core.json.parsers.conditions.ParentEventHasTag;
 import com.dndsuite.core.json.parsers.functions.GrantAdvantage;
 import com.dndsuite.core.json.parsers.functions.GrantDisadvantage;
 import com.dndsuite.exceptions.ConditionMismatchException;
 import com.dndsuite.exceptions.FunctionMismatchException;
 import com.dndsuite.exceptions.JSONFormatException;
-import com.dndsuite.exceptions.UUIDDoesNotExistException;
 
 /**
  * Effect is a class which represents any lingering change in behavior which is
@@ -50,7 +49,7 @@ public class Effect extends JSONLoader implements UUIDTableElement {
 			put("deals_damage_type", new DealsDamageType());
 			put("has_tag", new HasTag());
 			put("is_roll_below", new IsRollBelow());
-			put("parent_event_has_tag", new ParentHasTag());
+			put("parent_event_has_tag", new ParentEventHasTag());
 		}
 	};
 
@@ -169,31 +168,21 @@ public class Effect extends JSONLoader implements UUIDTableElement {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void setSource(GameObject o) {
-		json.put("source", o.getUUID());
+	public void setSource(long sourceUUID) {
+		json.put("source", sourceUUID);
 	}
 
 	@SuppressWarnings("unchecked")
-	public void setTarget(GameObject o) {
-		json.put("target", o.getUUID());
+	public void setTarget(long targetUUID) {
+		json.put("target", targetUUID);
 	}
 
-	public GameObject getSource() {
-		try {
-			return (GameObject) UUIDTable.get((long) json.get("source"));
-		} catch (UUIDDoesNotExistException ex) {
-			ex.printStackTrace();
-			return null;
-		}
+	public long getSource() {
+		return (long) json.get("source");
 	}
 
-	public GameObject getTarget() {
-		try {
-			return (GameObject) UUIDTable.get((long) json.get("target"));
-		} catch (UUIDDoesNotExistException ex) {
-			ex.printStackTrace();
-			return null;
-		}
+	public long getTarget() {
+		return (long) json.get("target");
 	}
 
 }
