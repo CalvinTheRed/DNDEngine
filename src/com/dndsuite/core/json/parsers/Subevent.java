@@ -110,4 +110,8 @@ public abstract class Subevent implements Taggable {
 		return target;
 	}
 
+	public void setTarget(long target) {
+		this.target = target;
+	}
+
 }

@@ -13,6 +13,8 @@ import com.dndsuite.core.json.parsers.Subevent;
 import com.dndsuite.core.json.parsers.conditions.DealsDamageType;
 import com.dndsuite.core.json.parsers.conditions.HasTag;
 import com.dndsuite.core.json.parsers.conditions.IsRollBelow;
+import com.dndsuite.core.json.parsers.conditions.MatchEventSource;
+import com.dndsuite.core.json.parsers.conditions.MatchEventTarget;
 import com.dndsuite.core.json.parsers.conditions.ParentEventHasTag;
 import com.dndsuite.core.json.parsers.functions.GrantAdvantage;
 import com.dndsuite.core.json.parsers.functions.GrantDisadvantage;
@@ -49,6 +51,8 @@ public class Effect extends JSONLoader implements UUIDTableElement {
 			put("deals_damage_type", new DealsDamageType());
 			put("has_tag", new HasTag());
 			put("is_roll_below", new IsRollBelow());
+			put("match_event_source", new MatchEventSource());
+			put("match_event_target", new MatchEventTarget());
 			put("parent_event_has_tag", new ParentEventHasTag());
 		}
 	};

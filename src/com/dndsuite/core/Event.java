@@ -91,10 +91,10 @@ public class Event extends JSONLoader implements Receptor {
 	 * 
 	 * @param source - the GameObject which is enacting the Event
 	 */
-	public void invoke(GameObject source) {
+	public void invoke(long source) {
 		try {
 			JSONParser parser = new JSONParser();
-			String jsonString = "{\"requests\":[\"event_target_data\"],\"source\":" + source.getUUID() + "}";
+			String jsonString = "{\"requests\":[\"event_target_data\"],\"source\":" + source + "}";
 			pauseNotes = (JSONObject) parser.parse(jsonString);
 			pause();
 		} catch (ParseException ex) {

@@ -27,7 +27,7 @@ public class MatchEventTarget implements Condition {
 			throw new ConditionMismatchException("match_event_target", condition);
 		}
 
-		String eventSourceAlias = (String) json.get("event_source");
+		String eventSourceAlias = (String) json.get("event_target");
 		if (eventSourceAlias.equals("effect_source")) {
 			return s.getTarget() == e.getSource();
 		} else if (eventSourceAlias.equals("effect_target")) {

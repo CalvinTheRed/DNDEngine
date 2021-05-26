@@ -257,7 +257,7 @@ public class GameObject extends JSONLoader implements UUIDTableElement, Subject 
 		for (EventGroup group : queuedEvents) {
 			if (group.contains(e)) {
 				container = group;
-				e.invoke(this);
+				e.invoke(getUUID());
 				break;
 			}
 		}
