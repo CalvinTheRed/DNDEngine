@@ -1,0 +1,12 @@
+{
+  "name" : "Attack",
+  "cost" : "action",
+  "tags" : [ "action" ],
+  "item_attack_groups" : [ {
+    "hand": "mainhand",
+    "hit" : [ {
+      "subevent" : "damage"
+    } ],
+    "miss" : [ ]
+  } ]
+}

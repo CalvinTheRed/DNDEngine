@@ -1,0 +1,11 @@
+{
+  "name" : "Longsword",
+  "description" : "A sturdy sword which can be wielded with one or two hands.",
+  "damage" : [ {
+    "dice" : 1,
+    "size" : 8,
+    "damage_type" : "slashing"
+  } ],
+  "tags" : [ "versatile", "melee", "martial" ],
+  "equipped_effects" : [ ]
+}

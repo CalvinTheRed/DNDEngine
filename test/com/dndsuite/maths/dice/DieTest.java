@@ -10,8 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.dndsuite.maths.dice.Die;
-
 public class DieTest {
 
 	@BeforeAll
@@ -56,12 +54,12 @@ public class DieTest {
 		d2.roll();
 		assertNotEquals(d1.getRoll(), d2.getRoll());
 	}
-	
+
 	@Test
 	@DisplayName("Die control mode")
 	void test4() {
 		Die d = new Die(1);
-		int [] controlValues = {1,2,3,4,5,6,7,8,9,10};
+		long[] controlValues = { 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L };
 		Die.enableDiceControl(controlValues);
 		for (int i = 0; i < controlValues.length; i++) {
 			d.roll();

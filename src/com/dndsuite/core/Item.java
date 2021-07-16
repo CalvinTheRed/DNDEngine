@@ -1,211 +1,131 @@
 package com.dndsuite.core;
 
-import java.util.LinkedList;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
-import org.luaj.vm2.Varargs;
+import com.dndsuite.core.json.JSONLoader;
+import com.dndsuite.exceptions.UUIDDoesNotExistException;
 
-import com.dndsuite.core.events.Event;
-import com.dndsuite.core.events.ItemAttack;
-import com.dndsuite.core.gameobjects.Entity;
-import com.dndsuite.core.tasks.Task;
-import com.dndsuite.dnd.combat.DamageDiceGroup;
-import com.dndsuite.dnd.data.DamageType;
+/**
+ * Item is a class which represents any physical artifact to be found in the
+ * game. This might be a weapon, or a tool of some kind, or a random natural
+ * object such as a small rock.
+ * 
+ * @author Calvin Withun
+ *
+ */
+public class Item extends JSONLoader implements UUIDTableElement {
 
-public class Item extends Scriptable {
+	/**
+	 * Item constructor for loading from save JSON files.
+	 * 
+	 * @param json - the JSON data stored in a save file
+	 */
+	public Item(JSONObject json) {
+		super(json);
 
-	// Generic Item property tags (for both armor and weapons)
-	public static final String HEAVY = "Heavy";
-	public static final String LIGHT = "Light";
-	// Armor property tags
-	public static final String ARMOR = "Armor"; // Permits an item to be equipped as armor
-	public static final String ARMOR_HEAVY = "Heavy Armor";
-	public static final String ARMOR_LIGHT = "Light Armor";
-	public static final String ARMOR_MEDIUM = "Medium Armor";
-	public static final String MEDIUM = "Medium";
-	public static final String METALLIC = "Metallic";
-	public static final String SHIELD = "Shield";
-	public static final String STEALTH_DADV = "Stealth Disadvantage";
-	// TODO: add item lua function to determine stat prereqs for using item
-	// Weapon property tags
-	public static final String AMMUNITION = "Ammunition";
-	public static final String FINESSE = "Finesse";
-	public static final String IMPROVISED_MELEE = "Improvised Melee";
-	public static final String IMPROVISED_THROWN = "Improvised Thrown";
-	public static final String LOADING = "Loading";
-	public static final String MAGICAL = "Magical";
-	public static final String RANGED = "Ranged";
-	public static final String REACH = "Reach";
-	public static final String SILVERED = "Silvered";
-	public static final String THROWN = "Thrown";
-	public static final String TWO_HANDED = "Two Handed";
-	public static final String VERSATILE = "Versatile";
-	public static final String WEAPON = "Weapon";
-	// Weapon proficiency groups (categorical)
-	public static final String MARTIAL_MELEE = "Martial Melee";
-	public static final String MARTIAL_RANGED = "Martial Ranged";
-	public static final String SIMPLE_MELEE = "Simple Melee";
-	public static final String SIMPLE_RANGED = "Simple Ranged";
-	// Weapon proficiency groups (particulars)
-	public static final String BATTLEAXE = "Battleaxe";
-	public static final String BLOWGUN = "Blowgun";
-	public static final String CLUB = "Club";
-	public static final String DAGGER = "Dagger";
-	public static final String DART = "Dart";
-	public static final String FLAIL = "Flail";
-	public static final String GLAIVE = "Glaive";
-	public static final String GREATAXE = "Greataxe";
-	public static final String GREATCLUB = "Greatclub";
-	public static final String GREATSWORD = "Greatsword";
-	public static final String HALBERD = "Halberd";
-	public static final String HANDAXE = "Handaxe";
-	public static final String HAND_CROSSBOW = "Hand Crossbow";
-	public static final String HEAVY_CROSSBOW = "Heavy Crossbow";
-	public static final String JAVELIN = "Javelin";
-	public static final String LANCE = "Lance";
-	public static final String LIGHT_CROSSBOW = "Light Crossbow";
-	public static final String LIGHT_HAMMER = "Light Hammer";
-	public static final String LONGBOW = "Longbow";
-	public static final String LONGSWORD = "Longsword";
-	public static final String MACE = "Mace";
-	public static final String MAUL = "Maul";
-	public static final String MORNINGSTAR = "Morningstar";
-	public static final String NET = "Net";
-	public static final String PIKE = "Pike";
-	public static final String QUARTERSTAFF = "Quarterstaff";
-	public static final String RAPIER = "Rapier";
-	public static final String SCIMITAR = "Scimitar";
-	public static final String SHORTBOW = "Shortbow";
-	public static final String SHORTSWORD = "Shortsword";
-	public static final String SICKLE = "Sickle";
-	public static final String SLING = "Sling";
-	public static final String SPEAR = "Spear";
-	public static final String TRIDENT = "Trident";
-	public static final String WAR_PICK = "War Pick";
-	public static final String WARHAMMER = "Warhammer";
-	public static final String WHIP = "Whip";
-
-	public Item(String script) {
-		super(script);
+		UUIDTable.addToTable(this);
 	}
 
-	public void equip(Entity subject) {
-		try {
-			passToLua("subject", subject);
-			invokeFromLua("equip");
-		} catch (Exception ex) {
-			
+	/**
+	 * Item constructor for loading an Item from template JSON files.
+	 * 
+	 * @param file - the path to a file, as a continuation of the file path
+	 *             "resources/json/items/..."
+	 */
+	public Item(String file) {
+		super("items/" + file);
+
+		UUIDTable.addToTable(this);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	protected void parseTemplate() {
+		JSONArray effectNames = (JSONArray) json.remove("equipped_effects");
+		JSONArray effectUUIDs = new JSONArray();
+		while (effectNames.size() > 0) {
+			// TODO: ensure source/target UUIDs are provided here
+			String effectName = (String) effectNames.remove(0);
+			// TODO: does null, null work?
+			Effect e = new Effect(effectName, null, null);
+			UUIDTable.addToTable(e);
+			effectUUIDs.add(e.getUUID());
 		}
+		json.put("equipped_effects", effectUUIDs);
 	}
 
-	public int getAC() {
-		try {
-			Varargs va = invokeFromLua("acbase");
-			return va.toint(1);
-		} catch (Exception ex) {
-			System.out.println("[JAVA] Non-armor item being referenced for AC");
-			return 0;
-		}
+	@Override
+	@SuppressWarnings("unchecked")
+	public long getUUID() {
+		return (long) json.getOrDefault("uuid", -1L);
 	}
 
-	public int getACAbilityBonusLimit() {
+	@Override
+	@SuppressWarnings("unchecked")
+	public void assignUUID(long uuid) {
+		json.put("uuid", uuid);
+	}
+
+	/**
+	 * This function gives the Item a chance to apply Effects to its wielder upon
+	 * being equipped.
+	 * 
+	 * @param o - the GameObject which has equipped the Item
+	 */
+	public void equipBy(GameObject o) {
 		try {
-			Varargs va = invokeFromLua("acAbilityBonusLimit");
-			int limit = va.toint(1);
-			if (limit == -1) {
-				return Integer.MAX_VALUE;
+			JSONArray equippedEffects = (JSONArray) json.get("equipped_effects");
+			for (Object obj : equippedEffects) {
+				long uuid = (long) obj;
+				Effect e = (Effect) UUIDTable.get(uuid);
+				e.setSource(o.getUUID());
+				e.setTarget(o.getUUID());
+				o.addEffect(e);
 			}
-			return limit;
-		} catch (Exception ex) {
-			return Integer.MAX_VALUE;
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
 		}
 	}
 
-	public LinkedList<Event> getItemAttackOptions() {
-		LinkedList<Event> events = new LinkedList<Event>();
-		
-		events.add(new ItemAttack(Entity.STR, this, ItemAttack.MELEE));
-		events.add(new ItemAttack(Entity.STR, this, ItemAttack.THROWN));
-		
-		if (hasTag(Item.FINESSE)) {
-			events.add(new ItemAttack(Entity.DEX, this, ItemAttack.MELEE));
-			
-			if (hasTag(Item.THROWN)) {
-				events.add(new ItemAttack(Entity.DEX, this, ItemAttack.THROWN));
+	/**
+	 * This function gives the Item a chance to remove Effects from its wielder upon
+	 * being unequipped.
+	 * 
+	 * @param o - the GameObject which has unequipped the Item
+	 */
+	public void unequipBy(GameObject o) {
+		try {
+			JSONArray equippedEffects = (JSONArray) json.get("equipped_effects");
+			for (Object obj : equippedEffects) {
+				long uuid = (long) obj;
+				Effect e = (Effect) UUIDTable.get(uuid);
+				e.setSource(-1L);
+				e.setTarget(-1L);
+				o.removeEffect(e);
 			}
-		}
-		
-		if (hasTag(Item.RANGED)) {
-			events.add(new ItemAttack(Entity.DEX, this, ItemAttack.RANGED));
-		}
-		
-		return events;
-	}
-
-	public LinkedList<Task> getCustomTasks() {
-		try {
-			Varargs va = invokeFromLua("customTasks");
-			LinkedList<Task> tasks = new LinkedList<Task>();
-			int index = 1;
-			Task task = (Task) (va.touserdata(index));
-			while (task != null) {
-				tasks.add(task);
-				index++;
-				task = (Task) (va.touserdata(index));
-			}
-			return tasks;
-		} catch (Exception ex) {
-			return new LinkedList<Task>();
+		} catch (UUIDDoesNotExistException ex) {
+			ex.printStackTrace();
 		}
 	}
 
-	public DamageDiceGroup getDamageDice(String attackType) {
-		try {
-			passToLua("attackType", attackType);
-			Varargs va = invokeFromLua("damage");
-			return (DamageDiceGroup) va.touserdata(1);
-		} catch (Exception ex) {
-			return new DamageDiceGroup(0,0,DamageType.TYPELESS);
-		}
+	@SuppressWarnings("unchecked")
+	public JSONArray getDamage() {
+		JSONArray improvised = new JSONArray();
+		JSONObject damage = new JSONObject();
+		damage.put("dice", 1L);
+		damage.put("size", 4L);
+		damage.put("damage_type", "bludgeoning");
+		improvised.add(damage);
+		return (JSONArray) json.getOrDefault("damage", improvised);
 	}
 
-	public double[] getRange(String attackType) {
-		try {
-			passToLua("attackType", attackType);
-			Varargs va = invokeFromLua("range");
-			double[] range = new double[2];
-			range[0] = va.todouble(1);
-			range[1] = va.todouble(2);
-			return range;
-		} catch (Exception ex) {
-			return new double[] { 0.0, 0.0 };
-		}
-	}
-
-	public double getReach() {
-		try {
-			Varargs va = invokeFromLua("reach");
-			return va.todouble(1);
-		} catch (Exception ex) {
-			return 0.0;
-		}
-	}
-
-	public double getWeight() {
-		try {
-			Varargs va = invokeFromLua("weight");
-			return va.todouble(1);
-		} catch (Exception ex) {
-			return 0.0;
-		}
-	}
-
-	public void unequip(Entity subject) {
-		try {
-			passToLua("subject", subject);
-			invokeFromLua("unequip");
-		} catch (Exception ex) {
-			
-		}
+	@SuppressWarnings("unchecked")
+	public JSONObject getRange() {
+		JSONObject range = new JSONObject();
+		range.put("short", 20.0);
+		range.put("long", 60.0);
+		return (JSONObject) json.getOrDefault("range", range);
 	}
 
 }
